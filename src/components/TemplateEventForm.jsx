@@ -18,6 +18,7 @@ const TemplateEventForm = () => {
   const [coverImg, setCoverImg] = useState(cover);
   const { eventInfo } = eventData;
   const { user } = useContext(AuthContext);
+  // console.log("This is eventInfo", eventInfo);
 
   // const handleImg = (e) => {
   //   e.preventDefault()

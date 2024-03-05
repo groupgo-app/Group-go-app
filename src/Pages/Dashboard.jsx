@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import  { useContext, useEffect } from "react";
 import AvailableEvents from "../components/AvailableEvents";
 import PreviewAvailableEvents from "../components/PreviewAvailableEvents";
 import { useState } from "react";

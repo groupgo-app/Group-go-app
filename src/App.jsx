@@ -8,6 +8,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import { FormContextProvider } from "./context/FormContext";
 import Event from "./Pages/Event";
 import Dashboard from "./Pages/Dashboard";
+import PaymentApi from "./Pages/PaymentApi";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
                   <Route path="/:eventId" element={<Event />} />
                 </Route>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/paystack" element={<PaymentApi />} />
               </Routes>
             </AppLayout>
           </FormContextProvider>

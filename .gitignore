@@ -25,3 +25,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# File 
+src/Pages/PaymentApi.jsx
