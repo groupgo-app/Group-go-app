@@ -12,7 +12,6 @@ export const FormContextProvider = ({ children }) => {
   const [progresspercent, setProgresspercent] = useState();
   const { user } = useContext(AuthContext);
 
-  // const [accountNumber, setAccountNumber] = React.useState("");
   const [banksName, setBanksName] = useState([]);
   const [bankCode, setBankCode] = React.useState("");
   const [resolvedBankDetails, setResolvedBankDetails] = React.useState(null);
