@@ -27,3 +27,5 @@ dist-ssr
 *.sw?
 
 
+# File 
+src/Pages/PaymentApi.jsx
