@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Avatar from "../assets/images/avatar.png";
 import menuBar from "../assets/images/menu-bar.svg";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { handleLogOut, user } = useContext(AuthContext);
@@ -16,7 +17,12 @@ const Navbar = () => {
         <div className="nav_items">
           <h4>groupgo</h4>
           <ul className="relative">
-            <li>Home</li>
+            {user ? (
+              <Link to="/dashboard">Dashboard</Link>
+            ) : (
+              <Link to="/create">Home</Link>
+            )}
+
             <li>Features</li>
             <li>How it works</li>
             <li>About us</li>
@@ -41,7 +47,7 @@ const Navbar = () => {
               </div>
             )}
           </ul>
-          <img className="tablet:hidden block" src={menuBar} alt="" />
+          <img className="block tablet:hidden" src={menuBar} alt="" />
         </div>
       </nav>
     </>

@@ -1,12 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
 import { AppContext } from "./AppContext";
 import { nanoid } from "nanoid";
-import cover from "../assets/images/resturant image.jpeg";
-import { storage } from "../config/firebase";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 
 export const FormContext = createContext(null);
 
@@ -17,11 +12,11 @@ export const FormContextProvider = ({ children }) => {
   const [progresspercent, setProgresspercent] = useState();
   const { user } = useContext(AuthContext);
 
-  const [accountNumber, setAccountNumber] = React.useState("");
+  // const [accountNumber, setAccountNumber] = React.useState("");
   const [banksName, setBanksName] = useState([]);
   const [bankCode, setBankCode] = React.useState("");
   const [resolvedBankDetails, setResolvedBankDetails] = React.useState(null);
-  // const [error, setError] = React.useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const [eventData, setEventData] = useState({
     uid: "",
     eventImg: "",
@@ -49,32 +44,7 @@ export const FormContextProvider = ({ children }) => {
     },
   });
 
-  const uploadCoverImage = () => {
-    setLoading(true);
-    const storageRef = ref(storage, `images/${imgUrl.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, imgUrl);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-        );
-        setProgresspercent(progress);
-      },
-      (error) => {
-        console.log(error);
-        setLoading(false);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log(downloadURL);
-          // setEventData({...eventData, eventImg: downloadURL})
-          handleEventCreation(downloadURL);
-        });
-      },
-    );
-  };
+  // console.log(user)
 
   const handleChangeForEventInfo = (e) => {
     const { name, value } = e.target;
@@ -92,18 +62,29 @@ export const FormContextProvider = ({ children }) => {
     });
   };
 
-  const handleEventCreation = async (fileUrl) => {
-    const newEventData = { ...eventData, eventImg: fileUrl };
-    const dofRef = doc(db, "event", newEventData.eventId);
-    try {
-      await setDoc(dofRef, { eventData: newEventData });
-      // console.log(newEventData)
-      setCurrentStep(stepData[3]);
-      console.log("event data added");
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error.message);
+  const handleChangeAccountNumber = (changeAccNum) => {
+    setEventData((eventData) => ({
+      ...eventData,
+      paymentInfo: {
+        ...eventData.paymentInfo,
+        accountNum: changeAccNum,
+      },
+    }));
+  };
+
+  const handleChangeBankName = (selectedBankName) => {
+    const bank = banksName.find((bank) => bank.name === selectedBankName);
+    if (bank) {
+      setEventData((eventData) => ({
+        ...eventData,
+        paymentInfo: {
+          ...eventData.paymentInfo,
+          bankName: selectedBankName,
+        },
+      }));
+      // console.log("This is bank", bank);
+      setResolvedBankDetails(null); // Reset resolved bank details
+      setBankCode(bank.code); // Set bank code
     }
   };
 
@@ -134,12 +115,18 @@ export const FormContextProvider = ({ children }) => {
           },
         },
       );
-      const data = await response.json();
-      console.log(data);
-      setResolvedBankDetails(data.data);
-      // setError(null);
-      setAccountNumber("");
-      setBanksName([]);
+      // console.log("response", response);
+      if (response.ok === false) {
+        setErrorMessage(
+          "Bank name could not be resolved. Please check your input.",
+        );
+        return setCurrentStep(stepData[2]);
+      } else {
+        const data = await response.json();
+        setResolvedBankDetails(data.data);
+      }
+
+      // console.log(data.data);
     } catch (error) {
       // setError(error.message);
       setResolvedBankDetails(null);
@@ -151,43 +138,22 @@ export const FormContextProvider = ({ children }) => {
     fetchBanks();
   }, []);
 
-  const handleChangeBankName = (selectedBankName) => {
-    setEventData((eventData) => ({
-      ...eventData,
-      paymentInfo: {
-        ...eventData.paymentInfo,
-        bankName: selectedBankName,
-      },
-    }));
-    // selectBankCode(bankCode);
-  };
-  const handleChangeAccountNumber = (changeAccNum) => {
-    setEventData((eventData) => ({
-      ...eventData,
-      paymentInfo: {
-        ...eventData.paymentInfo,
-        accountNum: changeAccNum,
-      },
-    }));
-  };
-
   return (
     <FormContext.Provider
       value={{
         eventData,
         banksName,
+        bankCode,
         setImgUrl,
         imgUrl,
         loading,
-        bankCode,
         resolvedBankDetails,
-        setBankCode,
+        errorMessage,
         setEventData,
         handleChangeForEventInfo,
         handleChangeForPaymentInfo,
-        uploadCoverImage,
-        handleChangeBankName,
         handleChangeAccountNumber,
+        handleChangeBankName,
         resolveBankAccount,
       }}
     >

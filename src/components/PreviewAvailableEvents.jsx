@@ -1,13 +1,16 @@
 import React from "react";
 import moneySvg from "../assets/images/money.svg";
 import profileSvg from "../assets/images/profile.svg";
+import cover from "../assets/images/resturant image.jpeg";
+import { Link } from "react-router-dom";
 
 const PreviewAvailableEvents = ({ currentPreview }) => {
+  const eventId = currentPreview?.id;
   return (
     <div>
       <div className="flex flex-col gap-8 laptop:flex-row laptop:items-center">
         <img
-          src={currentPreview?.eventData.eventImg}
+          src={currentPreview?.eventImg || cover}
           alt=""
           className="h-[356px] w-full max-w-[439px] rounded-[10px]"
         />
@@ -17,8 +20,11 @@ const PreviewAvailableEvents = ({ currentPreview }) => {
               <img src={moneySvg} alt="" />
               Total commitment
             </span>
-            <h2 className=" text-[24px] font-medium tablet:text-[32px] laptop:text-[46px]">
-              N 150,000
+
+            <h2 className="text-[24px] font-medium tablet:text-[32px] laptop:text-[46px]">
+              N
+              {Number(currentPreview?.eventInfo.amountPerParticipant) *
+                Number(currentPreview?.eventInfo.maxNumOfParticipant)}
             </h2>
           </div>
           <div>
@@ -28,7 +34,7 @@ const PreviewAvailableEvents = ({ currentPreview }) => {
                   <img src={profileSvg} alt="" />
                   Participants
                 </span>
-                <h5 className="text-[24px] font-medium">{`0/${currentPreview?.eventData.eventInfo.maxNumOfParticipant}`}</h5>
+                <h5 className="text-[24px] font-medium">{`0/${currentPreview?.eventInfo.maxNumOfParticipant}`}</h5>
               </div>
               <div className="space-y-2">
                 <span className="icon_text_block">
@@ -36,13 +42,16 @@ const PreviewAvailableEvents = ({ currentPreview }) => {
                   Amount per person
                 </span>
                 <h5 className="text-[24px] font-medium">
-                  {`N ${currentPreview?.eventData.eventInfo.amountPerParticipant}`}
+                  {`N ${currentPreview?.eventInfo.amountPerParticipant}`}
                 </h5>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <button className="flex items-center justify-center gap-2 rounded-[15px] bg-orange-clr py-[10px] text-white">
+            <Link
+              to={`/${eventId}`}
+              className="flex items-center justify-center gap-2 rounded-[15px] bg-orange-clr py-[10px] text-white"
+            >
               <svg
                 width="21"
                 height="10"
@@ -56,9 +65,9 @@ const PreviewAvailableEvents = ({ currentPreview }) => {
                 />
               </svg>
               Go to event link
-            </button>
+            </Link>
             <button className="rounded-[15px] border-[1px] border-[#E4E4E4] bg-white py-[10px]">
-              Send money to bank account{" "}
+              Send money to bank account
             </button>
           </div>
         </aside>

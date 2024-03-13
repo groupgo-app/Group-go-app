@@ -1,7 +1,9 @@
 import React, { useContext, useState } from "react";
-import InputField from "./InputField";
 import { FormContext } from "../context/FormContext";
 import loader from "../assets/images/loader.svg";
+import { AuthContext } from "../context/AuthContext";
+import { findUser, saveEventForAUser } from "../utils/events";
+import { AppContext } from "../context/AppContext";
 
 const PaymentInformation = () => {
   const {
@@ -9,68 +11,103 @@ const PaymentInformation = () => {
     loading,
     banksName,
     bankCode,
-    accountNumber,
-    uploadCoverImage,
-    setEventData,
-    handleChangeForPaymentInfo,
+    errorMessage,
+    resolvedBankDetails,
     handleChangeAccountNumber,
     handleChangeBankName,
     resolveBankAccount,
   } = useContext(FormContext);
 
-  const { paymentInfo } = eventData;
+  const { user } = useContext(AuthContext);
+  const { setCurrentStep, stepData } = useContext(AppContext);
 
-  console.log("This is eventData", eventData);
-  // const [bankCode, setBankCode] = useState("");
-
-  const submitForm = (e) => {
+  // const [errorMessage, setErrorMessage] = useState("");
+  /* 
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
-    // uploadCoverImage();
-    //resolveBankAccount();
-    console.log("event data", eventData);
+
+    // Flag to indicate if bank account resolution was successful
+    let isBankResolutionSuccessful = false;
+
+    if (eventData.paymentInfo.bankName && eventData.paymentInfo.accountNum) {
+      try {
+        await resolveBankAccount({
+          accountNumber: eventData.paymentInfo.accountNum,
+          bankCode: bankCode,
+        });
+        // If resolveBankAccount succeeds, set flag to true
+        isBankResolutionSuccessful = true;
+      } catch (error) {
+        console.error("Error resolving bank account:", error);
+
+        return setCurrentStep(stepData[2]);
+      }
+    } else {
+      return;
+    }
+
+    if (!isBankResolutionSuccessful) {
+      return; // Exit function if bank resolution failed
+    }
+
+    const userFound = await findUser(user?.uid);
+    if (userFound) {
+      const saveEventData = await saveEventForAUser(userFound?.uid, eventData);
+      console.log("Event saved:", saveEventData);
+    } else {
+      console.log("User not found.");
+    }
+    setCurrentStep(stepData[3]);
+  }; */
+
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+    try {
+      // Flag to indicate if bank account resolution was successful
+      let isBankResolutionSuccessful = false;
+
+      if (eventData.paymentInfo.bankName && eventData.paymentInfo.accountNum) {
+        await resolveBankAccount({
+          accountNumber: eventData.paymentInfo.accountNum,
+          bankCode: bankCode,
+        });
+        // If resolveBankAccount succeeds, set flag to true
+        isBankResolutionSuccessful = true;
+      } else {
+        return;
+      }
+
+      if (!isBankResolutionSuccessful) {
+        return; // Exit function if bank resolution failed
+      }
+
+      const userFound = await findUser(user?.uid);
+      if (userFound) {
+        const saveEventData = await saveEventForAUser(
+          userFound?.uid,
+          eventData,
+        );
+        console.log("Event saved:", saveEventData);
+      } else {
+        console.log("User not found.");
+      }
+      setCurrentStep(stepData[3]);
+    } catch (error) {
+      console.error("Error handling form submission:", error);
+      setCurrentStep(stepData[2]);
+    }
   };
 
+  // console.log("This is eventData", eventData);
   return (
     <>
-      <form className="payment_info_container" onSubmit={submitForm}>
+      <form className="payment_info_container">
         <h4 className="font-normal">How would you like to get paid?</h4>
-
-        {/*         <InputField
-          id="bank_name"
-          type="text"
-          label="Name of bank"
-          name="bankName"
-          placeholder="GT bank..."
-          value={paymentInfo.bankName}
-          onChange={handleChangeForPaymentInfo}
-        />
-
-        <InputField
-          id="acc_num"
-          type="text"
-          label="Account number"
-          name="accountNum"
-          value={paymentInfo.accountNum}
-          placeholder="account number"
-          onChange={handleChangeForPaymentInfo}
-        /> */}
-
         <label htmlFor="bankName">Bank Name:</label>
-        {/*         <select
-          multiple
-          id="bankName"
-          name="bankName"
-          value={eventData.paymentInfo.bankName}
-          onChange={(e) => e}
-        >
-          {eventData?.paymentInfo?.bankName?.map((bank, index) => (
-            <option key={index} value={bank}>
-              {bank}
-            </option>
-          ))}
-        </select> */}
         <select
-          // value={bankCode}
+          className="inputs"
+          type="select"
+          value={eventData?.paymentInfo?.bankName}
           onChange={(event) => handleChangeBankName(event.target.value)}
         >
           <option value="">Select a bank</option>
@@ -81,19 +118,28 @@ const PaymentInformation = () => {
           ))}
         </select>
         <div>
-          <label>Account Number:</label>
+          <label htmlFor="bankName">Account Number:</label>
           <input
             type="text"
-            value={paymentInfo.accountNum}
+            className="inputs"
+            value={eventData.paymentInfo.accountNum}
             onChange={(event) => handleChangeAccountNumber(event.target.value)}
             placeholder="Enter your account number"
           />
         </div>
+
+        <div>
+          <p>{resolvedBankDetails?.account_name}</p>
+        </div>
+
+        {errorMessage && <div className="error">{errorMessage}</div>}
+
         <div className="mt-10">
           <button
             type="submit"
+            // type="button"
             disabled={loading}
-            onClick={submitForm}
+            onClick={handleSubmitForm}
             className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080]"
           >
             {!loading ? "Continue" : <img src={loader} />}

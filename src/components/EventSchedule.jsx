@@ -29,7 +29,7 @@ const EventSchedule = ({ eventInfo, handleChangeForEventInfo }) => {
             type="date"
             label="Start Date"
             name="startDate"
-            value={eventInfo.startDate}
+            value={eventInfo?.startDate}
             onChange={handleChangeForEventInfo}
           />
 

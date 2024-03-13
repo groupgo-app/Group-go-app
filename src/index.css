@@ -45,7 +45,7 @@ p {
   /* font-size: 18px; */
   color: #060811b0;
   font-weight: 300;
-  @apply text-[16px] tablet:text-[18px];
+  @apply text-[16px] tablet:text-[16px];
 }
 
 /*buttons classes*/

@@ -18,35 +18,27 @@ const TemplateEventForm = () => {
   const [coverImg, setCoverImg] = useState(cover);
   const { eventInfo } = eventData;
   const { user } = useContext(AuthContext);
-  // console.log("This is eventInfo", eventInfo);
 
-  // const handleImg = (e) => {
-  //   e.preventDefault()
-  //   const file = e.target?.files[0]
-  //   setImgUrl(file)
-  //   console.log(file)
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
 
-  //   if (!file) return
-  // }
-
-  const handleImg = () => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-
-    fileInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      setImgUrl(file);
-
-      reader.onload = (e) => {
-        const uploadImageUrl = e.target.result;
-        setCoverImg(uploadImageUrl);
-        addImageToState(uploadImageUrl);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
       };
-      reader.readAsDataURL(file);
-    });
 
-    fileInput.click();
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    const imgUrl = await convertBase64(file);
+    setCoverImg(imgUrl);
+    setEventData({ ...eventData, eventImg: imgUrl });
   };
 
   useEffect(() => {
@@ -63,13 +55,20 @@ const TemplateEventForm = () => {
         <div className="mb-12 space-y-3">
           <p className="font-normal">{selectedTemplate.templateName}</p>
           <div className="relative w-full cursor-pointer">
-            <div className="relative w-full" onClick={handleImg}>
+            <label className="relative z-[50] w-full cursor-pointer">
               <img
                 src={coverImg}
                 alt="a cover image illustration of template cover"
                 className="h-[189px] w-full rounded-xl object-cover"
               />
-            </div>
+              <input
+                onChange={handleUpload}
+                type="file"
+                className="hidden"
+                name=""
+                id=""
+              />
+            </label>
             <div className="absolute bottom-0 left-0 right-0 top-0 m-auto flex w-fit items-center gap-3">
               <svg
                 width="18"
@@ -83,17 +82,10 @@ const TemplateEventForm = () => {
                   fill="white"
                 />
               </svg>
-              <span className="text-[16px] font-medium text-white">
+              <span className="z-[51] text-[16px] font-medium text-white">
                 Change event photo
               </span>
             </div>
-            {/* <input
-                id="file-upload"
-                name="file-upload"
-                type="file"
-                className="sr-only"
-                onChange={handleImg}
-              /> */}
           </div>
         </div>
 

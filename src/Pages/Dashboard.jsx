@@ -1,13 +1,12 @@
-import  { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import AvailableEvents from "../components/AvailableEvents";
 import PreviewAvailableEvents from "../components/PreviewAvailableEvents";
 import { useState } from "react";
-import { db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
 import { AuthContext } from "../context/AuthContext";
 import loader from "../assets/images/orange-loader.svg";
 import addIcon from "../assets/images/addIcon.svg";
 import Signin from "../components/modals/Signin";
+import { fetchEventForAUser } from "../utils/events";
 
 const Dashboard = () => {
   const [eventList, setEventList] = useState([]);
@@ -15,27 +14,29 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const { user, navigate } = useContext(AuthContext);
 
-  const getEventList = async () => {
-    const eventsData = [];
+  const getAllEvents = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "event"));
-      querySnapshot.forEach((docs) => {
-        eventsData.push(docs.data());
-      });
-      setEventList(
-        eventsData.filter((event) => event.eventData?.uid === user?.uid),
-      );
-      setLoading(false);
-      setCurrentPreview(eventList[0]);
+      if (user) {
+        const allEvent = await fetchEventForAUser(user?.uid);
+        setEventList(allEvent);
+        setCurrentPreview(eventList[0]); // Get the first list in the array
+        setLoading(false);
+      } else {
+        console.log("No user found for this id " + user?.uid);
+      }
     } catch (error) {
-      console.log(error.message);
+      console.log(error.stack);
     }
   };
 
+  const handleEventClick = (event) => {
+    setCurrentPreview(event);
+  };
+
   useEffect(() => {
-    getEventList();
+    getAllEvents();
     // console.log("hello");
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (
@@ -49,9 +50,12 @@ const Dashboard = () => {
         <div className="w-full space-y-16">
           <div className="space-y-5">
             <h5 className="text-[24px] font-medium">Events</h5>
-            <div className="flex flex-col gap-3 tablet:flex-row">
+            <div
+              // className="flex flex-col gap-3 tablet:grid tablet:grid-cols-4"
+              className="grid grid-cols-1 gap-5 laptop:grid-cols-4"
+            >
               <div
-                className="flex h-[206px] w-full max-w-[265px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[10px] border-[1px] border-[#E4E4E4] bg-white"
+                className="flex h-[206px] w-full max-w-[265px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[10px] border-[1px] border-[#E4E4E4]  bg-white laptop:h-full"
                 onClick={() => navigate("/create")}
               >
                 <img src={addIcon} alt="" />
@@ -60,15 +64,16 @@ const Dashboard = () => {
               {eventList &&
                 eventList.map((events) => (
                   <AvailableEvents
+                    handleEventClick={handleEventClick}
                     events={events}
-                    key={events.eventData.eventId}
+                    key={events.eventId}
                   />
                 ))}
             </div>
           </div>
           {currentPreview && (
             <div className="flex flex-col gap-5">
-              <h5 className="text-[24px] font-medium">{`Event/${currentPreview?.eventData?.eventType}`}</h5>
+              <h5 className="text-[24px] font-medium">{`Event/${currentPreview?.eventType}`}</h5>
               <PreviewAvailableEvents
                 currentPreview={currentPreview}
                 setCurrentPreview={setCurrentPreview}

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import location from "../assets/images/location.svg";
 import profile from "../assets/images/profile.svg";
@@ -10,29 +8,74 @@ import dateImg from "../assets/images/date.svg";
 import moneyImg from "../assets/images/money.svg";
 import loader from "../assets/images/orange-loader.svg";
 import PageNotFound from "./PageNotFound";
+import { fetchSingleEventByOwnerAndID } from "../utils/events";
+import { AuthContext } from "../context/AuthContext";
+import cover from "../assets/images/resturant image.jpeg";
+import { usePaystackPayment } from "react-paystack";
+import moment from "moment";
 
 const Event = () => {
   const [loading, setLoading] = useState(true);
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
 
-  useEffect(() => {
-    getEventData();
-  }, [eventId]);
+  const { user } = useContext(AuthContext);
 
-  const getEventData = async () => {
-    const docRef = doc(db, "event", eventId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      // console.log(docSnap.data())
-      setEvent(docSnap.data().eventData);
+  const startDate = moment(event?.eventInfo?.startDate).format("DD MMM, YYYY");
+  const endDate = moment(event?.eventInfo?.endDate).format("DD MMM, YYYY");
+
+  const startTime = moment(event?.eventInfo?.startTime, "HH:mm").format(
+    "hh:mm A",
+  );
+  const endTime = moment(event?.eventInfo?.endTime, "HH:mm").format("hh:mm A");
+
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: user?.email,
+    publicKey: import.meta.env.VITE_REACT_PAYSTACK_API,
+    metadata: {
+      custom_fields: [
+        {
+          display_name: user?.email,
+          variable_name: user?.email,
+          value: user?.email,
+        },
+      ],
+    },
+  };
+
+  const onSuccess = (reference) => {
+    console.log("Payment successfully completed");
+  };
+
+  const onClose = () => {
+    console.log("Your payment was unsuccessful, try again later!");
+  };
+
+  const initializePayment = usePaystackPayment({
+    ...config,
+    amount: event?.eventInfo?.amountPerParticipant * 100,
+  });
+
+  const getDataSingleEvent = async () => {
+    try {
+      const saveDataEvent = await fetchSingleEventByOwnerAndID(
+        user?.uid,
+        eventId,
+      );
+      // console.log(saveDataEvent);
+      setEvent(saveDataEvent);
       setLoading(false);
-      console.log(event);
-    } else {
-      console.log("No such document!");
-      setLoading(false);
+    } catch (error) {
+      console.log(error.stack);
     }
   };
+  // console.log(event);
+
+  useEffect(() => {
+    getDataSingleEvent();
+  }, [eventId, user?.uid]);
+
   if (loading) {
     return (
       <div className="my-[56px] flex w-full items-center justify-center">
@@ -44,12 +87,12 @@ const Event = () => {
       <div>
         <img
           className="h-[403px] w-full rounded-[10px] object-cover"
-          src={event?.eventImg}
+          src={event?.eventImg || cover}
           alt=""
         />
 
         <div className="my-[55px] flex flex-wrap gap-10">
-          <div className="flex w-fit max-w-full flex-col gap-[24px]">
+          <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
             <div className="flex flex-col gap-[6px]">
               <h3>{event?.eventType}</h3>
               <div className="flex items-center gap-[22px]">
@@ -65,8 +108,13 @@ const Event = () => {
             </div>
 
             <div>
-              <p>30 spots left</p>
-              <button className="w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff]">
+              <p className="mb-[15px]">
+                {event?.eventInfo.maxNumOfParticipant} left
+              </p>
+              <button
+                onClick={() => initializePayment(onSuccess, onClose)}
+                className="w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff]"
+              >
                 Apply for event
               </button>
             </div>
@@ -96,8 +144,8 @@ const Event = () => {
                 </div>
 
                 <div className="">
-                  <h5>{`${event?.eventInfo?.startDate} to ${event?.eventInfo?.endDate}`}</h5>
-                  <h5>{`${event?.eventInfo?.startTime} to ${event?.eventInfo?.endTime}`}</h5>
+                  <h5 className="mb-[5px] font-medium">{`${startDate}`}</h5>
+                  <h5 className="font-medium">{`${startTime} to ${endTime}`}</h5>
                 </div>
               </div>
 
@@ -108,7 +156,9 @@ const Event = () => {
                 </div>
 
                 <div>
-                  <h5>{event?.eventInfo?.amountPerParticipant}</h5>
+                  <h5 className="font-medium">
+                    N{event?.eventInfo?.amountPerParticipant}
+                  </h5>
                 </div>
               </div>
             </div>
