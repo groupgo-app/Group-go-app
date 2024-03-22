@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { getData } from "../data";
 
 export const AppContext = createContext(null);
@@ -19,6 +19,7 @@ export const AppProvider = ({ children }) => {
       setCurrentStep(stepData[1]);
     }
   };
+
   return (
     <AppContext.Provider
       value={{

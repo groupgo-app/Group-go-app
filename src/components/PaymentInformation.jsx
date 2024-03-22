@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { FormContext } from "../context/FormContext";
 import loader from "../assets/images/loader.svg";
 import { AuthContext } from "../context/AuthContext";
@@ -19,46 +19,8 @@ const PaymentInformation = () => {
   } = useContext(FormContext);
 
   const { user } = useContext(AuthContext);
-  const { setCurrentStep, stepData } = useContext(AppContext);
-
-  // const [errorMessage, setErrorMessage] = useState("");
-  /* 
-  const handleSubmitForm = async (e) => {
-    e.preventDefault();
-
-    // Flag to indicate if bank account resolution was successful
-    let isBankResolutionSuccessful = false;
-
-    if (eventData.paymentInfo.bankName && eventData.paymentInfo.accountNum) {
-      try {
-        await resolveBankAccount({
-          accountNumber: eventData.paymentInfo.accountNum,
-          bankCode: bankCode,
-        });
-        // If resolveBankAccount succeeds, set flag to true
-        isBankResolutionSuccessful = true;
-      } catch (error) {
-        console.error("Error resolving bank account:", error);
-
-        return setCurrentStep(stepData[2]);
-      }
-    } else {
-      return;
-    }
-
-    if (!isBankResolutionSuccessful) {
-      return; // Exit function if bank resolution failed
-    }
-
-    const userFound = await findUser(user?.uid);
-    if (userFound) {
-      const saveEventData = await saveEventForAUser(userFound?.uid, eventData);
-      console.log("Event saved:", saveEventData);
-    } else {
-      console.log("User not found.");
-    }
-    setCurrentStep(stepData[3]);
-  }; */
+  const { setCurrentStep, stepData, currentStep, setStepData } =
+    useContext(AppContext);
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -83,11 +45,9 @@ const PaymentInformation = () => {
 
       const userFound = await findUser(user?.uid);
       if (userFound) {
-        const saveEventData = await saveEventForAUser(
-          userFound?.uid,
-          eventData,
-        );
-        console.log("Event saved:", saveEventData);
+        // const saveEventData = await saveEventForAUser(eventData);
+        await saveEventForAUser(eventData);
+        // console.log("Event saved:", saveEventData);
       } else {
         console.log("User not found.");
       }
@@ -98,10 +58,22 @@ const PaymentInformation = () => {
     }
   };
 
+  const handleBackButton = () => {
+    setCurrentStep(stepData[1]);
+    const newStep = stepData.map((step) => {
+      if (step.id === currentStep.id) {
+        return { ...step, checked: false };
+      } else {
+        return step;
+      }
+    });
+    setStepData(newStep);
+  };
+
   // console.log("This is eventData", eventData);
   return (
     <>
-      <form className="payment_info_container">
+      <div className="payment_info_container">
         <h4 className="font-normal">How would you like to get paid?</h4>
         <label htmlFor="bankName">Bank Name:</label>
         <select
@@ -134,18 +106,29 @@ const PaymentInformation = () => {
 
         {errorMessage && <div className="error">{errorMessage}</div>}
 
-        <div className="mt-10">
-          <button
-            type="submit"
-            // type="button"
-            disabled={loading}
-            onClick={handleSubmitForm}
-            className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080]"
-          >
-            {!loading ? "Continue" : <img src={loader} />}
-          </button>
+        <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
+          <div className="w-full">
+            <button
+              onClick={handleBackButton}
+              className="primary_button block tablet:w-[100%]"
+              type="button"
+            >
+              Back
+            </button>
+          </div>
+          <div className="w-full">
+            <button
+              type="submit"
+              // type="button"
+              disabled={loading}
+              onClick={handleSubmitForm}
+              className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
+            >
+              {!loading ? "Continue" : <img src={loader} />}
+            </button>
+          </div>
         </div>
-      </form>
+      </div>
     </>
   );
 };

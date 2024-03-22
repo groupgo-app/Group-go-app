@@ -16,14 +16,13 @@ const Dashboard = () => {
 
   const getAllEvents = async () => {
     try {
-      if (user) {
-        const allEvent = await fetchEventForAUser(user?.uid);
-        setEventList(allEvent);
+      const allEvent = await fetchEventForAUser();
+      // setEventList(allEvent);
+      setEventList(allEvent.filter((event) => event?.uid === user?.uid)),
+        // console.log("All event", allEvent);
         setCurrentPreview(eventList[0]); // Get the first list in the array
-        setLoading(false);
-      } else {
-        console.log("No user found for this id " + user?.uid);
-      }
+      // console.log("Event", eventList);
+      setLoading(false);
     } catch (error) {
       console.log(error.stack);
     }
@@ -50,10 +49,7 @@ const Dashboard = () => {
         <div className="w-full space-y-16">
           <div className="space-y-5">
             <h5 className="text-[24px] font-medium">Events</h5>
-            <div
-              // className="flex flex-col gap-3 tablet:grid tablet:grid-cols-4"
-              className="grid grid-cols-1 gap-5 laptop:grid-cols-4"
-            >
+            <div className="grid grid-cols-1 gap-5 laptop:grid-cols-4">
               <div
                 className="flex h-[206px] w-full max-w-[265px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[10px] border-[1px] border-[#E4E4E4]  bg-white laptop:h-full"
                 onClick={() => navigate("/create")}
@@ -66,7 +62,7 @@ const Dashboard = () => {
                   <AvailableEvents
                     handleEventClick={handleEventClick}
                     events={events}
-                    key={events.eventId}
+                    key={events?.id}
                   />
                 ))}
             </div>

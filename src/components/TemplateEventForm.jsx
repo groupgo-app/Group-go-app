@@ -7,7 +7,13 @@ import { AuthContext } from "../context/AuthContext";
 import { FormContext } from "../context/FormContext";
 
 const TemplateEventForm = () => {
-  const { selectedTemplate, setCurrentStep, stepData } = useContext(AppContext);
+  const {
+    selectedTemplate,
+    setCurrentStep,
+    stepData,
+    setStepData,
+    currentStep,
+  } = useContext(AppContext);
   const {
     eventData,
     setEventData,
@@ -48,6 +54,18 @@ const TemplateEventForm = () => {
       eventType: selectedTemplate.templateName,
     });
   }, []);
+
+  const handleBackButton = () => {
+    setCurrentStep(stepData[0]);
+    const newStep = stepData.map((step) => {
+      if (step.id === currentStep.id) {
+        return { ...step, checked: false };
+      } else {
+        return step;
+      }
+    });
+    setStepData(newStep);
+  };
 
   return (
     <>
@@ -204,14 +222,25 @@ const TemplateEventForm = () => {
           />
         </div>
 
-        <div className="mt-12">
-          <button
-            onClick={() => setCurrentStep(stepData[2])}
-            className="primary_button block"
-            type="button"
-          >
-            Continue
-          </button>
+        <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
+          <div className="w-full">
+            <button
+              onClick={handleBackButton}
+              className="primary_button block tablet:w-[100%]"
+              type="button"
+            >
+              Back
+            </button>
+          </div>
+          <div className="w-full">
+            <button
+              onClick={() => setCurrentStep(stepData[2])}
+              className="primary_button block tablet:w-[100%]"
+              type="button"
+            >
+              Continue
+            </button>
+          </div>
         </div>
       </form>
     </>

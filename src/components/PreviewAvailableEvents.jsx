@@ -34,7 +34,7 @@ const PreviewAvailableEvents = ({ currentPreview }) => {
                   <img src={profileSvg} alt="" />
                   Participants
                 </span>
-                <h5 className="text-[24px] font-medium">{`0/${currentPreview?.eventInfo.maxNumOfParticipant}`}</h5>
+                <h5 className="text-[24px] font-medium">{`${currentPreview?.eventInfo?.minNumOfParticipant}/${currentPreview?.eventInfo.maxNumOfParticipant}`}</h5>
               </div>
               <div className="space-y-2">
                 <span className="icon_text_block">

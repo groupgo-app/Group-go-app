@@ -115,7 +115,7 @@ export const FormContextProvider = ({ children }) => {
         },
       );
       // console.log("response", response);
-      if (response.ok === false) {
+      if (!response.ok) {
         setErrorMessage(
           "Bank name could not be resolved. Please check your input.",
         );

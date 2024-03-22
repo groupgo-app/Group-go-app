@@ -11,7 +11,7 @@ const TemplateContainer = () => {
   return (
     <>
       {!user && <Signin />}
-      <div className="flex flex-wrap gap-[24px] justify-between w-full">
+      <div className="flex w-full flex-wrap justify-between gap-[24px]">
         {templateData.map((template) => (
           <Template
             key={template.id}

@@ -8,11 +8,15 @@ import dateImg from "../assets/images/date.svg";
 import moneyImg from "../assets/images/money.svg";
 import loader from "../assets/images/orange-loader.svg";
 import PageNotFound from "./PageNotFound";
-import { fetchSingleEventByOwnerAndID } from "../utils/events";
+import {
+  fetchSingleEventByOwnerAndID,
+  updateParticipantsCount,
+} from "../utils/events";
 import { AuthContext } from "../context/AuthContext";
 import cover from "../assets/images/resturant image.jpeg";
 import { usePaystackPayment } from "react-paystack";
 import moment from "moment";
+import { nanoid } from "nanoid";
 
 const Event = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +26,6 @@ const Event = () => {
   const { user } = useContext(AuthContext);
 
   const startDate = moment(event?.eventInfo?.startDate).format("DD MMM, YYYY");
-  const endDate = moment(event?.eventInfo?.endDate).format("DD MMM, YYYY");
 
   const startTime = moment(event?.eventInfo?.startTime, "HH:mm").format(
     "hh:mm A",
@@ -30,9 +33,10 @@ const Event = () => {
   const endTime = moment(event?.eventInfo?.endTime, "HH:mm").format("hh:mm A");
 
   const config = {
-    reference: new Date().getTime().toString(),
+    reference: nanoid(),
     email: user?.email,
     publicKey: import.meta.env.VITE_REACT_PAYSTACK_API,
+    amount: event?.eventInfo?.amountPerParticipant * 100,
     metadata: {
       custom_fields: [
         {
@@ -45,36 +49,33 @@ const Event = () => {
   };
 
   const onSuccess = (reference) => {
-    console.log("Payment successfully completed");
+    // console.log("This is reference", reference);
+    updateParticipantsCount(eventId);
   };
 
-  const onClose = () => {
-    console.log("Your payment was unsuccessful, try again later!");
+  const onClose = (reference) => {
+    console.log("Your payment was unsuccessful, try again later!", reference);
   };
 
-  const initializePayment = usePaystackPayment({
-    ...config,
-    amount: event?.eventInfo?.amountPerParticipant * 100,
-  });
+  const initializePayment = usePaystackPayment(config);
 
   const getDataSingleEvent = async () => {
     try {
-      const saveDataEvent = await fetchSingleEventByOwnerAndID(
-        user?.uid,
-        eventId,
-      );
-      // console.log(saveDataEvent);
+      const saveDataEvent = await fetchSingleEventByOwnerAndID(eventId);
       setEvent(saveDataEvent);
       setLoading(false);
     } catch (error) {
       console.log(error.stack);
     }
   };
-  // console.log(event);
 
   useEffect(() => {
     getDataSingleEvent();
-  }, [eventId, user?.uid]);
+  }, [eventId]);
+
+  const handlePaymentSubmit = async () => {
+    await initializePayment(onSuccess, onClose);
+  };
 
   if (loading) {
     return (
@@ -94,7 +95,7 @@ const Event = () => {
         <div className="my-[55px] flex flex-wrap gap-10">
           <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
             <div className="flex flex-col gap-[6px]">
-              <h3>{event?.eventType}</h3>
+              <h3 className="">{event?.eventType}</h3>
               <div className="flex items-center gap-[22px]">
                 <div className="flex items-center gap-[8px]">
                   <img src={location} alt="" />
@@ -108,14 +109,33 @@ const Event = () => {
             </div>
 
             <div>
+              <p>
+                Number of people paid: {event?.numberOfPaidParticipants || 0}
+              </p>
               <p className="mb-[15px]">
-                {event?.eventInfo.maxNumOfParticipant} left
+                {`${
+                  (event?.eventInfo?.maxNumOfParticipant || 0) -
+                  (event?.numberOfPaidParticipants || 0)
+                }`}{" "}
+                people left unpaid
               </p>
               <button
-                onClick={() => initializePayment(onSuccess, onClose)}
-                className="w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff]"
+                onClick={handlePaymentSubmit}
+                disabled={
+                  event?.numberOfPaidParticipants ===
+                  Number(event?.eventInfo?.maxNumOfParticipant)
+                }
+                className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
+                  event?.numberOfPaidParticipants ===
+                  Number(event?.eventInfo?.maxNumOfParticipant)
+                    ? "cursor-not-allowed bg-red-900"
+                    : ""
+                }`}
               >
-                Apply for event
+                {event?.numberOfPaidParticipants ===
+                Number(event?.eventInfo?.maxNumOfParticipant)
+                  ? "No more ticket"
+                  : "Apply for event"}
               </button>
             </div>
 
@@ -128,7 +148,7 @@ const Event = () => {
               <h3>Event Host/Creator</h3>
               <div className="flex items-center gap-[16px]">
                 <p>{event?.eventInfo?.creatorName}</p>
-                <a href="/">
+                <a href={event?.eventInfo?.socialLink}>
                   <img src={instagram} alt="" />
                 </a>
               </div>
@@ -136,8 +156,8 @@ const Event = () => {
           </div>
 
           <div className="flex w-fit max-w-full flex-col gap-[18px]">
-            <div className="flex gap-4">
-              <div className="flex h-[149px] w-[50%] flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px]">
+            <div className="flex flex-col gap-4 tablet:flex-row">
+              <div className="flex h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
                 <div className="flex items-center gap-[8px]">
                   <img src={dateImg} alt="" />
                   <p>Date and time</p>
@@ -149,7 +169,7 @@ const Event = () => {
                 </div>
               </div>
 
-              <div className="flex h-[149px] w-[50%] flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px]">
+              <div className="flex h-[149px] w-full flex-col  justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
                 <div className="flex items-center gap-[8px]">
                   <img src={moneyImg} alt="" />
                   <p>Commitment per person</p>
@@ -163,8 +183,8 @@ const Event = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-[8px]">
-              <p>Location</p>
+            <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
+              <p className="font-medium">Location</p>
               <img src={mapImg} alt="" className="map w-full" />
               {/* <div className="w-full"><iframe width="100%" height="281" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps vehicle tracker</a></iframe></div> */}
             </div>

@@ -4,7 +4,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
@@ -24,9 +26,20 @@ export const findUser = async (uid) => {
 };
 
 // Create a function to save event for a specific user
-export const saveEventForAUser = async (uid, data) => {
+/* export const saveEventForAUser = async (uid, data) => {
   try {
     const docRef = await addDoc(collection(db, "users", uid, "events"), data);
+    // console.log(docRef);
+    const snapShot = await getDoc(docRef);
+    const savedData = snapShot.data();
+    return savedData;
+  } catch (error) {
+    console.log(error.stack);
+  }
+}; */
+export const saveEventForAUser = async (data) => {
+  try {
+    const docRef = await addDoc(collection(db, "event"), data);
     // console.log(docRef);
     const snapShot = await getDoc(docRef);
     const savedData = snapShot.data();
@@ -37,10 +50,10 @@ export const saveEventForAUser = async (uid, data) => {
 };
 
 // Create a function to fetch all event for a specific user
-export const fetchEventForAUser = async (uid) => {
+export const fetchEventForAUser = async () => {
   try {
     const eventList = [];
-    const eventRef = collection(db, "users", uid, "events");
+    const eventRef = collection(db, "event");
     const eventSnapshot = await getDocs(eventRef);
     eventSnapshot.forEach((doc) => {
       // console.log(doc.id);
@@ -57,9 +70,9 @@ export const fetchEventForAUser = async (uid) => {
 };
 
 // create a function to fetch a single event for a given id and ownerId
-export const fetchSingleEventByOwnerAndID = async (uid, eventId) => {
+export const fetchSingleEventByOwnerAndID = async (eventId) => {
   try {
-    const eventRef = query(doc(db, "users", uid, "events", eventId));
+    const eventRef = query(doc(db, "event", eventId));
     const getEventSnapShot = await getDoc(eventRef);
     // console.log("Event snapshot", getEventSnapShot.data());
 
@@ -70,6 +83,17 @@ export const fetchSingleEventByOwnerAndID = async (uid, eventId) => {
     } else {
       return "Data not found";
     }
+  } catch (error) {
+    console.log(error.stack);
+  }
+};
+
+export const updateParticipantsCount = async (eventId) => {
+  try {
+    const eventRef = query(doc(db, "event", eventId));
+    await updateDoc(eventRef, {
+      numberOfPaidParticipants: increment(1),
+    });
   } catch (error) {
     console.log(error.stack);
   }
