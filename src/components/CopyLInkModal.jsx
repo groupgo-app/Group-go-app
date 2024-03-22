@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { FormContext } from "../context/FormContext";
-import { useParams } from "react-router-dom";
 
 const CopyLInkModal = () => {
   const { eventData } = useContext(FormContext);
-
-  let { eventId } = useParams();
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -35,7 +32,7 @@ const CopyLInkModal = () => {
       <div className="w-full">
         <div className="flex w-full flex-col justify-between gap-[15px] rounded-[15px] bg-white px-2 py-[6px] font-light text-black-clr tablet:flex-row tablet:items-center tablet:gap-0 tablet:border-[1px] tablet:border-[#06081121]">
           <p className="text-wrap rounded-[15px] border-[1px] border-[#06081121] px-2 py-[6px] text-base font-light text-black-clr tablet:border-none ">
-            {`https://group-go-one.netlify.app/${eventId}`}
+            {`https://group-go-one.netlify.app/${eventData.eventId}`}
           </p>
           <button
             onClick={handleCopyClick}
