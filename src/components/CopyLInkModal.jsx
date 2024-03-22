@@ -18,7 +18,7 @@ const CopyLInkModal = () => {
   };
 
   const handleCopyClick = () => {
-    copyToClipboard(`https://groupgo.netlify.app/${eventData.eventId}`)
+    copyToClipboard(`https://group-go-one.netlify.app/${eventData.eventId}`)
       .then(() => {
         setIsCopied(true);
         setTimeout(() => {
@@ -35,7 +35,7 @@ const CopyLInkModal = () => {
       <div className="w-full">
         <div className="flex w-full flex-col justify-between gap-[15px] rounded-[15px] bg-white px-2 py-[6px] font-light text-black-clr tablet:flex-row tablet:items-center tablet:gap-0 tablet:border-[1px] tablet:border-[#06081121]">
           <p className="text-wrap rounded-[15px] border-[1px] border-[#06081121] px-2 py-[6px] text-base font-light text-black-clr tablet:border-none ">
-            {`https://groupgo.netlify.app/${eventId}`}
+            {`https://group-go-one.netlify.app/${eventId}`}
           </p>
           <button
             onClick={handleCopyClick}
