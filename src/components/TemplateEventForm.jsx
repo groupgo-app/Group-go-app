@@ -5,7 +5,8 @@ import { AppContext } from "../context/AppContext";
 import InputField from "./InputField";
 import { AuthContext } from "../context/AuthContext";
 import { FormContext } from "../context/FormContext";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiUpload } from "react-icons/fi";
+import { FcUpload } from "react-icons/fc";
 
 const TemplateEventForm = () => {
   const {
@@ -81,38 +82,42 @@ const TemplateEventForm = () => {
             Go back
           </button>
           <p className="font-normal">{selectedTemplate.templateName}</p>
-          <div className="relative w-full cursor-pointer">
-            <label className="relative z-[50] w-full cursor-pointer">
-              <img
-                src={coverImg}
-                alt="a cover image illustration of template cover"
-                className="h-[400px] w-full rounded-xl object-cover"
-              />
-              <input
-                onChange={handleUpload}
-                type="file"
-                className="hidden"
-                name=""
-                id=""
-              />
-            </label>
-            <div className="absolute bottom-0 left-0 right-0 top-0 m-auto flex w-fit items-center gap-3">
-              <svg
-                width="18"
-                height="19"
-                viewBox="0 0 18 19"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2 18.5C1.45 18.5 0.979333 18.3043 0.588 17.913C0.196667 17.5217 0.000666667 17.0507 0 16.5V2.5C0 1.95 0.196 1.47933 0.588 1.088C0.98 0.696667 1.45067 0.500667 2 0.5H16C16.55 0.5 17.021 0.696 17.413 1.088C17.805 1.48 18.0007 1.95067 18 2.5V16.5C18 17.05 17.8043 17.521 17.413 17.913C17.0217 18.305 16.5507 18.5007 16 18.5H2ZM2 16.5H16V2.5H2V16.5ZM3 14.5H15L11.25 9.5L8.25 13.5L6 10.5L3 14.5Z"
-                  fill="white"
-                />
-              </svg>
-              <span className="z-[51] text-[16px] font-medium text-white">
+          <div className={`relative w-full bg-[${coverImg}]`}>
+            <img
+              src={coverImg}
+              alt="a cover image illustration of template cover"
+              className="h-[400px] w-full rounded-xl object-cover"
+            />
+            <input
+              onChange={handleUpload}
+              type="file"
+              className="hidden"
+              name=""
+              id="eventImg"
+            />
+            <label
+              className="absolute bottom-0 left-0 right-0 top-0 z-[50] m-auto flex h-[200px] w-[200px] cursor-pointer flex-col items-center justify-center gap-8 rounded-xl bg-gray-300 text-blue-500"
+              htmlFor="eventImg"
+            >
+              <FiUpload className="text-4xl text-blue-600" />
+              <span className="z-[51] text-[16px] font-medium">
                 Change event photo
               </span>
-            </div>
+              {/* <div className="flex gap-3 items-center bg-white w-fit">
+                <svg
+                  width="18"
+                  height="19"
+                  viewBox="0 0 18 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 18.5C1.45 18.5 0.979333 18.3043 0.588 17.913C0.196667 17.5217 0.000666667 17.0507 0 16.5V2.5C0 1.95 0.196 1.47933 0.588 1.088C0.98 0.696667 1.45067 0.500667 2 0.5H16C16.55 0.5 17.021 0.696 17.413 1.088C17.805 1.48 18.0007 1.95067 18 2.5V16.5C18 17.05 17.8043 17.521 17.413 17.913C17.0217 18.305 16.5507 18.5007 16 18.5H2ZM2 16.5H16V2.5H2V16.5ZM3 14.5H15L11.25 9.5L8.25 13.5L6 10.5L3 14.5Z"
+                    fill="black"
+                  />
+                </svg>
+              </div> */}
+            </label>
           </div>
         </div>
 
