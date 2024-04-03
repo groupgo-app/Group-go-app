@@ -1,11 +1,12 @@
 import  { useContext, useEffect, useState, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
-import { FiAlertCircle } from "react-icons/fi";
+import { FiAlertCircle, FiX } from "react-icons/fi";
 import Loader from "../../assets/images/loader.svg";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiOutlineBellAlert } from "react-icons/hi2";
 import * as EmailValidator from "email-validator";
+import { Link } from "react-router-dom";
 
 const Signin = () => {
   const [isValidEmail, setIsValidEmail] = useState(false);
@@ -53,7 +54,7 @@ const Signin = () => {
         console.log("unable to sign in");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -80,7 +81,11 @@ const Signin = () => {
             onClick={(e) => e.stopPropagation()}
             className="signin_container"
           >
-            <form onSubmit={(event) => sendEmailLink(event, email)}>
+            <form onSubmit={(event) => sendEmailLink(event, email)} className="relative">
+              <Link className="absolute right-[10px]" to={"/"}>
+                <FiX/>
+              </Link>
+
               <div>
                 <h2 className="tablet:text-[48px] text-[24px]">groupgo</h2>
                 <p>Sign in or sign up to create an event</p>
@@ -123,7 +128,7 @@ const Signin = () => {
                   </button>
                   <div
                     className="signin_btn mt-3 gap-2 bg-[#F8F8F8] text-black-clr"
-                    onClick={handleGoogleSignin}
+                    onClick={signInWithGoogle}
                   >
                     <FcGoogle size={24} />
                     <span>Continue with google</span>
