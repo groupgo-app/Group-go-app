@@ -14,7 +14,7 @@ html {
 body {
   font-family: "Excon", sans-serif;
   overscroll-behavior: auto;
-  @apply bg-[#fff] tablet:bg-[#f0f0f0];
+  @apply bg-[#f0f0f0] tablet:bg-[#f0f0f0];
 }
 
 h1 {
@@ -93,7 +93,7 @@ ul li {
 }
 
 .template_module_container {
-  @apply flex flex-col gap-[6px] rounded-[10px] bg-white;
+  @apply flex flex-col gap-[3px] rounded-[10px] bg-white;
 }
 
 .template_module_container .choose_template_button {

@@ -11,7 +11,14 @@ const TemplateContainer = () => {
   return (
     <>
       {!user && <Signin />}
-      <div className="flex w-full flex-wrap justify-between gap-[24px]">
+      {/* <button
+        onClick={handleBackButton}
+        className="flex gap-2 items-center text-blue-500"
+      >
+        <FiArrowLeft />
+        Go back
+      </button> */}
+      <div className="flex w-full flex-wrap justify-center gap-[24px] tablet:justify-between">
         {templateData.map((template) => (
           <Template
             key={template.id}

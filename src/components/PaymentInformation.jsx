@@ -4,6 +4,7 @@ import loader from "../assets/images/loader.svg";
 import { AuthContext } from "../context/AuthContext";
 import { findUser, saveEventForAUser } from "../utils/events";
 import { AppContext } from "../context/AppContext";
+import { FiArrowLeft } from "react-icons/fi";
 
 const PaymentInformation = () => {
   const {
@@ -74,6 +75,13 @@ const PaymentInformation = () => {
   return (
     <>
       <div className="payment_info_container">
+        <button
+          onClick={handleBackButton}
+          className="flex items-center gap-2 text-blue-500"
+        >
+          <FiArrowLeft />
+          Go back
+        </button>
         <h4 className="font-normal">How would you like to get paid?</h4>
         <label htmlFor="bankName">Bank Name:</label>
         <select

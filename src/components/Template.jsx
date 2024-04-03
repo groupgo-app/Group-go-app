@@ -3,9 +3,13 @@ import React from "react";
 const Template = ({ template, handleRedirect }) => {
   return (
     <>
-      <div className="template_module_container">
+      <div className="template_module_container max-w-[300px] grow tablet:max-w-[250px]">
         <div className="w-full">
-          <img src={template.imgUrl} alt={template.imageAlt} />
+          <img
+            src={template.imgUrl}
+            alt={template.imageAlt}
+            className="w-full"
+          />
         </div>
         <p className="pl-1 font-normal text-black-clr">
           {template.templateName}
@@ -14,7 +18,7 @@ const Template = ({ template, handleRedirect }) => {
           className="choose_template_button"
           onClick={() => handleRedirect(template.id)}
         >
-          <p className="text-[15px]"> choose template</p>
+          <p className="text-[15px]">Choose template</p>
           <svg
             width="20"
             height="21"

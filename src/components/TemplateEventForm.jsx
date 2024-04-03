@@ -5,6 +5,7 @@ import { AppContext } from "../context/AppContext";
 import InputField from "./InputField";
 import { AuthContext } from "../context/AuthContext";
 import { FormContext } from "../context/FormContext";
+import { FiArrowLeft } from "react-icons/fi";
 
 const TemplateEventForm = () => {
   const {
@@ -53,6 +54,7 @@ const TemplateEventForm = () => {
       uid: user?.uid,
       eventType: selectedTemplate.templateName,
     });
+    setCoverImg(selectedTemplate.imgUrl);
   }, []);
 
   const handleBackButton = () => {
@@ -71,13 +73,20 @@ const TemplateEventForm = () => {
     <>
       <form className="event_info_form">
         <div className="mb-12 space-y-3">
+          <button
+            onClick={handleBackButton}
+            className="flex items-center gap-2 text-blue-500"
+          >
+            <FiArrowLeft />
+            Go back
+          </button>
           <p className="font-normal">{selectedTemplate.templateName}</p>
           <div className="relative w-full cursor-pointer">
             <label className="relative z-[50] w-full cursor-pointer">
               <img
                 src={coverImg}
                 alt="a cover image illustration of template cover"
-                className="h-[189px] w-full rounded-xl object-cover"
+                className="h-[400px] w-full rounded-xl object-cover"
               />
               <input
                 onChange={handleUpload}
@@ -109,6 +118,15 @@ const TemplateEventForm = () => {
 
         <div className="space-y-7">
           <InputField
+            id="titlr"
+            type="text"
+            label="Title"
+            name="title"
+            placeholder="Title"
+            value={eventInfo.title}
+            onChange={handleChangeForEventInfo}
+          />
+          <InputField
             id="name"
             type="text"
             label="Creator name"
@@ -117,7 +135,6 @@ const TemplateEventForm = () => {
             value={eventInfo.creatorName}
             onChange={handleChangeForEventInfo}
           />
-
           <InputField
             id="email"
             type="email"

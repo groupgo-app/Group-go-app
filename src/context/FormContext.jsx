@@ -22,7 +22,9 @@ export const FormContextProvider = ({ children }) => {
     totalAmount: 0,
     eventId: nanoid(),
     eventType: "",
+    inCreation: true,
     eventInfo: {
+      title: "",
       creatorName: "",
       creatorEmail: user?.email,
       socialLink: "",

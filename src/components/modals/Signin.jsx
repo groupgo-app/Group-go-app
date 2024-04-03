@@ -1,4 +1,4 @@
-import  { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 import { FiAlertCircle, FiX } from "react-icons/fi";
@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { HiOutlineBellAlert } from "react-icons/hi2";
 import * as EmailValidator from "email-validator";
 import { Link } from "react-router-dom";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../config/firebase";
 
 const Signin = () => {
   const [isValidEmail, setIsValidEmail] = useState(false);
@@ -20,7 +22,7 @@ const Signin = () => {
     user,
     search,
     alertMsg,
-    signInWithGoogle,
+    // signInWithGoogle,
     isEmailLinkLoadong,
     setIsEmailLinkLoading,
     errorMsg,
@@ -44,18 +46,23 @@ const Signin = () => {
     }
   }, [email, isValidEmail]);
 
-  const handleGoogleSignin = async () => {
-    try {
-      await signInWithGoogle();
-      if (user) {
-        // createUserDocument(user.uid, user.email, user.photoURL, user.displayName)
-        navigate("/create");
-      } else {
-        console.log("unable to sign in");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  // const handleGoogleSignin = async () => {
+  //   try {
+  //     await signInWithGoogle();
+  //     if (user) {
+  //       // createUserDocument(user.uid, user.email, user.photoURL, user.displayName)
+  //       navigate("/create");
+  //     } else {
+  //       console.log("unable to sign in");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  const signInWithGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider();
+    await signInWithPopup(auth, googleProvider);
   };
 
   useEffect(() => {
@@ -81,13 +88,16 @@ const Signin = () => {
             onClick={(e) => e.stopPropagation()}
             className="signin_container"
           >
-            <form onSubmit={(event) => sendEmailLink(event, email)} className="relative">
+            <form
+              onSubmit={(event) => sendEmailLink(event, email)}
+              className="relative"
+            >
               <Link className="absolute right-[10px]" to={"/"}>
-                <FiX/>
+                <FiX />
               </Link>
 
               <div>
-                <h2 className="tablet:text-[48px] text-[24px]">groupgo</h2>
+                <h2 className="text-[24px] tablet:text-[48px]">groupgo</h2>
                 <p>Sign in or sign up to create an event</p>
               </div>
               <div className="mt-6 flex flex-col gap-[22px]">

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { auth, db, googleProvider } from "../config/firebase";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import {
   GoogleAuthProvider,
   isSignInWithEmailLink,
@@ -21,7 +21,7 @@ export const AuthContextProvider = ({ children }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [alertMsg, setAlertMsg] = useState("");
   const { search } = useLocation();
-  const navigate = useNavigate("");
+  const navigate = useNavigate();
 
   const actionCodeSettings = {
     // URL you want to redirect back to. The domain (www.example.com) for this
@@ -30,14 +30,6 @@ export const AuthContextProvider = ({ children }) => {
     url: "http://localhost:5173/create",
     handleCodeInApp: true,
   };
-
-  useEffect(() => {
-    if (user) {
-      createUserDocument(user);
-    } else {
-      console.log("no user doc to create");
-    }
-  }, [user]);
 
   const sendEmailLink = async (event, email) => {
     event.preventDefault();
@@ -92,6 +84,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const signInWithGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider();
     await signInWithPopup(auth, googleProvider);
   };
 
@@ -114,6 +107,14 @@ export const AuthContextProvider = ({ children }) => {
     };
     await setDoc(docRef, userObj);
   };
+
+  useEffect(() => {
+    if (user) {
+      createUserDocument(user);
+    } else {
+      console.log("no user doc to create");
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider

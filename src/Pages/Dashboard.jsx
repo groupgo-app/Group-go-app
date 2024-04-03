@@ -1,5 +1,4 @@
 import { useContext, useEffect } from "react";
-import AvailableEvents from "../components/AvailableEvents";
 import PreviewAvailableEvents from "../components/PreviewAvailableEvents";
 import { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -7,6 +6,7 @@ import loader from "../assets/images/orange-loader.svg";
 import addIcon from "../assets/images/addIcon.svg";
 import Signin from "../components/modals/Signin";
 import { fetchEventForAUser } from "../utils/events";
+import DashboardEvent from "../components/DashboardEvent";
 
 const Dashboard = () => {
   const [eventList, setEventList] = useState([]);
@@ -51,18 +51,18 @@ const Dashboard = () => {
             <h5 className="text-[24px] font-medium">Events</h5>
             <div className="grid grid-cols-1 gap-5 laptop:grid-cols-4">
               <div
-                className="flex h-[206px] w-full max-w-[265px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[10px] border-[1px] border-[#E4E4E4]  bg-white laptop:h-full"
+                className="flex h-[206px] w-full max-w-[265px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[10px] border-[1px] border-[#E4E4E4]  bg-gray-300  laptop:h-full"
                 onClick={() => navigate("/create")}
               >
                 <img src={addIcon} alt="" />
-                <p className="font-normal text-black">create event</p>
+                <p className="font-normal text-black">Create Event</p>
               </div>
               {eventList &&
-                eventList.map((events) => (
-                  <AvailableEvents
+                eventList.map((event) => (
+                  <DashboardEvent
                     handleEventClick={handleEventClick}
-                    events={events}
-                    key={events?.id}
+                    event={event}
+                    key={event?.id}
                   />
                 ))}
             </div>

@@ -40,7 +40,7 @@ const Navbar = () => {
                   </li>
                 ) : (
                   <li>
-                    <Link onClick={handleClikOpen} to="/create">
+                    <Link onClick={handleClikOpen} to="/">
                       Home
                     </Link>
                   </li>
@@ -62,20 +62,24 @@ const Navbar = () => {
                   </Link>
                 </li>
                 {!user && (
-                  <Link
-                    to={"/create"}
-                    className="block rounded-[10px] bg-orange-clr px-[18px] py-2 text-white"
-                  >
-                    Create event
-                  </Link>
+                  <li>
+                    <Link
+                      to={"/create"}
+                      className="block rounded-[10px] bg-orange-clr px-[18px] py-2 text-white"
+                    >
+                      Create event
+                    </Link>
+                  </li>
                 )}
                 {user && (
-                  <img
-                    onClick={() => setToggleDropDown((prev) => !prev)}
-                    className="h-[48px] w-[48px] cursor-pointer rounded-[999px]"
-                    src={`${user.photoURL || Avatar}`}
-                    alt=""
-                  />
+                  <li>
+                    <img
+                      onClick={() => setToggleDropDown((prev) => !prev)}
+                      className="h-[48px] w-[48px] cursor-pointer rounded-[999px]"
+                      src={`${user.photoURL || Avatar}`}
+                      alt=""
+                    />
+                  </li>
                 )}
 
                 {user && toggleDropDown && (

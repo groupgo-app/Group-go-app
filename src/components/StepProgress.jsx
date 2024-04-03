@@ -5,14 +5,15 @@ import CheckedIcon from "./CheckedIcon";
 import { AppContext } from "../context/AppContext";
 
 const StepProgress = () => {
-  const { stepData, setStepData, currentStep } = useContext(AppContext);
+  const { stepData, setStepData, currentStep, setCurrentStep } =
+    useContext(AppContext);
 
   const markChecked = () => {
     const newStep = stepData.map((step) => {
-      if (step.id === currentStep.id) {
+      if (step.id <= currentStep.id) {
         return { ...step, checked: true };
-      } else {
-        return step;
+      } else if (step.id > currentStep.id) {
+        return { ...step, checked: false };
       }
     });
     setStepData(newStep);
@@ -26,12 +27,20 @@ const StepProgress = () => {
     <>
       <div className="step_progress_container">
         <div className="flex flex-col gap-6">
-          <h2 className="">{currentStep?.step}</h2>
+          <h2 className="capitalize">{currentStep?.step}</h2>
           <p>{currentStep?.about}</p>
-          <p className="font-normal text-black ">{`step ${currentStep?.id} of ${stepData?.length}`}</p>
+          <p className="font-normal text-black">{`step ${currentStep?.id} of ${stepData?.length}`}</p>
           <div className="flex flex-col gap-8">
             {stepData?.map((step, i) => (
-              <div className="step_item" key={i}>
+              <div
+                className="step_item cursor-pointer"
+                key={i}
+                title={`Step `}
+                onClick={() => {
+                  console.log(stepData[i]);
+                  return setCurrentStep(step);
+                }}
+              >
                 {step.checked ? <CheckedIcon /> : <UncheckedIcon />}
                 <p className="font-light text-black">{step?.step}</p>
               </div>

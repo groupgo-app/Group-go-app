@@ -1,10 +1,18 @@
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React from "react";
 import { Link } from "react-router-dom";
+import { auth } from "../config/firebase";
+
+const signInWithGoogle = async () => {
+  const googleProvider = new GoogleAuthProvider();
+  await signInWithPopup(auth, googleProvider);
+};
 
 const Home = () => {
   return (
     <div className="mb-10 mt-[20px] flex w-full flex-col-reverse justify-center laptop:mb-0 laptop:mt-[50px] laptop:flex-row">
       <div className="flex w-full flex-col gap-[35px] laptop:w-[60%] laptop:gap-[28px]">
+        <button onClick={signInWithGoogle}>Sign in WIth google</button>
         <div>
           <h1 className="w-full text-[30px] tablet:text-[64px]">
             Create and share events in minutes
