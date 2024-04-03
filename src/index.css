@@ -13,8 +13,8 @@ html {
 
 body {
   font-family: "Excon", sans-serif;
-  background: #f0f0f0;
   overscroll-behavior: auto;
+  @apply bg-[#fff] tablet:bg-[#f0f0f0];
 }
 
 h1 {
@@ -23,8 +23,8 @@ h1 {
 }
 
 h2 {
-  font-size: 48px;
-  font-weight: 500;
+  /* font-size: 48px; */
+  @apply text-[24px] tablet:text-[48px];
 }
 
 h3 {
@@ -33,8 +33,7 @@ h3 {
 }
 
 h4 {
-  font-size: 24px;
-  font-weight: 500;
+  @apply text-[20px] font-[400] tablet:text-[20px] tablet:font-[500];
 }
 
 h5 {
@@ -43,19 +42,21 @@ h5 {
 }
 
 p {
-  font-size: 18px;
+  /* font-size: 18px; */
   color: #060811b0;
   font-weight: 300;
+  @apply text-[16px] tablet:text-[18px];
 }
 
 /*buttons classes*/
 
 .app_container {
-  @apply static
+  @apply static tablet:bg-[#f0f0f0];
 }
 
 .app_body {
-  @apply m-auto relative mb-9 mt-20 flex max-w-[1200px] items-start gap-44;
+  /* @apply container relative mx-auto mb-9 mt-20 flex flex-col items-start gap-[56px] tablet:flex-row laptop:justify-between; */
+  @apply container relative mx-auto mb-9 mt-20 flex flex-col items-start gap-[56px] px-[24px] tablet:flex-row laptop:justify-between;
 }
 
 .primary_button {
@@ -63,15 +64,15 @@ p {
 }
 
 nav {
-  @apply sticky h-fit w-full bg-white px-[48px] py-[18px] z-10;
+  @apply sticky z-10 h-fit w-full bg-white px-[24px] py-[18px];
 }
 
 .nav_items {
-  @apply flex items-center justify-between;
+  @apply container mx-auto flex items-center justify-between;
 }
 
 .nav_items ul {
-  @apply flex items-center gap-8 text-[15px] font-normal;
+  @apply hidden items-center gap-8 text-[15px] font-normal tablet:flex;
 }
 
 ul li {
@@ -79,16 +80,16 @@ ul li {
 }
 
 .step_progress_container {
-  @apply flex w-[376px] sticky top-10 bottom-0 flex-col items-center gap-12 rounded-[10px] bg-white px-7 pt-8;
+  @apply left-0 top-10 flex max-w-full flex-col items-center gap-12 rounded-[10px] tablet:sticky tablet:w-[376px] tablet:max-w-full tablet:bg-white tablet:px-7 tablet:pt-8;
 }
 
 .step_item {
   @apply relative flex items-center justify-start gap-6;
 }
 
-/* .step_item:not(:first-child):before {
+.step_item:not(:first-child):before {
   @apply absolute -top-4 right-[89.9%] h-[2px] w-[10.2%] rotate-90 bg-[#06081133] content-[''];
-} */
+}
 
 .template_module_container {
   @apply flex flex-col gap-[6px] rounded-[10px] bg-white;
@@ -98,44 +99,40 @@ ul li {
   @apply mx-1 my-2 flex cursor-pointer items-center justify-center rounded-lg bg-[#06081114] p-2;
 }
 
+/* .event_info_form {
+  @apply max-w-[479px];
+} */
+
 .event_info_form {
-  @apply w-[479px];
+  @apply max-w-full;
 }
 
 .inputs {
-  @apply w-full rounded-[15px] border-[1px] border-[#06081121] bg-white px-6 py-[10px] font-light text-black-clr focus:outline-none;
+  @apply w-full rounded-[15px] border-[1px] border-[#06081121] bg-white px-6 py-[10px] font-light text-black-clr focus:outline-none disabled:opacity-40;
 }
 
 .event_info_form label {
   @apply text-base font-normal text-black-clr;
 }
 
-.event_info_form h4 {
-  @apply my-7 text-2xl font-normal text-black-clr;
-}
-
-.event_info_form .email_field_div {
-  @apply mt-14 flex w-full flex-col gap-2;
-}
-
 .field_set_div {
   @apply flex w-full flex-col gap-2;
 }
 
-.event_info_form .event_description_textarea {
+.event_description_textarea {
   @apply w-full resize-none rounded-[15px] border-[1px] bg-white px-6 py-[10px] font-light text-black-clr focus:outline-none;
 }
 
 .event_schedule_container {
-  @apply mt-5 flex flex-col gap-4;
+  @apply space-y-6;
 }
 
-.event_schedule_container .select_schedule_container {
-  @apply flex w-full items-center justify-between rounded-[15px] bg-[#F4F4F4] p-2;
+.select_schedule_container {
+  @apply mt-6 flex max-w-full flex-wrap items-center justify-between rounded-[15px] bg-[#F4F4F4] p-2;
 }
 
 .select_schedule_container .schedule_period {
-  @apply cursor-pointer rounded-[10px] border-[1px] border-[#F0F0F0] px-2 py-1 text-base font-normal text-black-clr;
+  @apply w-[120px] cursor-pointer rounded-[10px] border-[1px] border-[#F0F0F0] px-2 py-2 text-center text-base font-normal text-black-clr;
 }
 
 .selected_schedule_period {
@@ -143,15 +140,11 @@ ul li {
 }
 
 .event_schedule_duration {
-  @apply flex w-full items-center gap-8;
-}
-
-.field_set_div select {
-  @apply w-full rounded-[15px] border-[1px] bg-white px-6 py-[10px] font-light text-black-clr;
+  @apply flex w-full flex-col items-center gap-8 laptop:flex-row;
 }
 
 .payment_info_container {
-  @apply flex w-[479px] flex-col gap-[22px];
+  @apply flex max-w-full flex-col gap-[22px];
 }
 
 .payment_info_container label {
@@ -159,7 +152,7 @@ ul li {
 }
 
 .share_link_container {
-  @apply flex w-[479px] flex-col gap-8;
+  @apply flex w-full flex-col gap-8;
 }
 
 .select_method_div {
@@ -184,4 +177,24 @@ ul li {
 
 .email_list_container span {
   @apply flex items-center justify-center gap-3 rounded-full border-[1px] border-[#E9E9E9] bg-[#F7F6F9] px-2 py-1 font-light text-black-clr;
+}
+
+.signin_btn {
+  @apply flex w-full cursor-pointer items-center justify-center rounded-[15px] px-6 py-[10px] hover:bg-opacity-50;
+}
+
+.signin_bg_overlay {
+  @apply fixed inset-0 z-50 grid cursor-pointer place-items-center overflow-y-scroll bg-black/10 p-8 backdrop-blur;
+}
+
+.signin_container {
+  @apply relative w-full max-w-lg cursor-default overflow-hidden rounded-[20px] bg-white px-4 py-16 shadow-xl tablet:px-14;
+}
+
+.icon_text_block {
+  @apply flex items-center gap-2 text-[12px] tablet:text-base;
+}
+
+.current_preview {
+  @apply absolute inset-0 h-3 rounded-t-[10px] bg-orange-clr;
 }

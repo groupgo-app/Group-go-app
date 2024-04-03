@@ -8,6 +8,7 @@ const ShareInviteLink = () => {
 
   const [selected, setSelected] = useState("Invite Link");
 
+
   const handleSelect = (e) => {
     const method = e.target.innerText;
     setSelected(method);
@@ -33,7 +34,7 @@ const ShareInviteLink = () => {
 
         {selected === "Invite Link" ? <CopyLInkModal /> : <SendEmail />}
 
-        <div className="mt-10">
+        <div className="mt-10 max-w-[295px] w-full">
           <img
             src={cheersImg}
             alt="image illustration of hands holding glasses of champagne"

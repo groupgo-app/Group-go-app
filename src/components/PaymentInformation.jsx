@@ -1,36 +1,52 @@
-import React from "react";
-import PrimaryButton from "./PrimaryButton";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import InputField from "./InputField";
+import { FormContext } from "../context/FormContext";
+import loader from "../assets/images/loader.svg"
 
 const PaymentInformation = () => {
+  const { eventData, handleChangeForPaymentInfo, uploadCoverImage, loading } =
+    useContext(FormContext);
+
+  const { paymentInfo } = eventData;
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    uploadCoverImage();
+  };
+
   return (
     <>
-      <form className="payment_info_container">
+      <form className="payment_info_container" onSubmit={submitForm}>
         <h4 className="font-normal">How would you like to get paid?</h4>
-        <div className="field_set_div">
-          <label htmlFor="bank_name">Name of bank</label>
-          <input
-            type="text"
-            id="bank_name"
-            name="bank_name"
-            placeholder="GTBank"
-            className="inputs"
-          />
-        </div>
 
-        <div className="field_set_div">
-          <label htmlFor="account_number">Account number</label>
-          <input
-            type="text"
-            id="account_number"
-            name="account_number"
-            placeholder="account number"
-            className="inputs"
-          />
-        </div>
+        <InputField
+          id="bank_name"
+          type="text"
+          label="Name of bank"
+          name="bankName"
+          placeholder="GT bank..."
+          value={paymentInfo.bankName}
+          onChange={handleChangeForPaymentInfo}
+        />
+
+        <InputField
+          id="acc_num"
+          type="text"
+          label="Account number"
+          name="accountNum"
+          value={paymentInfo.accountNum}
+          placeholder="account number"
+          onChange={handleChangeForPaymentInfo}
+        />
         <div className="mt-10">
-          {/* <PrimaryButton>Create event</PrimaryButton> */}
-          <Link className="primary_button block" to="/create/invitation">Create event</Link>
+          <button
+            type="submit"
+            disabled={loading}
+            onClick={submitForm}
+            className="primary_button flex items-center justify-center disabled:bg-[#EE9080] disabled:cursor-default"
+          >
+            {!loading ? 'Continue' : <img src={loader} />}
+          </button>
         </div>
       </form>
     </>

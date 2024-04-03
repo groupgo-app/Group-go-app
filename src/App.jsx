@@ -1,32 +1,33 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
-import TemplatePage from "./Pages/TemplatePage";
-import EventInfoPage from "./Pages/EventInfoPage";
 import { AppProvider } from "./context/AppContext";
-import PaymentPage from "./Pages/PaymentPage";
-import SendInvitationPage from "./Pages/SendInvitationPage";
 import Home from "./Pages/Home";
 import CreateEvent from "./Pages/CreateEvent";
+import { AuthContextProvider } from "./context/AuthContext";
+import { FormContextProvider } from "./context/FormContext";
+import Event from "./Pages/Event";
+import Dashboard from "./Pages/Dashboard";
 
 const App = () => {
   return (
     <>
-      <AppProvider>
-        <AppLayout>
-          <Routes>
-            <Route path="/">
-              <Route index element={<Home />}/>
-              <Route path="/create" element={<CreateEvent />}>
-                <Route index element={<TemplatePage />} />
-                <Route path="event" element={<EventInfoPage />} />
-                <Route path="payment" element={<PaymentPage />} />
-                <Route path="invitation" element={<SendInvitationPage />} />
-              </Route>
-            </Route>
-          </Routes>
-        </AppLayout>
-      </AppProvider>
+      <AuthContextProvider>
+        <AppProvider>
+          <FormContextProvider>
+            <AppLayout>
+              <Routes>
+                <Route path="/">
+                  <Route index element={<Home />} />
+                  <Route path="/create" element={<CreateEvent />} />
+                  <Route path="/:eventId" element={<Event />} />
+                </Route>
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Routes>
+            </AppLayout>
+          </FormContextProvider>
+        </AppProvider>
+      </AuthContextProvider>
     </>
   );
 };
