@@ -64,7 +64,7 @@ p {
 }
 
 nav {
-  @apply sticky z-10 h-full w-full  bg-white px-[24px]  mobile:h-[80px];
+  @apply sticky z-10  h-[80px]  w-full bg-white  px-[24px];
 }
 
 .nav_items {

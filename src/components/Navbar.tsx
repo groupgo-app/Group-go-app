@@ -9,6 +9,11 @@ import { logout } from "../api/auth";
 import { FormContext } from "../contexts/FormContext";
 import { AppContext } from "../contexts/AppContext";
 import { initialEventData } from "../data/events";
+import { FiArrowDown } from "react-icons/fi";
+import { BsArrowDown } from "react-icons/bs";
+import { FaArrowDown } from "react-icons/fa6";
+import { FcDown } from "react-icons/fc";
+import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 
 const Navbar = () => {
   const { user } = useContext(AuthContext);
@@ -32,12 +37,22 @@ const Navbar = () => {
             <motion.div className={`relative`}>
               {user ? (
                 <>
-                  <img
+                  <div
                     onClick={() => setToggleDropDown((prev) => !prev)}
-                    className="h-[48px] w-[48px] cursor-pointer rounded-[999px]"
-                    src={`${user.photoURL || Avatar}`}
-                    alt=""
-                  />
+                    className="flex cursor-pointer items-center gap-2 rounded-xl p-1 hover:bg-gray-300"
+                  >
+                    <img
+                      className="h-[40px] w-[40px] cursor-pointer rounded-[999px]"
+                      src={`${user.photoURL || Avatar}`}
+                      alt=""
+                    />
+                    {toggleDropDown ? (
+                      <BiUpArrow className="text-sm" />
+                    ) : (
+                      <BiDownArrow className="text-sm" />
+                    )}
+                  </div>
+
                   {toggleDropDown && (
                     <>
                       <div className="absolute -left-[200px] top-[55px] ml-[25%] flex w-fit flex-col items-start gap-[16px] rounded-[16px] bg-white px-[18px] py-[18px] shadow-lg  tablet:right-0 tablet:top-[50px] tablet:z-50">
