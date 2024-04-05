@@ -1,7 +1,12 @@
-// import React from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { FormContext } from "../contexts/FormContext";
+import { initialEventData } from "../data/events";
+import { AppContext } from "../contexts/AppContext";
 
 const Home = () => {
+  const { setEventData } = useContext(FormContext);
+  const { setCurrentStep, creationSteps } = useContext(AppContext);
   return (
     <div className="mb-10 mt-[20px] flex w-full flex-col-reverse justify-center laptop:mb-0 laptop:mt-[50px] laptop:flex-row">
       <div className="flex w-full flex-col gap-[35px] laptop:w-[60%] laptop:gap-[28px]">
@@ -19,6 +24,10 @@ const Home = () => {
             <Link
               to="/create"
               className="rounded-[15px] bg-orange-clr px-6 py-[14px] text-[18px] text-white"
+              onClick={() => {
+                setEventData(initialEventData);
+                setCurrentStep!(creationSteps![0]);
+              }}
             >
               Create event
             </Link>
