@@ -1,8 +1,7 @@
 import { useContext, useEffect } from "react";
-// import PreviewAvailableEvents from "../components/PreviewAvailableEvents";
 import { useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import loader from "../assets/images/orange-loader.svg";
+
 import addIcon from "../assets/images/addIcon.svg";
 import Signin from "../components/modals/Signin";
 import DashboardEvent from "../components/Dashboard/DashboardEvent";
@@ -11,6 +10,7 @@ import { fetchEvents } from "../api/events";
 import { useNavigate } from "react-router-dom";
 import { FormContext } from "../contexts/FormContext";
 import { initialEventData } from "../data/events";
+import Loader from "../components/Loader";
 
 const Dashboard = () => {
   const [eventList, setEventList] = useState<any[]>([]);
@@ -25,8 +25,9 @@ const Dashboard = () => {
 
   const getAllEvents = async () => {
     try {
+      setLoading(true);
       const allEvents: any[] = await fetchEvents();
-      // setEventList(allEvent);
+
       setEventList(
         allEvents.filter(
           (event) => event?.uid === user?.uid && event.inCreation === false,
@@ -40,18 +41,11 @@ const Dashboard = () => {
         ),
       );
 
-      // console.log("All event", allEvent);
-      // setCurrentPreview(eventList[0]); // Get the first list in the array
-      // console.log("Event", eventList);
       setLoading(false);
     } catch (error: any) {
       console.log(error.stack);
     }
   };
-
-  // const handleEventClick = (event) => {
-  //   setCurrentPreview(event);
-  // };
 
   useEffect(() => {
     getAllEvents();
@@ -59,11 +53,7 @@ const Dashboard = () => {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="my-[56px] flex w-full items-center justify-center">
-        <img width={48} src={loader} alt="" />
-      </div>
-    );
+    return <Loader />;
   } else if (user) {
     return (
       <>
@@ -84,7 +74,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
                 {eventList &&
                   eventList.map((event) => (
                     <DashboardEvent
@@ -97,10 +87,11 @@ const Dashboard = () => {
             </div>
 
             {drafts.length > 0 && (
-              <div>
-                <h3>Drafts</h3>
+              <div className="py-5">
+                <h3 className="text-4xl">Drafts</h3>
+                <div className="mb-4 mt-1 h-[2px] w-[200px] bg-black"></div>
                 <p>Finish up setting up your events</p>
-                <div className="flex flex-wrap items-center justify-center gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
                   {drafts.map((event) => (
                     <DashboardEvent
                       // handleEventClick={handleEventClick}

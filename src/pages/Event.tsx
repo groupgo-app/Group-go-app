@@ -97,7 +97,8 @@ const Event = () => {
         <div className="my-[55px] flex flex-wrap gap-10">
           <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
             <div className="flex flex-col gap-[6px]">
-              <h3 className="">{event?.eventType}</h3>
+              <h3 className="">{event?.eventInfo.title}</h3>
+              <p className="text-sm">Event Type: {event?.eventType}</p>
               <div className="flex items-center gap-[22px]">
                 <div className="flex items-center gap-[8px]">
                   <img src={location} alt="" />
@@ -159,25 +160,25 @@ const Event = () => {
 
           <div className="flex w-fit max-w-full flex-col gap-[18px]">
             <div className="flex flex-col gap-4 tablet:flex-row">
-              <div className="flex h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
+              <div className=" h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
                 <div className="flex items-center gap-[8px]">
                   <img src={dateImg} alt="" />
                   <p>Date and time</p>
                 </div>
 
-                <div className="">
-                  <h5 className="mb-[5px] font-medium">{`${startDate}`}</h5>
+                <div className="pt-1">
+                  <h5 className="mb-[2px] font-medium">{`${startDate}`}</h5>
                   <h5 className="font-medium">{`${startTime} to ${endTime}`}</h5>
                 </div>
               </div>
 
-              <div className="flex h-[149px] w-full flex-col  justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
+              <div className="h-[149px] w-full flex-col  justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[50%]">
                 <div className="flex items-center gap-[8px]">
                   <img src={moneyImg} alt="" />
                   <p>Commitment per person</p>
                 </div>
 
-                <div>
+                <div className="">
                   <h5 className="font-medium">
                     N{event?.eventInfo?.amountPerParticipant}
                   </h5>

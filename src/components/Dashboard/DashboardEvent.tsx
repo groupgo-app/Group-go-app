@@ -13,15 +13,15 @@ const DashboardEvent = ({
       <figure
         // onClick={() => handleEventClick(event)}
         style={{ aspectRatio: "1 / 1" }}
-        className="relative flex w-full max-w-[300px] cursor-pointer flex-col gap-1"
+        className="relative flex w-full max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl bg-gray-300 pb-2"
       >
         <img
           src={event?.eventImg}
           alt=""
           className="relative h-full w-full rounded-[10px] bg-contain"
         />
-        <figcaption>
-          <h3 className="text-2xl">{event?.eventInfo.title}</h3>
+        <figcaption className="px-2">
+          <h3 className="px-4 text-2xl">{event?.eventInfo.title}</h3>
 
           <Link
             to={draft ? `/edit/${event?.eventId}` : `/${event?.eventId}`}

@@ -37,7 +37,7 @@ const PaymentInformation = ({ event }: { event?: any }) => {
 
   const handleSubmitForm = async (e: any) => {
     e.preventDefault();
-    console.log("Clicked");
+
     try {
       // Flag to indicate if bank account resolution was successful
       let isBankResolutionSuccessful: boolean | undefined = false;
@@ -46,7 +46,6 @@ const PaymentInformation = ({ event }: { event?: any }) => {
         eventData.paymentInfo.bankName &&
         eventData.paymentInfo.accountNumber
       ) {
-        console.log("Found banks");
         isBankResolutionSuccessful = await resolveBankAccount({
           accountNumber: eventData.paymentInfo.accountNumber,
           bankCode: bankCode,
@@ -57,7 +56,6 @@ const PaymentInformation = ({ event }: { event?: any }) => {
         });
         // If resolveBankAccount succeeds, set flag to true
       }
-      console.log(isBankResolutionSuccessful);
 
       if (!isBankResolutionSuccessful) return;
 

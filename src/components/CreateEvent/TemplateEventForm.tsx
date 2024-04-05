@@ -9,6 +9,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../config/firebase";
 import { saveEvent, updateEvent } from "../../api/events";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Loader";
 
 const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const {
@@ -32,7 +33,8 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
 
   const linkToImage = async (link: string) => {
     const response = await fetch(link);
@@ -48,7 +50,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
     return file;
   };
 
-  const handleUpload: Function = async (file: any) => {
+  const handleUpload: Function = async (file: any, eventData: any) => {
     // const file = e.target.files[0];
     // const imgUrl: any = await convertBase64(file);
     if (!file) return;
@@ -62,7 +64,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
         );
         console.log(progress);
-        setIsLoading(true);
+        setIsLoadingImage(true);
       },
       (error: any) => {
         alert(error);
@@ -76,7 +78,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             await updateEvent(event.eventId, user?.uid, newData);
           }
           setEventData(newData);
-          setIsLoading(false);
+          setIsLoadingImage(false);
         });
       },
     );
@@ -92,7 +94,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             const file = await linkToImage(
               `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
             );
-            await handleUpload(file);
+            await handleUpload(file, eventData);
           }
         }
       } else {
@@ -107,7 +109,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         const file = await linkToImage(
           `${import.meta.env.VITE_REACT_SITE_URL}/templateimages/others.png`,
         );
-        await handleUpload(file);
+        await handleUpload(file, newData);
       }
     };
     runAtStart();
@@ -129,11 +131,6 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // handleChangeForCompletedSteps!([true, true, false, false]);
-    const newData = {
-      ...eventData,
-      completedSteps: [true, true, false, false],
-    };
 
     if (
       eventData.eventInfo.title.length > 0 &&
@@ -152,14 +149,26 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
       eventData.eventInfo.typeOfParticipants.length > 0 &&
       eventData.eventInfo.amountPerParticipant.length > 0
     ) {
+      setIsLoadingSubmit(true);
       if (event) {
+        const newData = {
+          ...eventData,
+
+          completedSteps: [true, true, false, false],
+        };
         await updateEvent(eventData.eventId, user.uid, newData);
         setEventData(newData);
       } else {
-        await saveEvent(eventData);
+        const newData = {
+          ...eventData,
+          uid: user.uid,
+          completedSteps: [true, true, false, false],
+        };
+        await saveEvent(newData);
       }
 
       setCurrentStep!(creationSteps![2]);
+      setIsLoadingSubmit(false);
       navigate(`/edit/${eventData?.eventId}?step=3`);
     } else {
       handleChangeForCompletedSteps!([true, false, false, false]);
@@ -184,8 +193,8 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             Go back
           </button>
           <p className="font-normal">{eventData?.eventType}</p>
-          {isLoading ? (
-            <>Loading Image</>
+          {isLoadingImage ? (
+            <Loader />
           ) : (
             <>
               <div className={`relative w-full bg-[${coverImg}]`}>
@@ -399,9 +408,16 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             <button
               onClick={handleSubmit}
               className="primary_button block tablet:w-[100%]"
+              disabled={isLoadingSubmit}
               type="submit"
             >
-              Save and Continue
+              {isLoadingSubmit ? (
+                <>
+                  <Loader />
+                </>
+              ) : (
+                <>Save and Continue</>
+              )}
             </button>
           </div>
         </div>

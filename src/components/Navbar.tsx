@@ -1,22 +1,25 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import Avatar from "../assets/images/avatar.png";
 import { motion, AnimatePresence } from "framer-motion";
-import menuBar from "../assets/images/menu-bar.svg";
-import { Link } from "react-router-dom";
-import { CloseIcon } from "./Icon";
+// import menuBar from "../assets/images/menu-bar.svg";
+import { Link, useNavigate } from "react-router-dom";
+// import { CloseIcon } from "./Icon";
+import { logout } from "../api/auth";
 
 const Navbar = () => {
-  const { handleLogOut, user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [toggleDropDown, setToggleDropDown] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  // const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleMenuOpen = () => {
-    setMenuOpen((prev) => !prev);
-  };
+  // const handleMenuOpen = () => {
+  //   setMenuOpen((prev) => !prev);
+  // };
 
   const handleClikOpen = () => {
-    setMenuOpen(false);
+    // setMenuOpen(false);
+    setToggleDropDown(false);
   };
   return (
     <>
@@ -26,42 +29,65 @@ const Navbar = () => {
             <Link to={"/"}>groupgo</Link>
           </h4>
           <AnimatePresence>
-            <motion.div
-              className={`tablet:relative tablet:flex ${
-                menuOpen ? "flex" : "hidden"
-              }`}
-            >
-              <ul className="">
-                {user ? (
-                  <li>
-                    <Link onClick={handleClikOpen} to="/dashboard">
-                      Dashboard
-                    </Link>
-                  </li>
-                ) : (
+            <motion.div className={`relative`}>
+              {user ? (
+                <>
+                  <img
+                    onClick={() => setToggleDropDown((prev) => !prev)}
+                    className="h-[48px] w-[48px] cursor-pointer rounded-[999px]"
+                    src={`${user.photoURL || Avatar}`}
+                    alt=""
+                  />
+                  {toggleDropDown && (
+                    <>
+                      <div className="absolute -left-[200px] top-[55px] ml-[25%] flex w-fit flex-col items-start gap-[16px] rounded-[16px] bg-white px-[18px] py-[18px] shadow-lg  tablet:right-0 tablet:top-[50px] tablet:z-50">
+                        <Link
+                          onClick={handleClikOpen}
+                          to={"/"}
+                          className="w-full cursor-pointer rounded-md p-2 hover:bg-gray-300"
+                        >
+                          Home
+                        </Link>
+
+                        <Link
+                          onClick={handleClikOpen}
+                          to="/dashboard"
+                          className="w-full cursor-pointer rounded-md p-2 hover:bg-gray-300"
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          to={"/create"}
+                          onClick={handleClikOpen}
+                          className="w-full cursor-pointer rounded-md p-2 hover:bg-gray-300"
+                        >
+                          Create Event
+                        </Link>
+
+                        <div className="h-[2px] w-full bg-black"></div>
+
+                        <button
+                          onClick={() => {
+                            logout(user, navigate);
+                          }}
+                          className="w-full cursor-pointer rounded-md p-2 hover:bg-gray-300"
+                        >
+                          <span className="flex w-full items-center">
+                            Logout
+                          </span>
+                          <p className="text-xs">{user?.email}</p>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <ul className="flex items-center gap-4">
                   <li>
                     <Link onClick={handleClikOpen} to="/">
                       Home
                     </Link>
                   </li>
-                )}
-
-                <li>
-                  <Link onClick={handleClikOpen} to={"/"}>
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link onClick={handleClikOpen} to={"/"}>
-                    How it works
-                  </Link>
-                </li>
-                <li>
-                  <Link onClick={handleClikOpen} to={"/"}>
-                    About us
-                  </Link>
-                </li>
-                {!user && (
                   <li>
                     <Link
                       to={"/create"}
@@ -70,36 +96,16 @@ const Navbar = () => {
                       Create event
                     </Link>
                   </li>
-                )}
-                {user && (
-                  <li>
-                    <img
-                      onClick={() => setToggleDropDown((prev) => !prev)}
-                      className="h-[48px] w-[48px] cursor-pointer rounded-[999px]"
-                      src={`${user.photoURL || Avatar}`}
-                      alt=""
-                    />
-                  </li>
-                )}
-
-                {user && toggleDropDown && (
-                  <div className="absolute left-0 top-[125px] ml-[25%] flex flex-col items-start gap-[16px] rounded-[16px] bg-white px-[18px] py-[18px] shadow-lg tablet:right-0 tablet:top-[50px] tablet:z-50">
-                    <p className="text-[16px]">{user?.email}</p>
-                    <button onClick={handleLogOut}>logout</button>
-                  </div>
-                )}
-              </ul>
+                </ul>
+              )}
             </motion.div>
           </AnimatePresence>
-          <div className="block cursor-pointer tablet:hidden">
-            <button>
-              {setMenuOpen ? (
-                <img onClick={handleMenuOpen} src={menuBar} alt="" />
-              ) : (
-                <CloseIcon />
-              )}
+
+          {/* <div className="block cursor-pointer">
+            <button onClick={handleMenuOpen}>
+              {menuOpen ? <CloseIcon /> : <img src={menuBar} alt="" />}
             </button>
-          </div>
+          </div> */}
         </div>
       </nav>
     </>

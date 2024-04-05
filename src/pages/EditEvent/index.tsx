@@ -22,7 +22,7 @@ const EditEvent = () => {
     try {
       if (eventId) {
         const eventData = await fetchEventById(eventId);
-        console.log(eventData);
+
         const step = searchParams.get("step");
         if (step) setCurrentStep!(creationSteps![Number(step) - 1]);
         setEvent(eventData);
