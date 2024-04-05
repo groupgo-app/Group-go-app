@@ -6,19 +6,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 // import { CloseIcon } from "./Icon";
 import { logout } from "../api/auth";
+import { FormContext } from "../contexts/FormContext";
+import { AppContext } from "../contexts/AppContext";
+import { initialEventData } from "../data/events";
 
 const Navbar = () => {
   const { user } = useContext(AuthContext);
+  const { setEventData } = useContext(FormContext);
+  const { setCurrentStep, creationSteps } = useContext(AppContext);
   const [toggleDropDown, setToggleDropDown] = useState(false);
-  // const [menuOpen, setMenuOpen] = useState(false);
+
   const navigate = useNavigate();
 
-  // const handleMenuOpen = () => {
-  //   setMenuOpen((prev) => !prev);
-  // };
-
   const handleClikOpen = () => {
-    // setMenuOpen(false);
     setToggleDropDown(false);
   };
   return (
@@ -58,7 +58,11 @@ const Navbar = () => {
                         </Link>
                         <Link
                           to={"/create"}
-                          onClick={handleClikOpen}
+                          onClick={() => {
+                            handleClikOpen();
+                            setEventData(initialEventData);
+                            setCurrentStep!(creationSteps![0]);
+                          }}
                           className="w-full cursor-pointer rounded-md p-2 hover:bg-gray-300"
                         >
                           Create Event
