@@ -205,7 +205,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                 />
                 <input
                   onChange={(e) => {
-                    handleUpload(e.target.files![0]);
+                    handleUpload(e.target.files![0], eventData);
                   }}
                   type="file"
                   className="hidden"
