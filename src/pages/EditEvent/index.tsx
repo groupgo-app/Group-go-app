@@ -36,7 +36,7 @@ const EditEvent = () => {
   }, []);
 
   const mapping: any = {
-    template: <TemplatePage event={event} />,
+    template: <TemplatePage />,
     event: <EventInfoPage event={event} />,
     payment: <PaymentPage event={event} />,
     invite: <SendInvitationPage event={event} />,

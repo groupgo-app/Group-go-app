@@ -42,7 +42,11 @@ const StepProgress = () => {
                   setCurrentStep!(step);
                 }}
               >
-                {step?.checked ? <CheckedIcon /> : <UncheckedIcon />}
+                {eventData?.completedSteps![step?.id - 1] ? (
+                  <CheckedIcon />
+                ) : (
+                  <UncheckedIcon />
+                )}
                 <p className="font-light text-black">{step?.step}</p>
               </div>
             ))}

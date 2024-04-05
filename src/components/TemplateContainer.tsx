@@ -6,7 +6,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import Signin from "./modals/Signin";
 import { FormContext } from "../contexts/FormContext";
 
-const TemplateContainer = ({ event }: any) => {
+const TemplateContainer = () => {
   const { templates } = useContext(AppContext);
   const { handleRedirect } = useContext(FormContext);
   const { user } = useContext(AuthContext);

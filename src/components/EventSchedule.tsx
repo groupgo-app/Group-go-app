@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import InputField from "./InputField";
 
-const EventSchedule = ({ eventInfo, handleChangeForEventInfo }) => {
-  const [current, setCurrent] = useState("Single event");
+const EventSchedule = ({ eventInfo, handleChangeForEventInfo }: any) => {
+  // const [current, setCurrent] = useState("Single event");
 
-  const schedules = ["Single event", "Montly", "Weekly", "Yearly"];
+  // const schedules = ["Single event", "Montly", "Weekly", "Yearly"];
 
   return (
     <>
       <div className="event_schedule_container">
-        <div className="select_schedule_container">
+        {/* <div className="select_schedule_container">
           {schedules.map((schedule, i) => (
             <span
               key={i}
@@ -21,7 +21,7 @@ const EventSchedule = ({ eventInfo, handleChangeForEventInfo }) => {
               {schedule}
             </span>
           ))}
-        </div>
+        </div> */}
 
         <div className="event_schedule_duration">
           <InputField

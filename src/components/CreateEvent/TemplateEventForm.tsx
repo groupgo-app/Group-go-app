@@ -34,6 +34,20 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  const linkToImage = async (link: string) => {
+    const response = await fetch(link);
+    // here image is url/location of image
+    const blob = await response.blob();
+    const file = new File(
+      [blob],
+      `${eventData.eventType}_image.${blob.type.split("/")[1]}`,
+      {
+        type: blob.type,
+      },
+    );
+    return file;
+  };
+
   const handleUpload: Function = async (file: any) => {
     // const file = e.target.files[0];
     // const imgUrl: any = await convertBase64(file);
@@ -70,48 +84,33 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
 
   useEffect(() => {
     const runAtStart = async () => {
-      if (event) {
-        setCoverImg(event?.eventImg);
+      if (event || selectedTemplate) {
+        if (event) {
+          setCoverImg(event?.eventImg);
+        } else {
+          if (eventData.eventImg.length > 0) {
+            const file = await linkToImage(
+              `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
+            );
+            await handleUpload(file);
+          }
+        }
       } else {
-        const response = await fetch(
-          `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
+        const newData = {
+          ...eventData,
+          uid: user?.uid,
+          eventInfo: { ...eventData.eventInfo, creatorEmail: user?.email },
+          eventImg: `${import.meta.env.VITE_REACT_SITE_URL}/templateimages/others.png`,
+          completedSteps: [true, false, false, false],
+        };
+        setEventData!(newData);
+        const file = await linkToImage(
+          `${import.meta.env.VITE_REACT_SITE_URL}/templateimages/others.png`,
         );
-        // here image is url/location of image
-        const blob = await response.blob();
-        const file = new File(
-          [blob],
-          `${eventData.eventType}_image.${blob.type.split("/")[1]}`,
-          {
-            type: blob.type,
-          },
-        );
-
         await handleUpload(file);
       }
-      // const urlToObject = async () => {
-      //   const response = await fetch(
-      //     `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
-      //   );
-      //   // here image is url/location of image
-      //   const blob = await response.blob();
-      //   const file = new File(
-      //     [blob],
-      //     `${eventData.eventType}_image.${blob.type.split("/")[1]}`,
-      //     {
-      //       type: blob.type,
-      //     },
-      //   );
-
-      //   return file;
-      // };
-
-      // setCoverImg(
-      //   `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
-      // );
     };
     runAtStart();
-
-    console.log(selectedTemplate);
   }, []);
 
   const handleBackButton = () => {
@@ -136,10 +135,23 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
       completedSteps: [true, true, false, false],
     };
 
-    console.log(newData);
-    // console.log(eventData);
-
-    if (eventData) {
+    if (
+      eventData.eventInfo.title.length > 0 &&
+      eventData.eventType.length > 0 &&
+      eventData.eventInfo.creatorName.length > 0 &&
+      eventData.eventInfo.creatorEmail.length > 0 &&
+      eventData.eventInfo.socialLink.length > 0 &&
+      eventData.eventInfo.eventDesc.length > 0 &&
+      eventData.eventInfo.eventLocation.length > 0 &&
+      eventData.eventInfo.startDate.length > 0 &&
+      eventData.eventInfo.endDate.length > 0 &&
+      eventData.eventInfo.startTime.length > 0 &&
+      eventData.eventInfo.endTime.length > 0 &&
+      eventData.eventInfo.maxNumOfParticipant > 0 &&
+      eventData.eventInfo.minNumOfParticipant > 0 &&
+      eventData.eventInfo.typeOfParticipants.length > 0 &&
+      eventData.eventInfo.amountPerParticipant.length > 0
+    ) {
       if (event) {
         await updateEvent(eventData.eventId, user.uid, newData);
         setEventData(newData);
@@ -157,12 +169,6 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
     // const file = e.target[0]?.files[0];
   };
   const eventInfoChange = (e: any) => {
-    // console.log(e.target.name, e.target.value, typeof e.target.value);
-    console.log(
-      eventInfo[e.target.name],
-      typeof eventInfo[e.target.name],
-      eventInfo[e.target.name].length,
-    );
     handleChangeForEventInfo!(e.target.name, e.target.value);
   };
 
@@ -212,22 +218,38 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         </div>
 
         <div className="space-y-7">
-          {(selectedTemplate && selectedTemplate!?.templateName == "Others") ||
-            event?.eventType ||
-            (eventData?.eventType === "" && (
-              <>
-                <InputField
-                  id="eventType"
-                  type="text"
-                  label="Event Type/Category"
-                  name="eventType"
-                  placeholder="Event Type"
-                  value={eventData?.eventType}
-                  onChange={handleChangeForEventType!}
-                  required={true}
-                />
-              </>
-            ))}
+          {!selectedTemplate && !event && (
+            <>
+              <InputField
+                id="eventType"
+                type="text"
+                label="Event Type / Category"
+                name="eventType"
+                placeholder="Event Type"
+                value={eventData?.eventType}
+                onChange={(e: any) => {
+                  handleChangeForEventType!(e.target.value);
+                }}
+                required={true}
+              />
+            </>
+          )}
+          {selectedTemplate && selectedTemplate.templateName == "Others" && (
+            <>
+              <InputField
+                id="eventType"
+                type="text"
+                label="Event Type / Category"
+                name="eventType"
+                placeholder="Event Type"
+                value={eventData?.eventType}
+                onChange={(e: any) => {
+                  handleChangeForEventType!(e.target.value);
+                }}
+                required={true}
+              />
+            </>
+          )}
 
           <InputField
             id="title"

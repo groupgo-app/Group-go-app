@@ -1,10 +1,9 @@
-import React from "react";
 import TemplateContainer from "../../components/TemplateContainer";
 
-const TemplatePage = ({ event }: any) => {
+const TemplatePage = () => {
   return (
     <>
-      <TemplateContainer event={event} />
+      <TemplateContainer />
     </>
   );
 };
