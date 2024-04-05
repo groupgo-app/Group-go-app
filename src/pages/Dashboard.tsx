@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { FormContext } from "../contexts/FormContext";
 import { initialEventData } from "../data/events";
 import Loader from "../components/Loader";
+import Underliner from "../components/Underliner";
 
 const Dashboard = () => {
   const [eventList, setEventList] = useState<any[]>([]);
@@ -89,7 +90,7 @@ const Dashboard = () => {
             {drafts.length > 0 && (
               <div className="py-5">
                 <h3 className="text-4xl">Drafts</h3>
-                <div className="mb-4 mt-1 h-[2px] w-[200px] bg-black"></div>
+                <Underliner />
                 <p>Finish up setting up your events</p>
                 <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
                   {drafts.map((event) => (

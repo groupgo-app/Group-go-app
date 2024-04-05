@@ -1,8 +1,8 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { FormContext } from "../contexts/FormContext";
 import loader from "../assets/images/loader.svg";
 import { AuthContext } from "../contexts/AuthContext";
-import { findUser, saveEventForAUser } from "../utils/events";
+import { findUser } from "../utils/events";
 import { AppContext } from "../contexts/AppContext";
 import { FiArrowLeft } from "react-icons/fi";
 import { updateEvent } from "../api/events";
@@ -11,7 +11,7 @@ import { resolveBankAccount } from "../api/banks";
 const PaymentInformation = ({ event }: { event?: any }) => {
   const {
     eventData,
-    setEventData,
+    // setEventData,
     loading,
     banks,
     bankCode,

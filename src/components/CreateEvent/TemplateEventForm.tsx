@@ -10,6 +10,7 @@ import { storage } from "../../config/firebase";
 import { saveEvent, updateEvent } from "../../api/events";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
+import Underliner from "../Underliner";
 
 const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const {
@@ -227,82 +228,87 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         </div>
 
         <div className="space-y-7">
-          {!selectedTemplate && !event && (
-            <>
-              <InputField
-                id="eventType"
-                type="text"
-                label="Event Type / Category"
-                name="eventType"
-                placeholder="Event Type"
-                value={eventData?.eventType}
-                onChange={(e: any) => {
-                  handleChangeForEventType!(e.target.value);
-                }}
-                required={true}
-              />
-            </>
-          )}
-          {selectedTemplate && selectedTemplate.templateName == "Others" && (
-            <>
-              <InputField
-                id="eventType"
-                type="text"
-                label="Event Type / Category"
-                name="eventType"
-                placeholder="Event Type"
-                value={eventData?.eventType}
-                onChange={(e: any) => {
-                  handleChangeForEventType!(e.target.value);
-                }}
-                required={true}
-              />
-            </>
-          )}
-
-          <InputField
-            id="title"
-            type="text"
-            label="Title"
-            name="title"
-            placeholder="Title"
-            required={true}
-            value={eventInfo.title}
-            onChange={eventInfoChange}
-          />
-
-          <InputField
-            id="name"
-            type="text"
-            label="Creator name"
-            name="creatorName"
-            placeholder="name"
-            required={true}
-            value={eventInfo.creatorName}
-            onChange={eventInfoChange}
-          />
-          <InputField
-            id="email"
-            type="text"
-            label="Email address"
-            name="creatorEmail"
-            required={true}
-            placeholder="Your email address"
-            value={eventInfo.creatorEmail}
-            onChange={eventInfoChange}
-          />
-          <InputField
-            id="link"
-            type="text"
-            label="Social link"
-            required={true}
-            name="socialLink"
-            placeholder="https://instagram.com/username (X, instagram, tiktok..)"
-            value={eventInfo.socialLink}
-            onChange={eventInfoChange}
-          />
-          <div className="my-2">
+          <div className="my-2 rounded-xl border border-blue-500 p-4">
+            <h4>Creator Details</h4>
+            <Underliner />
+            <InputField
+              id="name"
+              type="text"
+              label="Creator name"
+              name="creatorName"
+              placeholder="name"
+              required={true}
+              value={eventInfo.creatorName}
+              onChange={eventInfoChange}
+            />
+            <InputField
+              id="email"
+              type="text"
+              label="Email address"
+              name="creatorEmail"
+              required={true}
+              placeholder="Your email address"
+              value={eventInfo.creatorEmail}
+              onChange={eventInfoChange}
+            />
+            <InputField
+              id="link"
+              type="text"
+              label="Social link"
+              required={true}
+              name="socialLink"
+              placeholder="https://instagram.com/username (X, instagram, tiktok..)"
+              value={eventInfo.socialLink}
+              onChange={eventInfoChange}
+            />
+          </div>
+          <div className="my-2 rounded-xl border border-blue-500 p-4">
             <h4>Tell us about your event</h4>
+            <Underliner />
+            {!selectedTemplate && !event && (
+              <>
+                <InputField
+                  id="eventType"
+                  type="text"
+                  label="Event Type / Category"
+                  name="eventType"
+                  placeholder="Event Type"
+                  value={eventData?.eventType}
+                  onChange={(e: any) => {
+                    handleChangeForEventType!(e.target.value);
+                  }}
+                  required={true}
+                />
+              </>
+            )}
+            {selectedTemplate && selectedTemplate.templateName == "Others" && (
+              <>
+                <InputField
+                  id="eventType"
+                  type="text"
+                  label="Event Type / Category"
+                  name="eventType"
+                  placeholder="Event Type"
+                  value={eventData?.eventType}
+                  onChange={(e: any) => {
+                    handleChangeForEventType!(e.target.value);
+                  }}
+                  required={true}
+                />
+              </>
+            )}
+
+            <InputField
+              id="title"
+              type="text"
+              label="Title"
+              name="title"
+              placeholder="Title / Name of the event"
+              required={true}
+              value={eventInfo.title}
+              onChange={eventInfoChange}
+            />
+
             <InputField
               id="description"
               type="textarea"
@@ -316,8 +322,9 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           </div>
         </div>
 
-        <div className="my-4">
+        <div className="my-4 rounded-xl border border-blue-500 p-4">
           <h4>Where are you having the event?</h4>
+          <Underliner />
           <InputField
             id="location"
             type="text"
@@ -330,16 +337,18 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           />
         </div>
 
-        <div>
+        <div className="my-4 rounded-xl border border-blue-500 p-4">
           <h4>When is the event?</h4>
+          <Underliner />
           <EventSchedule
             eventInfo={eventInfo}
             handleChangeForEventInfo={eventInfoChange}
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="my-4 rounded-xl border border-blue-500 p-4">
           <h4>Who’s attending the event?</h4>
+          <Underliner />
           <InputField
             id="min_num_participant"
             type="number"
@@ -380,8 +389,9 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <h4>How much is the event</h4>
+        <div className="my-4 rounded-xl border border-blue-500 p-4">
+          <h4>Pricing</h4>
+          <Underliner />
           <InputField
             id="amount"
             required={true}
