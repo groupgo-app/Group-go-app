@@ -11,6 +11,10 @@ import { saveEvent, updateEvent } from "../../api/events";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import Underliner from "../Underliner";
+import { toast } from "react-toastify";
+import SocialLinkInput from "../SocialLinkInput";
+import isUrl from "../../utils/isUrl";
+import FormSection from "./FormSection";
 
 const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const {
@@ -68,7 +72,10 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         setIsLoadingImage(true);
       },
       (error: any) => {
-        alert(error);
+        toast(error, {
+          type: "error",
+          autoClose: 3000,
+        });
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
@@ -92,10 +99,15 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           setCoverImg(event?.eventImg);
         } else {
           if (eventData.eventImg.length > 0) {
-            const file = await linkToImage(
-              `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
-            );
-            await handleUpload(file, eventData);
+            if (isUrl(eventData.eventImg)) {
+              const file = await linkToImage(`${eventData.eventImg}`);
+              await handleUpload(file, eventData);
+            } else {
+              const file = await linkToImage(
+                `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
+              );
+              await handleUpload(file, eventData);
+            }
           }
         }
       } else {
@@ -133,47 +145,56 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (
-      eventData.eventInfo.title.length > 0 &&
-      eventData.eventType.length > 0 &&
-      eventData.eventInfo.creatorName.length > 0 &&
-      eventData.eventInfo.creatorEmail.length > 0 &&
-      eventData.eventInfo.socialLink.length > 0 &&
-      eventData.eventInfo.eventDesc.length > 0 &&
-      eventData.eventInfo.eventLocation.length > 0 &&
-      eventData.eventInfo.startDate.length > 0 &&
-      eventData.eventInfo.endDate.length > 0 &&
-      eventData.eventInfo.startTime.length > 0 &&
-      eventData.eventInfo.endTime.length > 0 &&
-      eventData.eventInfo.maxNumOfParticipant > 0 &&
-      eventData.eventInfo.minNumOfParticipant > 0 &&
-      eventData.eventInfo.typeOfParticipants.length > 0 &&
-      eventData.eventInfo.amountPerParticipant.length > 0
-    ) {
-      setIsLoadingSubmit(true);
-      if (event) {
-        const newData = {
-          ...eventData,
+    try {
+      if (
+        eventData.eventInfo.title.length > 0 &&
+        eventData.eventType.length > 0 &&
+        eventData.eventInfo.creatorName.length > 0 &&
+        eventData.eventInfo.creatorEmail.length > 0 &&
+        eventData.eventInfo.socialLinks.length > 0 &&
+        eventData.eventInfo.eventDesc.length > 0 &&
+        eventData.eventInfo.eventLocation.length > 0 &&
+        eventData.eventInfo.startDate.length > 0 &&
+        eventData.eventInfo.endDate.length > 0 &&
+        eventData.eventInfo.startTime.length > 0 &&
+        eventData.eventInfo.endTime.length > 0 &&
+        eventData.eventInfo.maxNumOfParticipant > 0 &&
+        eventData.eventInfo.minNumOfParticipant > 0 &&
+        eventData.eventInfo.typeOfParticipants.length > 0 &&
+        eventData.eventInfo.amountPerParticipant.length > 0
+      ) {
+        setIsLoadingSubmit(true);
+        if (event) {
+          const newData = {
+            ...eventData,
 
-          completedSteps: [true, true, false, false],
-        };
-        await updateEvent(eventData.eventId, user.uid, newData);
-        setEventData(newData);
+            completedSteps: [true, true, false, false],
+          };
+          await updateEvent(eventData.eventId, user.uid, newData);
+          setEventData(newData);
+        } else {
+          const newData = {
+            ...eventData,
+            uid: user.uid,
+            completedSteps: [true, true, false, false],
+          };
+          await saveEvent(newData);
+        }
+
+        setCurrentStep!(creationSteps![2]);
+        setIsLoadingSubmit(false);
+        navigate(`/edit/${eventData?.eventId}?step=3`);
       } else {
-        const newData = {
-          ...eventData,
-          uid: user.uid,
-          completedSteps: [true, true, false, false],
-        };
-        await saveEvent(newData);
+        handleChangeForCompletedSteps!([true, false, false, false]);
+        toast("Fill in all the inputs to proceed", {
+          type: "error",
+          autoClose: 3000,
+        });
       }
-
-      setCurrentStep!(creationSteps![2]);
+    } catch (error) {
+      console.log(error);
+      setCurrentStep!(creationSteps![1]);
       setIsLoadingSubmit(false);
-      navigate(`/edit/${eventData?.eventId}?step=3`);
-    } else {
-      handleChangeForCompletedSteps!([true, false, false, false]);
-      alert("Fill in all the inputs to proceed");
     }
 
     // const file = e.target[0]?.files[0];
@@ -188,7 +209,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         <div className="mb-12 space-y-3">
           <button
             onClick={handleBackButton}
-            className="flex items-center gap-2 text-blue-500"
+            className="flex items-center gap-2 text-orange-clr"
           >
             <FiArrowLeft />
             Go back
@@ -228,9 +249,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         </div>
 
         <div className="space-y-7">
-          <div className="my-2 rounded-xl border border-blue-500 p-4">
-            <h4>Creator Details</h4>
-            <Underliner />
+          <FormSection title="Creator Details">
             <InputField
               id="name"
               type="text"
@@ -251,20 +270,23 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
               value={eventInfo.creatorEmail}
               onChange={eventInfoChange}
             />
-            <InputField
+            {/* <InputField
               id="link"
               type="text"
-              label="Social link"
+              label="Social Links"
               required={true}
-              name="socialLink"
+              name="socialLinks"
               placeholder="https://instagram.com/username (X, instagram, tiktok..)"
               value={eventInfo.socialLink}
               onChange={eventInfoChange}
+            /> */}
+            <SocialLinkInput
+              eventData={eventData}
+              setEventData={setEventData!}
+              toast={toast}
             />
-          </div>
-          <div className="my-2 rounded-xl border border-blue-500 p-4">
-            <h4>Tell us about your event</h4>
-            <Underliner />
+          </FormSection>
+          <FormSection title="Tell us about your event">
             {!selectedTemplate && !event && (
               <>
                 <InputField
@@ -319,36 +341,27 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
               value={eventInfo.eventDesc}
               onChange={eventInfoChange}
             />
-          </div>
+          </FormSection>
         </div>
-
-        <div className="my-4 rounded-xl border border-blue-500 p-4">
-          <h4>Where are you having the event?</h4>
-          <Underliner />
+        <FormSection title="Location">
           <InputField
             id="location"
             type="text"
             required={true}
-            label="Location"
+            label="Where are you having the event"
             name="eventLocation"
             placeholder="Where are you having the event?"
             value={eventInfo.eventLocation}
             onChange={eventInfoChange}
           />
-        </div>
-
-        <div className="my-4 rounded-xl border border-blue-500 p-4">
-          <h4>When is the event?</h4>
-          <Underliner />
+        </FormSection>
+        <FormSection title="When is the event?">
           <EventSchedule
             eventInfo={eventInfo}
             handleChangeForEventInfo={eventInfoChange}
           />
-        </div>
-
-        <div className="my-4 rounded-xl border border-blue-500 p-4">
-          <h4>Who’s attending the event?</h4>
-          <Underliner />
+        </FormSection>
+        <FormSection title="Who is attending the event?">
           <InputField
             id="min_num_participant"
             type="number"
@@ -387,11 +400,8 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
               <option value="both genders">Both male and female</option>
             </select>
           </div>
-        </div>
-
-        <div className="my-4 rounded-xl border border-blue-500 p-4">
-          <h4>Pricing</h4>
-          <Underliner />
+        </FormSection>
+        <FormSection title="Pricing">
           <InputField
             id="amount"
             required={true}
@@ -402,7 +412,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             value={eventInfo.amountPerParticipant}
             onChange={eventInfoChange}
           />
-        </div>
+        </FormSection>
 
         <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
           <div className="w-full">

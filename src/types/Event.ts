@@ -12,7 +12,7 @@ export type IEventData = {
     title: string;
     creatorName: string;
     creatorEmail: string;
-    socialLink: string;
+    socialLinks: string[] | string;
     eventDesc: string;
     eventLocation: string;
     startDate: string;

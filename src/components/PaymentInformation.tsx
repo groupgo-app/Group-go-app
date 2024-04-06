@@ -7,6 +7,7 @@ import { AppContext } from "../contexts/AppContext";
 import { FiArrowLeft } from "react-icons/fi";
 import { updateEvent } from "../api/events";
 import { resolveBankAccount } from "../api/banks";
+import { useNavigate } from "react-router-dom";
 
 const PaymentInformation = ({ event }: { event?: any }) => {
   const {
@@ -28,12 +29,7 @@ const PaymentInformation = ({ event }: { event?: any }) => {
   const { user } = useContext(AuthContext);
   const { setCurrentStep, creationSteps, currentStep, setCreationSteps } =
     useContext(AppContext);
-
-  // useEffect(() => {
-  //   if (event.eventInfo.title) {
-  //     setEventData(event);
-  //   }
-  // });
+  const navigate = useNavigate();
 
   const handleSubmitForm = async (e: any) => {
     e.preventDefault();
@@ -79,6 +75,9 @@ const PaymentInformation = ({ event }: { event?: any }) => {
   };
 
   const handleBackButton = () => {
+    if (event) {
+      navigate(`/edit/${event.eventId}?step=2`);
+    }
     setCurrentStep!(creationSteps![1]);
     const newStep = creationSteps!.map((step) => {
       if (step.id === currentStep!.id) {
@@ -96,7 +95,7 @@ const PaymentInformation = ({ event }: { event?: any }) => {
       <div className="payment_info_container">
         <button
           onClick={handleBackButton}
-          className="flex items-center gap-2 text-blue-500"
+          className="flex items-center gap-2 text-orange-clr"
         >
           <FiArrowLeft />
           Go back

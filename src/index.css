@@ -195,3 +195,7 @@ ul li {
 .icon_text_block {
   @apply flex items-center gap-2 text-[12px] tablet:text-base;
 }
+
+.create_form_section {
+  @apply my-2 rounded-xl border border-orange-clr p-4;
+}

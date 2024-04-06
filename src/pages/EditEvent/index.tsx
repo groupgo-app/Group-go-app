@@ -22,11 +22,18 @@ const EditEvent = () => {
     try {
       if (eventId) {
         const eventData = await fetchEventById(eventId);
+        const newEventData = {
+          ...eventData,
+          eventInfo: {
+            ...eventData.eventInfo,
+            socialLinks: JSON.parse(eventData.eventInfo.socialLinks),
+          },
+        };
 
         const step = searchParams.get("step");
         if (step) setCurrentStep!(creationSteps![Number(step) - 1]);
-        setEvent(eventData);
-        setEventData!(eventData);
+        setEvent(newEventData);
+        setEventData!(newEventData);
       }
     } catch (error) {}
   };

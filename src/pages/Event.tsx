@@ -19,6 +19,7 @@ import moment from "moment";
 import { nanoid } from "nanoid";
 import { IEventData } from "../types/Event";
 import { fetchEventById } from "../api/events";
+import { SocialIcon } from "react-social-icons";
 
 const Event = () => {
   const [loading, setLoading] = useState(true);
@@ -86,6 +87,7 @@ const Event = () => {
       </div>
     );
   } else if (event) {
+    console.log(event);
     return (
       <div>
         <img
@@ -151,9 +153,25 @@ const Event = () => {
               <h3>Event Host/Creator</h3>
               <div className="flex items-center gap-[16px]">
                 <p>{event?.eventInfo?.creatorName}</p>
-                <a href={event?.eventInfo?.socialLink}>
-                  <img src={instagram} alt="" />
-                </a>
+
+                {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
+                  (link: string, i: number) => (
+                    <div key={i}>
+                      <SocialIcon
+                        url={link}
+                        style={{ width: "15px", height: "15px" }}
+                      />
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-sm"
+                      >
+                        {link}
+                      </a>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>

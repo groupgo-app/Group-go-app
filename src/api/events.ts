@@ -8,20 +8,31 @@ import {
   query,
   updateDoc,
   where,
+  // FieldValue,
 } from "firebase/firestore";
+
 import { db } from "../config/firebase";
+// import setFirebaseArr from "../utils/setFirebaseArr";
 
 const eventsCollectionRef = collection(db, "events");
 
 export const saveEvent = async (data: any) => {
   try {
-    const docRef = await addDoc(eventsCollectionRef, data);
+    const newData = {
+      ...data,
+      eventInfo: {
+        ...data.eventInfo,
+        socialLinks: JSON.stringify([...data.eventInfo.socialLinks]),
+      },
+    };
+    const docRef = await addDoc(eventsCollectionRef, newData);
     const snapShot = await getDoc(docRef);
     const savedData = snapShot.data();
 
     return savedData;
   } catch (error: any) {
     console.log(error?.stack);
+    throw new Error(error);
   }
 };
 
@@ -31,6 +42,13 @@ export const updateEvent = async (
   eventData: any,
 ) => {
   try {
+    const newData = {
+      ...eventData,
+      eventInfo: {
+        ...eventData.eventInfo,
+        socialLinks: JSON.stringify([...eventData.eventInfo.socialLinks]),
+      },
+    };
     const dataList: any[] = [];
     const q = query(eventsCollectionRef, where("eventId", "==", eventId));
     const querySnapshot = await getDocs(q);
@@ -44,7 +62,7 @@ export const updateEvent = async (
       if (dataList[0].uid === userId) {
         const eventDoc = doc(db, "events", dataList[0].id);
 
-        await updateDoc(eventDoc, eventData);
+        await updateDoc(eventDoc, newData);
       }
     } else {
       return Error("Data not found");

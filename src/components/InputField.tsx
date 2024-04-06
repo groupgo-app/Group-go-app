@@ -9,6 +9,8 @@ const InputField = ({
   value,
   onChange,
   required,
+  onKeyDown,
+  onBlur,
 }: any) => {
   return (
     <>
@@ -35,6 +37,8 @@ const InputField = ({
             placeholder={placeholder}
             value={value}
             onChange={onChange}
+            onKeyDown={onKeyDown ? onKeyDown : () => {}}
+            onBlur={onBlur ? onBlur : () => {}}
             required
           />
         )}

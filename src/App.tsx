@@ -8,6 +8,8 @@ import { FormContextProvider } from "./contexts/FormContext";
 import Event from "./pages/Event";
 import Dashboard from "./pages/Dashboard";
 import EditEvent from "./pages/EditEvent";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
@@ -29,6 +31,7 @@ const App = () => {
           </FormContextProvider>
         </AppProvider>
       </AuthContextProvider>
+      <ToastContainer />
     </>
   );
 };

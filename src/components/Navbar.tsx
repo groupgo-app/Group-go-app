@@ -9,10 +9,6 @@ import { logout } from "../api/auth";
 import { FormContext } from "../contexts/FormContext";
 import { AppContext } from "../contexts/AppContext";
 import { initialEventData } from "../data/events";
-import { FiArrowDown } from "react-icons/fi";
-import { BsArrowDown } from "react-icons/bs";
-import { FaArrowDown } from "react-icons/fa6";
-import { FcDown } from "react-icons/fc";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 
 const Navbar = () => {
