@@ -40,6 +40,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const navigate = useNavigate();
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [showAddButton, setShowAddButton] = useState(false);
 
   const linkToImage = async (link: string) => {
     const response = await fetch(link);
@@ -227,6 +228,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                 />
                 <input
                   onChange={(e) => {
+                    setShowAddButton(true);
                     handleUpload(e.target.files![0], eventData);
                   }}
                   type="file"
@@ -235,7 +237,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                   id="eventImg"
                 />
                 <label
-                  className="absolute bottom-0 left-0 right-0 top-0 z-[50] m-auto flex h-[200px] w-[200px] cursor-pointer flex-col items-center justify-center gap-8 rounded-xl bg-gray-300 text-blue-500"
+                  className={`absolute bottom-0 left-0 right-0 top-0 z-[50] m-auto flex h-[200px] w-[200px] cursor-pointer flex-col items-center justify-center gap-8 rounded-xl bg-gray-300 text-blue-500 ${showAddButton && "hidden"}`}
                   htmlFor="eventImg"
                 >
                   <FiUpload className="text-4xl text-blue-600" />
@@ -244,6 +246,16 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                   </span>
                 </label>
               </div>
+              {showAddButton && (
+                <div>
+                  <label
+                    htmlFor="eventImg"
+                    className="cursor-pointer rounded-xl bg-orange-clr p-4 py-2 !text-white hover:opacity-70"
+                  >
+                    Change Event Photo
+                  </label>
+                </div>
+              )}
             </>
           )}
         </div>
