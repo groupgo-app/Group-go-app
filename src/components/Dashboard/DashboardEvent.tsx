@@ -13,7 +13,7 @@ const DashboardEvent = ({
       <figure
         // onClick={() => handleEventClick(event)}
         style={{ aspectRatio: "1 / 1" }}
-        className="relative flex w-full max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl bg-gray-300 pb-2"
+        className="relative flex h-fit w-full max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl bg-gray-300 pb-2"
       >
         <img
           src={event?.eventImg}
