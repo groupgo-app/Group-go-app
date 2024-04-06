@@ -10,11 +10,11 @@ import { storage } from "../../config/firebase";
 import { saveEvent, updateEvent } from "../../api/events";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
-import Underliner from "../Underliner";
 import { toast } from "react-toastify";
 import SocialLinkInput from "../SocialLinkInput";
 import isUrl from "../../utils/isUrl";
 import FormSection from "./FormSection";
+import LocationSection from "./LocationSection";
 
 const TemplateEventForm = ({ event }: any | { event: any | null }) => {
   const {
@@ -154,7 +154,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         eventData.eventInfo.creatorEmail.length > 0 &&
         eventData.eventInfo.socialLinks.length > 0 &&
         eventData.eventInfo.eventDesc.length > 0 &&
-        eventData.eventInfo.eventLocation.length > 0 &&
+        eventData.eventInfo.eventLocation.display_name.length > 0 &&
         eventData.eventInfo.startDate.length > 0 &&
         eventData.eventInfo.endDate.length > 0 &&
         eventData.eventInfo.startTime.length > 0 &&
@@ -355,18 +355,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             />
           </FormSection>
         </div>
-        <FormSection title="Location">
-          <InputField
-            id="location"
-            type="text"
-            required={true}
-            label="Where are you having the event"
-            name="eventLocation"
-            placeholder="Where are you having the event?"
-            value={eventInfo.eventLocation}
-            onChange={eventInfoChange}
-          />
-        </FormSection>
+        <LocationSection setEventData={setEventData!} eventData={eventData!} />
         <FormSection title="When is the event?">
           <EventSchedule
             eventInfo={eventInfo}

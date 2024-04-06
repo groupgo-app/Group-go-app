@@ -10,11 +10,7 @@ const DashboardEvent = ({
 }) => {
   return (
     <>
-      <figure
-        // onClick={() => handleEventClick(event)}
-        style={{ aspectRatio: "1 / 1" }}
-        className="relative flex h-fit w-full max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl bg-gray-300 pb-2"
-      >
+      <figure className="relative flex  w-full max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl bg-gray-300 pb-2">
         <img
           src={event?.eventImg}
           alt=""
@@ -39,7 +35,7 @@ const DashboardEvent = ({
                 fill="white"
               />
             </svg>
-            View Event Details
+            {draft ? "Edit Details" : "View Event Details"}
           </Link>
         </figcaption>
       </figure>

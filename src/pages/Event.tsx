@@ -2,11 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import location from "../assets/images/location.svg";
 import profile from "../assets/images/profile.svg";
-import instagram from "../assets/images/instagram.svg";
-import mapImg from "../assets/images/map.svg";
 import dateImg from "../assets/images/date.svg";
 import moneyImg from "../assets/images/money.svg";
-import loader from "../assets/images/orange-loader.svg";
 import PageNotFound from "./PageNotFound";
 import {
   // fetchSingleEventByOwnerAndID,
@@ -20,6 +17,8 @@ import { nanoid } from "nanoid";
 import { IEventData } from "../types/Event";
 import { fetchEventById } from "../api/events";
 import { SocialIcon } from "react-social-icons";
+import LocationMap from "../components/CreateEvent/LocationMap";
+import Loader from "../components/Loader";
 
 const Event = () => {
   const [loading, setLoading] = useState(true);
@@ -81,11 +80,7 @@ const Event = () => {
   };
 
   if (loading) {
-    return (
-      <div className="my-[56px] flex w-full items-center justify-center">
-        <img width={48} src={loader} alt="" />
-      </div>
-    );
+    return <Loader />;
   } else if (event) {
     console.log(event);
     return (
@@ -104,7 +99,7 @@ const Event = () => {
               <div className="flex items-center gap-[22px]">
                 <div className="flex items-center gap-[8px]">
                   <img src={location} alt="" />
-                  <p>{event?.eventInfo?.eventLocation}</p>
+                  <p>{event?.eventInfo?.eventLocation?.display_name}</p>
                 </div>
                 <div className="flex items-center gap-[8px]">
                   <img src={profile} alt="" />
@@ -153,26 +148,31 @@ const Event = () => {
               <h3>Event Host/Creator</h3>
               <div className="flex items-center gap-[16px]">
                 <p>{event?.eventInfo?.creatorName}</p>
-
-                {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
-                  (link: string, i: number) => (
-                    <div key={i}>
-                      <SocialIcon
-                        url={link}
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="text-sm"
-                      >
-                        {link}
-                      </a>
-                    </div>
-                  ),
-                )}
               </div>
+            </div>
+            <div>
+              <h3>Links of the Event</h3>
+              {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
+                (link: string, i: number) => (
+                  <div
+                    key={i}
+                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
+                  >
+                    <SocialIcon
+                      url={link}
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-sm"
+                    >
+                      <p>{link}</p>
+                    </a>
+                  </div>
+                ),
+              )}
             </div>
           </div>
 
@@ -206,7 +206,8 @@ const Event = () => {
 
             <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
               <p className="font-medium">Location</p>
-              <img src={mapImg} alt="" className="map w-full" />
+              <LocationMap location={event.eventInfo.eventLocation} />
+              {/* <img src={mapImg} alt="" className="w-full map" /> */}
               {/* <div className="w-full"><iframe width="100%" height="281" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps vehicle tracker</a></iframe></div> */}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
 const InputField = ({
   name,
@@ -8,7 +8,7 @@ const InputField = ({
   placeholder,
   value,
   onChange,
-  required,
+  // required,
   onKeyDown,
   onBlur,
 }: any) => {

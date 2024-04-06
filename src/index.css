@@ -199,3 +199,8 @@ ul li {
 .create_form_section {
   @apply my-2 rounded-xl border border-orange-clr p-4;
 }
+
+.leaflet-container {
+  width: 100%;
+  height: 400px;
+}

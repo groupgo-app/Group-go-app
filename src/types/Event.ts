@@ -1,3 +1,5 @@
+import { ISubLocation } from "./Location";
+
 export type IEventData = {
   id?: string;
   uid: string;
@@ -14,7 +16,7 @@ export type IEventData = {
     creatorEmail: string;
     socialLinks: string[] | string;
     eventDesc: string;
-    eventLocation: string;
+    eventLocation: ISubLocation;
     startDate: string;
     endDate: string;
     startTime: string;
