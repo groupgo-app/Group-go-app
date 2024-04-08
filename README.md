@@ -24,7 +24,7 @@ Visit the live GroupGo application at [https://groupgo.vercel.app](https://group
 > Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Group-go-app.git
+git clone https://github.com/group-go/Group-go-app.git
 ```
 
 > Install dependencies
