@@ -110,7 +110,7 @@ const Event = () => {
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="my-4 flex flex-wrap gap-2 border border-red-500">
+        <div className="my-4 flex flex-wrap gap-2 ">
           {/* Date */}
           <div className="  h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[45%]">
             <div className="flex items-center gap-[8px]">

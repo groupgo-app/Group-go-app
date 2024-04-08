@@ -132,7 +132,7 @@ const Dashboard = () => {
 
             {completedEvents.length > 0 && (
               <div className="py-5">
-                <h3 className="text-4xl">Completed Events</h3>
+                <h3 className="text-4xl">Ended Events</h3>
                 <Underliner />
                 <p>Check out the details of the completed events</p>
                 <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
