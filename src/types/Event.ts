@@ -1,5 +1,11 @@
 import { ISubLocation } from "./Location";
 
+export type IEventTier = {
+  id: string;
+  name: string;
+  price: number;
+  numberOfTickets: number;
+};
 export type IEventData = {
   id?: string;
   uid: string;
@@ -10,6 +16,7 @@ export type IEventData = {
   inCreation: boolean;
   numberOfPaidParticipants: number;
   completedSteps: [boolean, boolean, boolean, boolean];
+  hasTiers: boolean;
   eventInfo: {
     title: string;
     creatorName: string;
@@ -25,6 +32,7 @@ export type IEventData = {
     minNumOfParticipant: number;
     typeOfParticipants: string;
     amountPerParticipant: number;
+    tiers: IEventTier[];
   };
   paymentInfo: {
     bankName: string;

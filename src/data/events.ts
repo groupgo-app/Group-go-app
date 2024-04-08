@@ -10,13 +10,21 @@ export const initialEventData: IEventData = {
   inCreation: true,
   completedSteps: [false, false, false, false],
   numberOfPaidParticipants: 0,
+  hasTiers: false,
   eventInfo: {
     title: "",
     creatorName: "",
     creatorEmail: "",
     socialLinks: [],
     eventDesc: "",
-    eventLocation: "",
+    eventLocation: {
+      display_name: "",
+      lat: "",
+      lon: "",
+      licence: "",
+      place_id: 1,
+    },
+    tiers: [],
     startDate: "",
     endDate: "",
     startTime: "",
@@ -25,7 +33,7 @@ export const initialEventData: IEventData = {
     minNumOfParticipant: 1,
     typeOfParticipants: "",
 
-    amountPerParticipant: "",
+    amountPerParticipant: 0,
   },
   paymentInfo: {
     bankName: "",

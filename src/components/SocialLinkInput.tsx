@@ -1,12 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SocialIcon } from "react-social-icons";
 import InputField from "./InputField";
 import { BiTrash } from "react-icons/bi";
 import isUrl from "../utils/isUrl";
+import { toast } from "react-toastify";
+import { IEventData } from "../types/Event";
 
-const SocialLinkInput = ({ eventData, setEventData, toast }: any) => {
+const SocialLinkInput = ({
+  eventData,
+  setEventData,
+}: {
+  eventData: IEventData;
+  setEventData: React.Dispatch<React.SetStateAction<IEventData>>;
+}) => {
   const [userInput, setUserInput] = useState("");
   const [links, setLinks] = useState<string[]>([]);
+  const inputRef = useRef<any>(null);
 
   const handleInputChange = (event: any) => {
     setUserInput(event.target.value);
@@ -29,6 +38,9 @@ const SocialLinkInput = ({ eventData, setEventData, toast }: any) => {
       } else {
         toast("That is not a url");
       }
+    }
+    if (e.key === "Escape") {
+      setUserInput("");
     }
   };
 
@@ -63,16 +75,16 @@ const SocialLinkInput = ({ eventData, setEventData, toast }: any) => {
   };
 
   useEffect(() => {
-    const handleEscape = (event: any) => {
-      if (event.key === "Escape") {
-        setUserInput("");
-      }
-    };
+    if (inputRef.current) {
+      inputRef.current.blur(); // Remove focus after component mounts
+    }
+  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("keydown", handleEscape);
 
-    document.addEventListener("keydown", handleEscape);
-
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, []); // Empty dependency array to run effect only once
+  //   return () => document.removeEventListener("keydown", handleEscape);
+  // }, []);
+  // Empty dependency array to run effect only once
 
   const renderLink = (link: string, i: number) => {
     // Identify and return the appropriate icon based on the link
@@ -117,6 +129,8 @@ const SocialLinkInput = ({ eventData, setEventData, toast }: any) => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
+        autoFocus={false}
+        ref={inputRef}
       />
       <div className="flex flex-wrap items-center">{links.map(renderLink)}</div>
     </div>

@@ -17,8 +17,14 @@ import FormSection from "./FormSection";
 import LocationSection from "./LocationSection";
 import { linkToImage } from "../../utils/linkToImage";
 import { ITemplate } from "../../types/Template";
-import { IEventData } from "../../types/Event";
+import { IEventData, IEventTier } from "../../types/Event";
 import { IStep } from "../../types/Step";
+import TierSection from "./TierSection";
+import TimeSection from "./TimeSection";
+import ParticipantSection from "./ParticipantSection";
+import CreatorSection from "./CreatorSection";
+import FormButtons from "./FormButtons";
+import FormImageSection from "./FormImageSection";
 
 const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   let selectedTemplate: ITemplate | undefined,
@@ -64,6 +70,17 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   // const [showAddButton, setShowAddButton] = useState(false);
+
+  function sumNumbersInObjects(arr: IEventTier[]) {
+    let totalSum = 0;
+    for (const obj of arr) {
+      if (obj.hasOwnProperty("numberOfTickets")) {
+        // Check if "number" property exists
+        totalSum += obj.numberOfTickets;
+      }
+    }
+    return totalSum;
+  }
 
   const handleUpload: Function = async (
     file: any,
@@ -185,34 +202,94 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
         eventData.eventInfo.endTime.length > 0 &&
         eventData.eventInfo.maxNumOfParticipant > 0 &&
         eventData.eventInfo.minNumOfParticipant > 0 &&
-        eventData.eventInfo.typeOfParticipants.length > 0 &&
-        eventData.eventInfo.amountPerParticipant > 0
+        eventData.eventInfo.typeOfParticipants.length > 0
       ) {
         setIsLoadingSubmit(true);
-        if (event) {
-          const newData: IEventData = {
-            ...eventData,
+        if (eventData.hasTiers) {
+          if (
+            !eventData.eventInfo.tiers.length &&
+            !(eventData.eventInfo.tiers.length > 0)
+          )
+            return toast("Please make sure you have added at least one tier", {
+              type: "error",
+            });
 
-            completedSteps: [true, true, false, false],
-          };
-          await updateEvent(eventData.eventId, user.uid, newData);
-          setEventData(newData);
+          const areAllFilled = eventData.eventInfo.tiers.every(
+            (tier) =>
+              tier.name.length > 0 &&
+              tier.price > 0 &&
+              tier.numberOfTickets > 0,
+          );
+          if (!areAllFilled)
+            return toast(
+              "Please make sure all your tiers have names, prices and number of tickets",
+              { type: "error" },
+            );
+
+          if (
+            sumNumbersInObjects(eventData.eventInfo.tiers) <
+            eventData.eventInfo.maxNumOfParticipant
+          )
+            return toast(
+              "Your number of tickets should not be less than the number of people",
+              { type: "error" },
+            );
+
+          if (event) {
+            const newData: IEventData = {
+              ...eventData,
+
+              completedSteps: [true, true, false, false],
+            };
+            await updateEvent(eventData.eventId, user.uid, newData);
+            setEventData(newData);
+          } else {
+            const newData: IEventData = {
+              ...eventData,
+              uid: user.uid,
+              completedSteps: [true, true, false, false],
+            };
+            await saveEvent(newData);
+          }
+
+          setCurrentStep!(creationSteps![2]);
+
+          toast("Successfully created Event", {
+            type: "success",
+            autoClose: 3000,
+          });
+          navigate(`/edit/${eventData?.eventId}?step=3`);
         } else {
-          const newData: IEventData = {
-            ...eventData,
-            uid: user.uid,
-            completedSteps: [true, true, false, false],
-          };
-          await saveEvent(newData);
+          if (!(eventData.eventInfo.amountPerParticipant > 0))
+            return toast("Please pass in an amount per person", {
+              type: "error",
+            });
+
+          if (event) {
+            const newData: IEventData = {
+              ...eventData,
+
+              completedSteps: [true, true, false, false],
+            };
+            await updateEvent(eventData.eventId, user.uid, newData);
+            setEventData(newData);
+          } else {
+            const newData: IEventData = {
+              ...eventData,
+              uid: user.uid,
+              completedSteps: [true, true, false, false],
+            };
+            await saveEvent(newData);
+          }
+
+          setCurrentStep!(creationSteps![2]);
+
+          toast("Successfully created Event", {
+            type: "success",
+            autoClose: 3000,
+          });
+          navigate(`/edit/${eventData?.eventId}?step=3`);
         }
-
-        setCurrentStep!(creationSteps![2]);
-
-        toast("Successfully created Event", {
-          type: "success",
-          autoClose: 3000,
-        });
-        navigate(`/edit/${eventData?.eventId}?step=3`);
       } else {
         handleChangeForCompletedSteps!([true, false, false, false]);
         toast("Fill in all the inputs to proceed", {
@@ -236,232 +313,93 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   return (
     <>
       <form className="event_info_form">
-        <div className="mb-12 space-y-3">
-          <button
-            onClick={handleBackButton}
-            className="flex items-center gap-2 text-orange-clr"
-          >
-            <FiArrowLeft />
-            Go back
-          </button>
-          <p className="font-normal">{eventData!.eventType}</p>
-          {isLoadingImage ? (
-            <Loader />
-          ) : (
+        <FormImageSection
+          coverImg={coverImg}
+          eventData={eventData!}
+          handleBackButton={handleBackButton}
+          handleUpload={handleUpload}
+          isLoadingImage={isLoadingImage}
+        />
+
+        <CreatorSection
+          eventData={eventData!}
+          setEventData={setEventData!}
+          eventInfoChange={eventInfoChange}
+        />
+        <FormSection title="Tell us about your event">
+          {!selectedTemplate && !event && (
             <>
-              <div className={`relative w-full bg-[${coverImg}]`}>
-                <img
-                  src={coverImg && coverImg}
-                  alt="a cover image illustration of template cover"
-                  className="h-[400px] w-full rounded-xl object-cover"
-                />
-                <input
-                  onChange={(e) => {
-                    // setShowAddButton(true);
-                    handleUpload(e.target.files![0], eventData);
-                  }}
-                  type="file"
-                  className="hidden"
-                  name=""
-                  id="eventImg"
-                />
-                <label
-                  className={`absolute  bottom-[30px] right-[40px] z-[50] m-auto flex h-[30px] w-[30px] cursor-pointer flex-col items-center justify-center gap-8 rounded-full  bg-black text-white opacity-90 `}
-                  htmlFor="eventImg"
-                >
-                  <FiUpload className="text-xl text-white" />
-                  {/* <span className="z-[51] text-[16px] font-medium">
-                    Change event photo
-                  </span> */}
-                </label>
-              </div>
-              {/* {showAddButton && (
-                <div>
-                  <label
-                    htmlFor="eventImg"
-                    className="cursor-pointer rounded-xl bg-orange-clr p-4 py-2 !text-white hover:opacity-70"
-                  >
-                    Change Event Photo
-                  </label>
-                </div>
-              )} */}
+              <InputField
+                id="eventType"
+                type="text"
+                label="Event Type / Category"
+                name="eventType"
+                placeholder="Event Type"
+                value={eventData!?.eventType}
+                onChange={(e: any) => {
+                  handleChangeForEventType!(e.target.value);
+                }}
+                required={true}
+              />
             </>
           )}
-        </div>
+          {selectedTemplate && selectedTemplate.templateName == "Others" && (
+            <>
+              <InputField
+                id="eventType"
+                type="text"
+                label="Event Type / Category"
+                name="eventType"
+                placeholder="Event Type"
+                value={eventData!?.eventType}
+                onChange={(e: any) => {
+                  handleChangeForEventType!(e.target.value);
+                }}
+                required={true}
+              />
+            </>
+          )}
 
-        <div className="space-y-7">
-          <FormSection title="Creator Details">
-            <InputField
-              id="name"
-              type="text"
-              label="Creator name"
-              name="creatorName"
-              placeholder="name"
-              required={true}
-              value={eventInfo.creatorName}
-              onChange={eventInfoChange}
-            />
-            <InputField
-              id="email"
-              type="text"
-              label="Email address"
-              name="creatorEmail"
-              required={true}
-              placeholder="Your email address"
-              value={eventInfo.creatorEmail}
-              onChange={eventInfoChange}
-            />
+          <InputField
+            id="title"
+            type="text"
+            label="Title"
+            name="title"
+            placeholder="Title / Name of the event"
+            required={true}
+            value={eventInfo.title}
+            onChange={eventInfoChange}
+          />
 
-            <SocialLinkInput
-              eventData={eventData!}
-              setEventData={setEventData!}
-              toast={toast}
-            />
-          </FormSection>
-          <FormSection title="Tell us about your event">
-            {!selectedTemplate && !event && (
-              <>
-                <InputField
-                  id="eventType"
-                  type="text"
-                  label="Event Type / Category"
-                  name="eventType"
-                  placeholder="Event Type"
-                  value={eventData!?.eventType}
-                  onChange={(e: any) => {
-                    handleChangeForEventType!(e.target.value);
-                  }}
-                  required={true}
-                />
-              </>
-            )}
-            {selectedTemplate && selectedTemplate.templateName == "Others" && (
-              <>
-                <InputField
-                  id="eventType"
-                  type="text"
-                  label="Event Type / Category"
-                  name="eventType"
-                  placeholder="Event Type"
-                  value={eventData!?.eventType}
-                  onChange={(e: any) => {
-                    handleChangeForEventType!(e.target.value);
-                  }}
-                  required={true}
-                />
-              </>
-            )}
-
-            <InputField
-              id="title"
-              type="text"
-              label="Title"
-              name="title"
-              placeholder="Title / Name of the event"
-              required={true}
-              value={eventInfo.title}
-              onChange={eventInfoChange}
-            />
-
-            <InputField
-              id="description"
-              type="textarea"
-              name="eventDesc"
-              required={true}
-              label="Event Description"
-              placeholder="Fan Hangout..."
-              value={eventInfo.eventDesc}
-              onChange={eventInfoChange}
-            />
-          </FormSection>
-        </div>
+          <InputField
+            id="description"
+            type="textarea"
+            name="eventDesc"
+            required={true}
+            label="Event Description"
+            placeholder="Fan Hangout..."
+            value={eventInfo.eventDesc}
+            onChange={eventInfoChange}
+          />
+        </FormSection>
         <LocationSection setEventData={setEventData!} eventData={eventData!} />
-        <FormSection title="When is the event?">
-          <EventSchedule
-            eventInfo={eventInfo}
-            handleChangeForEventInfo={eventInfoChange}
-          />
-        </FormSection>
-        <FormSection title="Who is attending the event?">
-          <InputField
-            id="min_num_participant"
-            type="number"
-            label="Minimum number of participants"
-            name="minNumOfParticipant"
-            placeholder="Minimum"
-            required={true}
-            value={eventInfo.minNumOfParticipant}
-            onChange={eventInfoChange}
-          />
+        <TimeSection eventData={eventData!} eventInfoChange={eventInfoChange} />
 
-          <InputField
-            id="max_num_participant"
-            required={true}
-            type="number"
-            label="Maximum number of participants"
-            name="maxNumOfParticipant"
-            placeholder="Maximum"
-            value={eventInfo.maxNumOfParticipant}
-            onChange={eventInfoChange}
-          />
+        <ParticipantSection
+          eventData={eventData!}
+          eventInfoChange={eventInfoChange}
+        />
+        <TierSection
+          eventData={eventData!}
+          setEventData={setEventData!}
+          eventInfoChange={eventInfoChange}
+        />
 
-          <div className="field_set_div">
-            <label htmlFor="gender">Participants gender</label>
-            <select
-              name="typeOfParticipants"
-              id="gender"
-              className="inputs"
-              // type="select"
-              value={eventInfo.typeOfParticipants}
-              onChange={eventInfoChange}
-            >
-              <option value="">select an option</option>
-              <option value="males">All male</option>
-              <option value="females">All female</option>
-              <option value="both genders">Both male and female</option>
-            </select>
-          </div>
-        </FormSection>
-        <FormSection title="Pricing">
-          <InputField
-            id="amount"
-            required={true}
-            type="number"
-            label="Amount per person"
-            name="amountPerParticipant"
-            placeholder="0.00 (NGN)"
-            value={eventInfo.amountPerParticipant}
-            onChange={eventInfoChange}
-          />
-        </FormSection>
-
-        <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
-          <div className="w-full">
-            <button
-              onClick={handleBackButton}
-              className="primary_button block tablet:w-[100%]"
-              type="button"
-            >
-              Back
-            </button>
-          </div>
-          <div className="w-full">
-            <button
-              onClick={handleSubmit}
-              className="primary_button block tablet:w-[100%]"
-              disabled={isLoadingSubmit}
-              type="submit"
-            >
-              {isLoadingSubmit ? (
-                <>
-                  <Loader />
-                </>
-              ) : (
-                <>Save and Continue</>
-              )}
-            </button>
-          </div>
-        </div>
+        <FormButtons
+          handleBackButton={handleBackButton}
+          handleSubmit={handleSubmit}
+          isLoadingSubmit={isLoadingSubmit}
+        />
       </form>
     </>
   );

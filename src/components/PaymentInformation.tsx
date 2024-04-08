@@ -83,20 +83,6 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
 
       if (!isBankResolutionSuccessful)
         return toast("Bank resolution was not successful", { type: "error" });
-
-      const userFound = await findUser(user?.uid);
-      if (userFound) {
-        handleChangeForCompletedSteps!([true, true, true, true]);
-        const newData: IEventData = {
-          ...eventData,
-          completedSteps: [true, true, true, true],
-          inCreation: false,
-        };
-        await updateEvent(eventData.eventId, user?.uid, newData);
-        toast("Bank Resolution Successful", { type: "success" });
-      } else {
-        console.log("User not found.");
-      }
     } catch (error) {
       // console.error("Error handling form submission:", error);
       if (error) return;
@@ -105,7 +91,20 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       setLoading(false);
     }
   };
-  const goForward = () => {
+  const goForward = async () => {
+    const userFound = await findUser(user?.uid);
+    if (userFound) {
+      handleChangeForCompletedSteps!([true, true, true, true]);
+      const newData: IEventData = {
+        ...eventData,
+        completedSteps: [true, true, true, true],
+        inCreation: false,
+      };
+      await updateEvent(eventData.eventId, user?.uid, newData);
+      toast("Bank Resolution Successful", { type: "success" });
+    } else {
+      console.log("User not found.");
+    }
     setCurrentStep!(creationSteps![3]);
   };
   const handleBackButton = () => {
@@ -212,7 +211,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
                   onClick={handleSubmitForm}
                   className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
                 >
-                  {!loading ? "Continue" : <img src={loader} />}
+                  {!loading ? "Verify Details" : <img src={loader} />}
                 </button>
               </>
             )}
