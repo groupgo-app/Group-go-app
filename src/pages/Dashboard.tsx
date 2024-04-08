@@ -133,15 +133,18 @@ const Dashboard = () => {
             {completedEvents.length > 0 && (
               <div className="py-5">
                 <h3 className="text-4xl">Completed Events</h3>
+                <Underliner />
                 <p>Check out the details of the completed events</p>
-                {completedEvents.map((event) => (
-                  <DashboardEvent
-                    // handleEventClick={handleEventClick}
-                    event={event}
-                    key={event?.id}
-                    completed
-                  />
-                ))}
+                <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
+                  {completedEvents.map((event) => (
+                    <DashboardEvent
+                      // handleEventClick={handleEventClick}
+                      event={event}
+                      key={event?.id}
+                      completed
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>

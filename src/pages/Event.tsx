@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
 import ShareInviteLink from "../components/ShareInviteLink";
 import { MdEmail } from "react-icons/md";
+import { FaUser } from "react-icons/fa6";
 
 const Event = () => {
   let user;
@@ -89,57 +90,13 @@ const Event = () => {
     return <Loader />;
   } else if (event) {
     return (
-      <div className="overflow-hidden">
+      <div className="w-full overflow-hidden">
         <div>
           <h2 className="">{event?.eventInfo.title}</h2>
-          <p className="text-sm">Event Type: {event?.eventType}</p>
-          <p className="text-sm">
-            Host: <strong>{event?.eventInfo?.creatorName}</strong>
-          </p>
-          <p className="flex items-center gap-2 text-sm">
-            <MdEmail />
-            <span>
-              Host Email:{" "}
-              <a href={`mailto:${event.eventInfo.creatorEmail}`}>
-                {event.eventInfo.creatorEmail}
-              </a>
-            </span>
-          </p>
-          <p className="flex flex-wrap items-center gap-1 text-sm">
-            Social Links:{" "}
-            <div className="flex flex-wrap items-center gap-1">
-              {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
-                (link: string, i: number) => (
-                  <span
-                    key={i}
-                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
-                  >
-                    <SocialIcon
-                      url={link}
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="text-sm"
-                    >
-                      {link}
-                    </a>
-                  </span>
-                ),
-              )}
-            </div>
-          </p>
-          <div className="my-4 flex items-center gap-[8px]">
-            <img src={profile} alt="" />
-            <p className="text-sm capitalize">
-              {event?.eventInfo?.typeOfParticipants} Allowed
-            </p>
-          </div>
+          <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
         </div>
 
-        <div className="my-4 aspect-video ">
+        <div className="my-4 aspect-video w-full ">
           <img
             className="aspect-video w-full rounded-sm object-cover"
             src={event?.eventImg}
@@ -149,11 +106,13 @@ const Event = () => {
 
         <div>
           <h3>Event Description</h3>
+
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="my-4 flex flex-wrap">
-          <div className="  h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
+        <div className="my-4 flex flex-wrap gap-2 border border-red-500">
+          {/* Date */}
+          <div className="  h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[45%]">
             <div className="flex items-center gap-[8px]">
               <img src={dateImg} alt="" />
               <p>Date and time</p>
@@ -174,7 +133,8 @@ const Event = () => {
               )}
             </div>
           </div>
-          <div className=" h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[50%]">
+          {/* Payment */}
+          <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
             <div className="flex items-center gap-[8px]">
               <img src={moneyImg} alt="" />
               <p>Commitment per person</p>
@@ -185,14 +145,31 @@ const Event = () => {
                 &#8358; {event?.eventInfo?.amountPerParticipant}
               </h5>
             </div>
+            <div className="my-4 flex items-center gap-[8px]">
+              <img src={profile} alt="" />
+              <p className="text-sm capitalize">
+                {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
+                {event?.eventInfo?.typeOfParticipants} Allowed
+              </p>
+            </div>
             <div>
               <h5 className="mb-[15px]">
-                {`${
-                  (event?.eventInfo?.maxNumOfParticipant || 0) -
-                  (event?.numberOfPaidParticipants || 0)
-                }`}{" "}
-                Tickets left
+                {isPassedCurrentTime(
+                  event.eventInfo.endDate,
+                  event.eventInfo.endDate,
+                ) ? (
+                  "0"
+                ) : (
+                  <>
+                    {`${
+                      (event?.eventInfo?.maxNumOfParticipant || 0) -
+                      (event?.numberOfPaidParticipants || 0)
+                    }`}{" "}
+                  </>
+                )}
+                Tickets available
               </h5>
+              <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
               <button
                 onClick={handlePaymentSubmit}
                 disabled={
@@ -230,6 +207,43 @@ const Event = () => {
               </button>
             </div>
           </div>
+        </div>
+        {/* Organiser Details */}
+        <div className="w-fit rounded-xl bg-gray-300 p-4">
+          <h4>Host / Organiser Details</h4>
+          <div className="flex justify-center">
+            <FaUser className="text-center text-4xl" />
+          </div>
+          <h5 className="text-center">
+            <strong>{event?.eventInfo?.creatorName}</strong>
+          </h5>
+          <p className="flex items-center gap-2 text-sm">
+            <MdEmail />
+            <span>
+              Email:{" "}
+              <a href={`mailto:${event.eventInfo.creatorEmail}`}>
+                {event.eventInfo.creatorEmail}
+              </a>
+            </span>
+          </p>
+          <p className="flex flex-wrap items-center gap-1 text-sm">
+            Event Links:{" "}
+            <div className="flex flex-wrap items-center gap-1">
+              {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
+                (link: string, i: number) => (
+                  <span
+                    key={i}
+                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
+                  >
+                    <SocialIcon
+                      url={link}
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </span>
+                ),
+              )}
+            </div>
+          </p>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
           <h3 className="flex items-center gap-4">

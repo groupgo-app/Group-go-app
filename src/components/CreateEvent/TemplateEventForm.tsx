@@ -63,9 +63,13 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   const navigate = useNavigate();
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-  const [showAddButton, setShowAddButton] = useState(false);
+  // const [showAddButton, setShowAddButton] = useState(false);
 
-  const handleUpload: Function = async (file: any, eventData: IEventData) => {
+  const handleUpload: Function = async (
+    file: any,
+    eventData: IEventData,
+    defaultLoad?: boolean,
+  ) => {
     if (!file) return;
     const storageRef = ref(storage, `images/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -77,10 +81,12 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
         );
         if (progress === 100) {
-          toast("Image Fully Uploaded", {
-            type: "success",
-            autoClose: 3000,
-          });
+          if (!defaultLoad) {
+            toast("Image Fully Uploaded", {
+              type: "success",
+              autoClose: 3000,
+            });
+          }
         }
         setIsLoadingImage(true);
       },
@@ -118,13 +124,13 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
                 `${eventData.eventImg}`,
                 eventData,
               );
-              await handleUpload(file, eventData);
+              await handleUpload(file, eventData, true);
             } else {
               const file = await linkToImage(
                 `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
                 eventData,
               );
-              await handleUpload(file, eventData);
+              await handleUpload(file, eventData, true);
             }
           }
         }
@@ -251,7 +257,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
                 />
                 <input
                   onChange={(e) => {
-                    setShowAddButton(true);
+                    // setShowAddButton(true);
                     handleUpload(e.target.files![0], eventData);
                   }}
                   type="file"
@@ -260,16 +266,16 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
                   id="eventImg"
                 />
                 <label
-                  className={`absolute bottom-0 left-0 right-0 top-0 z-[50] m-auto flex h-[200px] w-[200px] cursor-pointer flex-col items-center justify-center gap-8 rounded-xl bg-gray-300 text-blue-500 ${showAddButton && "hidden"}`}
+                  className={`absolute  bottom-[30px] right-[40px] z-[50] m-auto flex h-[30px] w-[30px] cursor-pointer flex-col items-center justify-center gap-8 rounded-full  bg-black text-white opacity-90 `}
                   htmlFor="eventImg"
                 >
-                  <FiUpload className="text-4xl text-blue-600" />
-                  <span className="z-[51] text-[16px] font-medium">
+                  <FiUpload className="text-xl text-white" />
+                  {/* <span className="z-[51] text-[16px] font-medium">
                     Change event photo
-                  </span>
+                  </span> */}
                 </label>
               </div>
-              {showAddButton && (
+              {/* {showAddButton && (
                 <div>
                   <label
                     htmlFor="eventImg"
@@ -278,7 +284,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
                     Change Event Photo
                   </label>
                 </div>
-              )}
+              )} */}
             </>
           )}
         </div>
