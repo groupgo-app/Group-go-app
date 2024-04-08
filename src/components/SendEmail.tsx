@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const SendEmail = () => {
   const [email, setEmail] = useState("");
-  const [emails, setEmails] = useState([]);
-  const emailInputRef = useRef(null);
+  const [emails, setEmails] = useState<any[]>([]);
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       setEmails([...emails, { id: emails.length + 1, email: email }]);
       setEmail("");
@@ -14,11 +14,11 @@ const SendEmail = () => {
 
   useEffect(() => {
     const emailInput = emailInputRef.current;
-    emailInput.addEventListener("keydown", handleKeyDown);
-    return () => emailInput.removeEventListener("keydown", handleKeyDown);
+    emailInput!.addEventListener("keydown", handleKeyDown);
+    return () => emailInput!.removeEventListener("keydown", handleKeyDown);
   }, [emails, email]);
 
-  const handleRemoveEmail = (id) => {
+  const handleRemoveEmail = (id: number) => {
     if (!emails) {
       return;
     } else {

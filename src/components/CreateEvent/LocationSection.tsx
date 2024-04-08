@@ -4,13 +4,19 @@ import InputField from "../InputField";
 import ILocation, { ISubLocation } from "../../types/Location";
 import Loader from "../Loader";
 import LocationMap from "./LocationMap";
+import { IEventData } from "../../types/Event";
 
-const LocationSection = ({ eventData, setEventData }: any) => {
-  //  const [searchTerm, setSearchTerm] = useState("");
+const LocationSection = ({
+  eventData,
+  setEventData,
+}: {
+  eventData: IEventData;
+  setEventData: any;
+}) => {
   const [locations, setLocations] = useState<ILocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState<ISubLocation | null>();
-  //   const [error, setError] = useState<Error | null>(null);
+
   const [query, setQuery] = useState("");
 
   const fetchLocations = async (queryStr: string) => {
@@ -29,11 +35,12 @@ const LocationSection = ({ eventData, setEventData }: any) => {
       );
       // Construct URL with query
       const data = await response.json();
-      console.log(data);
+
       setLocations(data);
     } catch (error: any) {
-      //   setError(error);
-      console.log(error);
+      // console.error(error);
+      if (error) {
+      }
     } finally {
       setIsLoading(false);
     }
@@ -84,14 +91,14 @@ const LocationSection = ({ eventData, setEventData }: any) => {
                     <div
                       key={location.place_id}
                       onClick={() => {
-                        const newData = {
+                        const newData: IEventData = {
                           ...eventData,
                           eventInfo: {
                             ...eventData.eventInfo,
                             eventLocation: subLocation,
                           },
                         };
-                        console.log(newData);
+
                         setQuery(location?.display_name);
                         setLocations([]);
                         setLocation(subLocation);

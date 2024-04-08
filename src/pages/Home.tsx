@@ -5,8 +5,14 @@ import { initialEventData } from "../data/events";
 import { AppContext } from "../contexts/AppContext";
 
 const Home = () => {
-  const { setEventData } = useContext(FormContext);
-  const { setCurrentStep, creationSteps } = useContext(AppContext);
+  let setEventData: any, setCurrentStep, creationSteps;
+  const formContext = useContext(FormContext);
+  const appContext = useContext(AppContext);
+
+  if (formContext && appContext) {
+    ({ setEventData } = formContext);
+    ({ setCurrentStep, creationSteps } = appContext);
+  }
   return (
     <div className="mb-10 mt-[20px] flex w-full flex-col-reverse justify-center laptop:mb-0 laptop:mt-[50px] laptop:flex-row">
       <div className="flex w-full flex-col gap-[35px] laptop:w-[60%] laptop:gap-[28px]">

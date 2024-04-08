@@ -8,15 +8,15 @@ import {
   query,
   updateDoc,
   where,
-  // FieldValue,
 } from "firebase/firestore";
 
 import { db } from "../config/firebase";
+import { IEventData } from "../types/Event";
 // import setFirebaseArr from "../utils/setFirebaseArr";
 
 const eventsCollectionRef = collection(db, "events");
 
-export const saveEvent = async (data: any) => {
+export const saveEvent = async (data: IEventData) => {
   try {
     const newData = {
       ...data,
@@ -39,7 +39,7 @@ export const saveEvent = async (data: any) => {
 export const updateEvent = async (
   eventId: string,
   userId: string,
-  eventData: any,
+  eventData: IEventData,
 ) => {
   try {
     const newData = {

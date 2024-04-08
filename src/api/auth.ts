@@ -14,9 +14,9 @@ const actionCodeSettings = {
 };
 
 export const sendEmailLink = async (
-  setIsEmailLinkLoading: Function | React.Dispatch<React.SetStateAction<any>>,
-  setAlertMsg: Function | React.Dispatch<React.SetStateAction<any>>,
-  setErrorMsg: Function | React.Dispatch<React.SetStateAction<any>>,
+  setIsEmailLinkLoading: React.Dispatch<React.SetStateAction<any>>,
+  setAlertMsg: React.Dispatch<React.SetStateAction<string>>,
+  setErrorMsg: React.Dispatch<React.SetStateAction<string>>,
   email: string,
 ) => {
   setIsEmailLinkLoading(true);
@@ -71,7 +71,7 @@ export const handleSignInUser = async (user: any, navigate: Function) => {
           navigate("/login");
         });
     } else {
-      console.log("pls sign in");
+      // console.log("pls sign in");
     }
   }
 };

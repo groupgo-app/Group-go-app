@@ -2,19 +2,9 @@ import { createContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { createUserDocument } from "../api/users";
+import { AuthContextState } from "../types/contexts";
 
-type ContextState = {
-  email?: string;
-  setEmail?: React.Dispatch<React.SetStateAction<string>>;
-  user?: any | null | undefined;
-  alertMsg?: string;
-  setAlertMsg?: React.Dispatch<React.SetStateAction<string>>;
-  isEmailLinkLoading?: boolean;
-  setIsEmailLinkLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  errorMsg?: string;
-  setErrorMsg?: React.Dispatch<React.SetStateAction<string>>;
-};
-export const AuthContext = createContext<ContextState>({});
+export const AuthContext = createContext<AuthContextState | null>(null);
 
 export const AuthContextProvider = ({
   children,

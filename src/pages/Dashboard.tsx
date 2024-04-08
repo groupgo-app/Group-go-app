@@ -12,16 +12,26 @@ import { FormContext } from "../contexts/FormContext";
 import { initialEventData } from "../data/events";
 import Loader from "../components/Loader";
 import Underliner from "../components/Underliner";
+import { IEventData } from "../types/Event";
+import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
 
 const Dashboard = () => {
-  const [eventList, setEventList] = useState<any[]>([]);
-  // const [currentPreview, setCurrentPreview] = useState(null);
+  let setEventData, user: any, setCurrentStep, creationSteps;
+  const formContext = useContext(FormContext);
+  const authContext = useContext(AuthContext);
+  const appContext = useContext(AppContext);
+
+  if (formContext && authContext && appContext) {
+    ({ setEventData } = formContext);
+    ({ user } = authContext);
+    ({ setCurrentStep, creationSteps } = appContext);
+  }
+
+  const [eventList, setEventList] = useState<IEventData[]>([]);
   const [loading, setLoading] = useState(false);
-  const { setEventData } = useContext(FormContext);
-  const { user } = useContext(AuthContext);
-  const { setCurrentStep, creationSteps } = useContext(AppContext);
-  const [drafts, setDrafts] = useState<any[]>([]);
-  const [completedEvents, setCompletedEvents] = useState<any[]>([]);
+
+  const [drafts, setDrafts] = useState<IEventData[]>([]);
+  const [completedEvents, setCompletedEvents] = useState<IEventData[]>([]);
   const navigate = useNavigate();
 
   const getAllEvents = async () => {
@@ -31,14 +41,29 @@ const Dashboard = () => {
 
       setEventList(
         allEvents.filter(
-          (event) => event?.uid === user?.uid && event.inCreation === false,
+          (event) =>
+            event?.uid === user?.uid &&
+            event.inCreation === false &&
+            !isPassedCurrentTime(
+              event.eventInfo.endDate,
+              event.eventInfo.endTime,
+            ),
         ),
       );
-      setDrafts(allEvents.filter((event) => event?.inCreation === true));
+      setDrafts(
+        allEvents.filter(
+          (event) => event?.inCreation === true && event?.uid === user?.uid,
+        ),
+      );
       setCompletedEvents(
         allEvents.filter(
-          (event) =>
-            event.eventInfo.endDate > new Date() && event.inCreation === false,
+          (event: IEventData) =>
+            isPassedCurrentTime(
+              event.eventInfo.endDate,
+              event.eventInfo.endTime,
+            ) &&
+            event.inCreation === false &&
+            event?.uid === user?.uid,
         ),
       );
 
@@ -106,14 +131,15 @@ const Dashboard = () => {
             )}
 
             {completedEvents.length > 0 && (
-              <div>
-                <h3>Completed Events</h3>
+              <div className="py-5">
+                <h3 className="text-4xl">Completed Events</h3>
                 <p>Check out the details of the completed events</p>
                 {completedEvents.map((event) => (
                   <DashboardEvent
                     // handleEventClick={handleEventClick}
                     event={event}
                     key={event?.id}
+                    completed
                   />
                 ))}
               </div>

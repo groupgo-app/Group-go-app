@@ -2,15 +2,16 @@ import { useState } from "react";
 import CopyLInkModal from "./modals/CopyLinkModal";
 import cheersImg from "../assets/images/Hands holding glasses of champagne.png";
 import SendEmail from "./SendEmail";
+import { IEventData } from "../types/Event";
 
-const ShareInviteLink = ({ event }: any) => {
+const ShareInviteLink = ({ event }: { event: IEventData }) => {
   const methods = ["Invite Link", "Email"];
 
   const [selected, setSelected] = useState("Invite Link");
 
   const handleSelect = (e: any) => {
     const method = e.target.innerText;
-    event && console.log(event);
+    // event && console.log(event);
     setSelected(method);
   };
   return (
@@ -32,7 +33,11 @@ const ShareInviteLink = ({ event }: any) => {
           </div>
         </div>
 
-        {selected === "Invite Link" ? <CopyLInkModal /> : <SendEmail />}
+        {selected === "Invite Link" ? (
+          <CopyLInkModal event={event} />
+        ) : (
+          <SendEmail />
+        )}
 
         <div className="mt-10 w-full max-w-[295px]">
           <img

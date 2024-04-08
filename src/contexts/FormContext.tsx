@@ -1,48 +1,28 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
-// import { AppContext } from "./AppContext";
 import { initialEventData } from "../data/events";
 import { fetchBanks } from "../api/banks";
 import { AppContext } from "./AppContext";
 import { templates } from "../data/templates";
+import { FormContextState } from "../types/contexts";
 
-type ContextState = {
-  eventData?: any;
-  banks?: any;
-  bankCode?: any;
-  setImgUrl?: any;
-  imgUrl?: any;
-  initialEventData?: any;
-  loading?: any;
-  setLoading?: any;
-  setErrorMessage?: any;
-  resolvedBankDetails?: any;
-  setResolvedBankDetails?: any;
-  errorMessage?: any;
-  setEventData?: any;
-  handleChangeForEventInfo?: any;
-  handleChangeForPaymentInfo?: any;
-  handleRedirect?: any;
-  handleChangeAccountNumber?: any;
-  handleChangeBankName?: any;
-  handleChangeForEventType?: any;
-  handleChangeForInCreation?: any;
-  handleChangeForCompletedSteps?: any;
-};
-export const FormContext = createContext<ContextState>({});
+export const FormContext = createContext<FormContextState | null>(null);
 
 export const FormContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  // const { setCurrentStep, creationSteps } = useContext(AppContext);
+  let user: any, setSelectedTemplate: any, setCurrentStep, creationSteps;
+  const authContext = useContext(AuthContext);
+  const appContext = useContext(AppContext);
+  if (authContext && appContext) {
+    ({ user } = authContext);
+    ({ setSelectedTemplate, setCurrentStep, creationSteps } = appContext);
+  }
+
   const [loading, setLoading] = useState(false);
-  const [imgUrl, setImgUrl] = useState(null);
-  // const [progresspercent, setProgresspercent] = useState();
-  const { user } = useContext(AuthContext);
-  const { setSelectedTemplate, setCurrentStep, creationSteps } =
-    useContext(AppContext);
+  const [imgUrl, setImgUrl] = useState("");
 
   const [banks, setBanks] = useState([]);
   const [bankCode, setBankCode] = React.useState("");
@@ -158,7 +138,7 @@ export const FormContextProvider = ({
         bankCode,
         setImgUrl,
         imgUrl,
-        initialEventData,
+
         loading,
         setLoading,
         resolvedBankDetails,

@@ -5,12 +5,9 @@ import profile from "../assets/images/profile.svg";
 import dateImg from "../assets/images/date.svg";
 import moneyImg from "../assets/images/money.svg";
 import PageNotFound from "./PageNotFound";
-import {
-  // fetchSingleEventByOwnerAndID,
-  updateParticipantsCount,
-} from "../utils/events";
+import { updateParticipantsCount } from "../utils/events";
 import { AuthContext } from "../contexts/AuthContext";
-// import cover from "../assets/images/resturant image.jpeg";
+
 import { usePaystackPayment } from "react-paystack";
 import moment from "moment";
 import { nanoid } from "nanoid";
@@ -19,15 +16,25 @@ import { fetchEventById } from "../api/events";
 import { SocialIcon } from "react-social-icons";
 import LocationMap from "../components/CreateEvent/LocationMap";
 import Loader from "../components/Loader";
+import { toast } from "react-toastify";
+import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
+import ShareInviteLink from "../components/ShareInviteLink";
+import { MdEmail } from "react-icons/md";
 
 const Event = () => {
+  let user;
   const [loading, setLoading] = useState(true);
   const { eventId } = useParams();
   const [event, setEvent] = useState<IEventData>();
 
-  const { user } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+
+  if (authContext) {
+    ({ user } = authContext);
+  }
 
   const startDate = moment(event?.eventInfo?.startDate).format("DD MMM, YYYY");
+  const endDate = moment(event?.eventInfo?.endDate).format("DD MMM, YYYY");
 
   const startTime = moment(event?.eventInfo?.startTime, "HH:mm").format(
     "hh:mm A",
@@ -51,12 +58,11 @@ const Event = () => {
   };
 
   const onSuccess = () => {
-    // console.log("This is reference", reference);
     updateParticipantsCount(eventId);
   };
 
   const onClose = () => {
-    console.log("Your payment was unsuccessful, try again later!");
+    toast("Your payment was unsuccessful, try again later!", { type: "error" });
   };
 
   const initializePayment = usePaystackPayment(config);
@@ -82,79 +88,29 @@ const Event = () => {
   if (loading) {
     return <Loader />;
   } else if (event) {
-    console.log(event);
     return (
-      <div>
-        <img
-          className="h-[403px] w-full rounded-[10px] object-cover"
-          src={event?.eventImg}
-          alt=""
-        />
-
-        <div className="my-[55px] flex flex-wrap gap-10">
-          <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
-            <div className="flex flex-col gap-[6px]">
-              <h3 className="">{event?.eventInfo.title}</h3>
-              <p className="text-sm">Event Type: {event?.eventType}</p>
-              <div className="flex items-center gap-[22px]">
-                <div className="flex items-center gap-[8px]">
-                  <img src={location} alt="" />
-                  <p>{event?.eventInfo?.eventLocation?.display_name}</p>
-                </div>
-                <div className="flex items-center gap-[8px]">
-                  <img src={profile} alt="" />
-                  <p>{event?.eventInfo?.typeOfParticipants}</p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p>
-                Number of people paid: {event?.numberOfPaidParticipants || 0}
-              </p>
-              <p className="mb-[15px]">
-                {`${
-                  (event?.eventInfo?.maxNumOfParticipant || 0) -
-                  (event?.numberOfPaidParticipants || 0)
-                }`}{" "}
-                people left unpaid
-              </p>
-              <button
-                onClick={handlePaymentSubmit}
-                disabled={
-                  event?.numberOfPaidParticipants ===
-                  Number(event?.eventInfo?.maxNumOfParticipant)
-                }
-                className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
-                  event?.numberOfPaidParticipants ===
-                  Number(event?.eventInfo?.maxNumOfParticipant)
-                    ? "cursor-not-allowed bg-red-900"
-                    : ""
-                }`}
-              >
-                {event?.numberOfPaidParticipants ===
-                Number(event?.eventInfo?.maxNumOfParticipant)
-                  ? "No more ticket"
-                  : "Apply for event"}
-              </button>
-            </div>
-
-            <div>
-              <h3>Event Description</h3>
-              <p>{event?.eventInfo?.eventDesc}</p>
-            </div>
-
-            <div>
-              <h3>Event Host/Creator</h3>
-              <div className="flex items-center gap-[16px]">
-                <p>{event?.eventInfo?.creatorName}</p>
-              </div>
-            </div>
-            <div>
-              <h3>Links of the Event</h3>
+      <div className="overflow-hidden">
+        <div>
+          <h2 className="">{event?.eventInfo.title}</h2>
+          <p className="text-sm">Event Type: {event?.eventType}</p>
+          <p className="text-sm">
+            Host: <strong>{event?.eventInfo?.creatorName}</strong>
+          </p>
+          <p className="flex items-center gap-2 text-sm">
+            <MdEmail />
+            <span>
+              Host Email:{" "}
+              <a href={`mailto:${event.eventInfo.creatorEmail}`}>
+                {event.eventInfo.creatorEmail}
+              </a>
+            </span>
+          </p>
+          <p className="flex flex-wrap items-center gap-1 text-sm">
+            Social Links:{" "}
+            <div className="flex flex-wrap items-center gap-1">
               {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
                 (link: string, i: number) => (
-                  <div
+                  <span
                     key={i}
                     className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
                   >
@@ -168,28 +124,167 @@ const Event = () => {
                       rel="noreferrer noopener"
                       className="text-sm"
                     >
-                      <p>{link}</p>
+                      {link}
                     </a>
-                  </div>
+                  </span>
                 ),
               )}
+            </div>
+          </p>
+          <div className="my-4 flex items-center gap-[8px]">
+            <img src={profile} alt="" />
+            <p className="text-sm capitalize">
+              {event?.eventInfo?.typeOfParticipants} Allowed
+            </p>
+          </div>
+        </div>
+
+        <div className="my-4 aspect-video ">
+          <img
+            className="aspect-video w-full rounded-sm object-cover"
+            src={event?.eventImg}
+            alt=""
+          />
+        </div>
+
+        <div>
+          <h3>Event Description</h3>
+          <p>{event?.eventInfo?.eventDesc}</p>
+        </div>
+
+        <div className="my-4 flex flex-wrap">
+          <div className="  h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
+            <div className="flex items-center gap-[8px]">
+              <img src={dateImg} alt="" />
+              <p>Date and time</p>
+            </div>
+
+            <div className="pt-1">
+              {event.eventInfo.startDate === event.eventInfo.endDate ? (
+                <>
+                  <h5 className="mb-[2px] font-medium">{`${startDate}`}</h5>
+                  <h5 className="font-medium">{`${startTime} to ${endTime}`}</h5>
+                </>
+              ) : (
+                <>
+                  <h5 className="mb-1 font-medium">{`${startDate}, ${startTime}`}</h5>
+                  <p>To</p>
+                  <h5 className="font-medium">{`${endDate}, ${endTime}`}</h5>
+                </>
+              )}
+            </div>
+          </div>
+          <div className=" h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[50%]">
+            <div className="flex items-center gap-[8px]">
+              <img src={moneyImg} alt="" />
+              <p>Commitment per person</p>
+            </div>
+
+            <div className="">
+              <h5 className="font-medium">
+                &#8358; {event?.eventInfo?.amountPerParticipant}
+              </h5>
+            </div>
+            <div>
+              <h5 className="mb-[15px]">
+                {`${
+                  (event?.eventInfo?.maxNumOfParticipant || 0) -
+                  (event?.numberOfPaidParticipants || 0)
+                }`}{" "}
+                Tickets left
+              </h5>
+              <button
+                onClick={handlePaymentSubmit}
+                disabled={
+                  event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant) ||
+                  isPassedCurrentTime(
+                    event?.eventInfo.endDate,
+                    event?.eventInfo.endTime,
+                  )
+                }
+                className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
+                  event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant) ||
+                  isPassedCurrentTime(
+                    event?.eventInfo.endDate,
+                    event?.eventInfo.endTime,
+                  )
+                    ? "cursor-not-allowed bg-red-900"
+                    : ""
+                }`}
+              >
+                {isPassedCurrentTime(
+                  event?.eventInfo.endDate,
+                  event?.eventInfo.endTime,
+                ) ? (
+                  <>Event Ended</>
+                ) : (
+                  <>
+                    {event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant)
+                      ? "No more ticket"
+                      : "Apply for event"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
+          <h3 className="flex items-center gap-4">
+            <img src={location} alt="" />
+            Location
+          </h3>
+          <p className="font-medium">
+            {event.eventInfo.eventLocation.display_name}
+          </p>
+          <LocationMap location={event.eventInfo.eventLocation} />
+          {/* <img src={mapImg} alt="" className="w-full map" /> */}
+          {/* <div className="w-full"><iframe width="100%" height="281" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps vehicle tracker</a></iframe></div> */}
+        </div>
+
+        <div className="my-4">
+          {event.uid === user.uid &&
+            !isPassedCurrentTime(
+              event.eventInfo.endDate,
+              event.eventInfo.endTime,
+            ) && (
+              <>
+                <ShareInviteLink event={event} />
+              </>
+            )}
+        </div>
+
+        {/* <div className="my-[55px] flex flex-wrap gap-10">
+          <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
+            <div className="flex flex-col gap-[6px]">
+              <h3 className="">{event?.eventInfo.title}</h3>
+              <p className="text-sm">Event Type: {event?.eventType}</p>
+              <div className="items-center gap-[22px]">
+                <div className="my-4 flex items-center gap-[8px]">
+                  <img src={location} alt="" />
+                  <p className="text-xs">
+                    {event?.eventInfo?.eventLocation?.display_name}
+                  </p>
+                </div>
+                <div className="my-4 flex items-center gap-[8px]">
+                  <img src={profile} alt="" />
+                  <p className="text-xs">
+                    {event?.eventInfo?.typeOfParticipants}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3>Event Description</h3>
+              <p>{event?.eventInfo?.eventDesc}</p>
             </div>
           </div>
 
           <div className="flex w-fit max-w-full flex-col gap-[18px]">
             <div className="flex flex-col gap-4 tablet:flex-row">
-              <div className=" h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[50%]">
-                <div className="flex items-center gap-[8px]">
-                  <img src={dateImg} alt="" />
-                  <p>Date and time</p>
-                </div>
-
-                <div className="pt-1">
-                  <h5 className="mb-[2px] font-medium">{`${startDate}`}</h5>
-                  <h5 className="font-medium">{`${startTime} to ${endTime}`}</h5>
-                </div>
-              </div>
-
               <div className="h-[149px] w-full flex-col  justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[50%]">
                 <div className="flex items-center gap-[8px]">
                   <img src={moneyImg} alt="" />
@@ -198,20 +293,13 @@ const Event = () => {
 
                 <div className="">
                   <h5 className="font-medium">
-                    N{event?.eventInfo?.amountPerParticipant}
+                    &#8358; {event?.eventInfo?.amountPerParticipant}
                   </h5>
                 </div>
               </div>
             </div>
-
-            <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
-              <p className="font-medium">Location</p>
-              <LocationMap location={event.eventInfo.eventLocation} />
-              {/* <img src={mapImg} alt="" className="w-full map" /> */}
-              {/* <div className="w-full"><iframe width="100%" height="281" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps vehicle tracker</a></iframe></div> */}
-            </div>
           </div>
-        </div>
+        </div> */}
       </div>
     );
   } else {

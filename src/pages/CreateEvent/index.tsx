@@ -7,7 +7,11 @@ import PaymentPage from "./PaymentPage";
 import SendInvitationPage from "./SendInvitationPage";
 
 const CreateEvent = () => {
-  const { currentStep } = useContext(AppContext);
+  let currentStep;
+  const appContext = useContext(AppContext);
+  if (appContext) {
+    ({ currentStep } = appContext);
+  }
 
   const mapping: any = {
     template: <TemplatePage />,

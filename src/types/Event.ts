@@ -5,7 +5,7 @@ export type IEventData = {
   uid: string;
   eventImg: string;
   totalAmount: number;
-  eventId: string | number;
+  eventId: string;
   eventType: string;
   inCreation: boolean;
   numberOfPaidParticipants: number;
@@ -24,7 +24,7 @@ export type IEventData = {
     maxNumOfParticipant: number;
     minNumOfParticipant: number;
     typeOfParticipants: string;
-    amountPerParticipant: string;
+    amountPerParticipant: number;
   };
   paymentInfo: {
     bankName: string;

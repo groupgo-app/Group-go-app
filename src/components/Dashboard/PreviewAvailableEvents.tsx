@@ -1,10 +1,9 @@
-import React from "react";
 import moneySvg from "../assets/images/money.svg";
 import profileSvg from "../assets/images/profile.svg";
 import cover from "../assets/images/resturant image.jpeg";
 import { Link } from "react-router-dom";
 
-const PreviewAvailableEvents = ({ currentPreview }) => {
+const PreviewAvailableEvents = ({ currentPreview }: any) => {
   const eventId = currentPreview?.id;
   return (
     <div>

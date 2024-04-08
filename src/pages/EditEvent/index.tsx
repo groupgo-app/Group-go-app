@@ -11,8 +11,14 @@ import { IEventData } from "../../types/Event";
 import { FormContext } from "../../contexts/FormContext";
 
 const EditEvent = () => {
-  const { currentStep, creationSteps, setCurrentStep } = useContext(AppContext);
-  const { setEventData } = useContext(FormContext);
+  let currentStep, creationSteps, setCurrentStep, setEventData;
+  const appContext = useContext(AppContext);
+  const formContext = useContext(FormContext);
+  if (appContext && formContext) {
+    ({ currentStep, creationSteps, setCurrentStep } = appContext);
+    ({ setEventData } = formContext);
+  }
+
   const { eventId } = useParams();
   const [event, setEvent] = useState<IEventData | any>();
 

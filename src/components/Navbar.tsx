@@ -12,9 +12,17 @@ import { initialEventData } from "../data/events";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 
 const Navbar = () => {
-  const { user } = useContext(AuthContext);
-  const { setEventData } = useContext(FormContext);
-  const { setCurrentStep, creationSteps } = useContext(AppContext);
+  let user: any, setEventData: any, setCurrentStep, creationSteps;
+  const authContext = useContext(AuthContext);
+  const formContext = useContext(FormContext);
+  const appContext = useContext(AppContext);
+
+  if (authContext && formContext && appContext) {
+    ({ user } = authContext);
+    ({ setEventData } = formContext);
+    ({ setCurrentStep, creationSteps } = appContext);
+  }
+
   const [toggleDropDown, setToggleDropDown] = useState(false);
 
   const navigate = useNavigate();

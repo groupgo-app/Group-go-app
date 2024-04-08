@@ -11,7 +11,9 @@ const Template = ({
   template: ITemplate;
   handleRedirect: any;
 }) => {
-  const { handleChangeForCompletedSteps } = useContext(FormContext);
+  let handleChangeForCompletedSteps;
+  const formContext = useContext(FormContext);
+  if (formContext) ({ handleChangeForCompletedSteps } = formContext);
   return (
     <>
       <div className="template_module_container max-w-[300px] grow tablet:max-w-[250px]">

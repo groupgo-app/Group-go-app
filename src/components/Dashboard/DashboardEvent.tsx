@@ -4,9 +4,11 @@ import { IEventData } from "../../types/Event";
 const DashboardEvent = ({
   event,
   draft = false,
+  completed = false,
 }: {
   event: IEventData;
   draft?: boolean;
+  completed?: boolean;
 }) => {
   return (
     <>
@@ -14,14 +16,14 @@ const DashboardEvent = ({
         <img
           src={event?.eventImg}
           alt=""
-          className="relative h-full w-full rounded-[10px] bg-contain"
+          className="relative h-full w-full rounded-[10px] object-contain"
         />
         <figcaption className="px-2">
-          <h3 className="px-4 text-2xl">{event?.eventInfo.title}</h3>
+          <h3 className="px-4 py-2 text-xl">{event?.eventInfo.title}</h3>
 
           <Link
             to={draft ? `/edit/${event?.eventId}` : `/${event?.eventId}`}
-            className="flex items-center justify-center gap-2 rounded-[15px] bg-orange-clr py-[10px] text-white"
+            className="flex items-center justify-center gap-2 rounded-[15px] bg-orange-clr py-[7px] text-white"
           >
             <svg
               width="21"
@@ -35,7 +37,11 @@ const DashboardEvent = ({
                 fill="white"
               />
             </svg>
-            {draft ? "Edit Details" : "View Event Details"}
+            {draft
+              ? "Edit Details"
+              : completed
+                ? "View Details"
+                : "View and Apply"}
           </Link>
         </figcaption>
       </figure>

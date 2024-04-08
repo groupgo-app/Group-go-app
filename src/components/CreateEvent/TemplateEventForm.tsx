@@ -15,50 +15,57 @@ import SocialLinkInput from "../SocialLinkInput";
 import isUrl from "../../utils/isUrl";
 import FormSection from "./FormSection";
 import LocationSection from "./LocationSection";
+import { linkToImage } from "../../utils/linkToImage";
+import { ITemplate } from "../../types/Template";
+import { IEventData } from "../../types/Event";
+import { IStep } from "../../types/Step";
 
-const TemplateEventForm = ({ event }: any | { event: any | null }) => {
-  const {
-    selectedTemplate,
+const TemplateEventForm = ({ event }: { event?: IEventData }) => {
+  let selectedTemplate: ITemplate | undefined,
     setCurrentStep,
     creationSteps,
     setCreationSteps,
-    currentStep,
-  } = useContext(AppContext);
-
-  const {
-    eventData,
-    setEventData,
+    currentStep: IStep,
+    user: any,
+    eventData: IEventData,
+    setEventData: React.Dispatch<React.SetStateAction<IEventData>>,
     handleChangeForEventInfo,
     handleChangeForEventType,
-    handleChangeForCompletedSteps,
-  } = useContext(FormContext);
-  const { eventInfo } = eventData;
+    handleChangeForCompletedSteps;
+
+  const appContext = useContext(AppContext);
+  const authContext = useContext(AuthContext);
+  const formContext = useContext(FormContext);
+
+  if (appContext && authContext && formContext) {
+    ({
+      selectedTemplate,
+      setCurrentStep,
+      creationSteps,
+      setCreationSteps,
+      currentStep,
+    } = appContext);
+
+    ({ user } = authContext);
+    ({
+      eventData,
+      setEventData,
+      handleChangeForEventInfo,
+      handleChangeForEventType,
+      handleChangeForCompletedSteps,
+    } = formContext);
+  }
+
+  const { eventInfo } = eventData!;
 
   const [coverImg, setCoverImg] = useState("");
 
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
 
-  const linkToImage = async (link: string) => {
-    const response = await fetch(link);
-    // here image is url/location of image
-    const blob = await response.blob();
-    const file = new File(
-      [blob],
-      `${eventData.eventType}_image.${blob.type.split("/")[1]}`,
-      {
-        type: blob.type,
-      },
-    );
-    return file;
-  };
-
-  const handleUpload: Function = async (file: any, eventData: any) => {
-    // const file = e.target.files[0];
-    // const imgUrl: any = await convertBase64(file);
+  const handleUpload: Function = async (file: any, eventData: IEventData) => {
     if (!file) return;
     const storageRef = ref(storage, `images/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -69,7 +76,12 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         const progress = Math.round(
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
         );
-        console.log(progress);
+        if (progress === 100) {
+          toast("Image Fully Uploaded", {
+            type: "success",
+            autoClose: 3000,
+          });
+        }
         setIsLoadingImage(true);
       },
       (error: any) => {
@@ -81,6 +93,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
           setCoverImg(downloadURL);
+
           const newData = { ...eventData, eventImg: downloadURL };
 
           if (event) {
@@ -101,18 +114,22 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         } else {
           if (eventData.eventImg.length > 0) {
             if (isUrl(eventData.eventImg)) {
-              const file = await linkToImage(`${eventData.eventImg}`);
+              const file = await linkToImage(
+                `${eventData.eventImg}`,
+                eventData,
+              );
               await handleUpload(file, eventData);
             } else {
               const file = await linkToImage(
                 `${import.meta.env.VITE_REACT_SITE_URL}${eventData.eventImg}`,
+                eventData,
               );
               await handleUpload(file, eventData);
             }
           }
         }
       } else {
-        const newData = {
+        const newData: IEventData = {
           ...eventData,
           uid: user?.uid,
           eventInfo: { ...eventData.eventInfo, creatorEmail: user?.email },
@@ -122,6 +139,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         setEventData!(newData);
         const file = await linkToImage(
           `${import.meta.env.VITE_REACT_SITE_URL}/templateimages/others.png`,
+          eventData,
         );
         await handleUpload(file, newData);
       }
@@ -133,7 +151,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
     if (event) {
       navigate(`/edit/${eventData.eventId}?step=1`);
     } else setCurrentStep!(creationSteps![0]);
-    const newStep = creationSteps!.map((step) => {
+    const newStep = creationSteps!.map((step: IStep) => {
       if (step.id === currentStep!.id) {
         return { ...step, checked: false };
       } else {
@@ -162,11 +180,11 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         eventData.eventInfo.maxNumOfParticipant > 0 &&
         eventData.eventInfo.minNumOfParticipant > 0 &&
         eventData.eventInfo.typeOfParticipants.length > 0 &&
-        eventData.eventInfo.amountPerParticipant.length > 0
+        eventData.eventInfo.amountPerParticipant > 0
       ) {
         setIsLoadingSubmit(true);
         if (event) {
-          const newData = {
+          const newData: IEventData = {
             ...eventData,
 
             completedSteps: [true, true, false, false],
@@ -174,7 +192,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           await updateEvent(eventData.eventId, user.uid, newData);
           setEventData(newData);
         } else {
-          const newData = {
+          const newData: IEventData = {
             ...eventData,
             uid: user.uid,
             completedSteps: [true, true, false, false],
@@ -183,7 +201,11 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
         }
 
         setCurrentStep!(creationSteps![2]);
-        setIsLoadingSubmit(false);
+
+        toast("Successfully created Event", {
+          type: "success",
+          autoClose: 3000,
+        });
         navigate(`/edit/${eventData?.eventId}?step=3`);
       } else {
         handleChangeForCompletedSteps!([true, false, false, false]);
@@ -195,6 +217,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
     } catch (error) {
       console.log(error);
       setCurrentStep!(creationSteps![1]);
+    } finally {
       setIsLoadingSubmit(false);
     }
 
@@ -215,7 +238,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
             <FiArrowLeft />
             Go back
           </button>
-          <p className="font-normal">{eventData?.eventType}</p>
+          <p className="font-normal">{eventData!.eventType}</p>
           {isLoadingImage ? (
             <Loader />
           ) : (
@@ -282,18 +305,9 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
               value={eventInfo.creatorEmail}
               onChange={eventInfoChange}
             />
-            {/* <InputField
-              id="link"
-              type="text"
-              label="Social Links"
-              required={true}
-              name="socialLinks"
-              placeholder="https://instagram.com/username (X, instagram, tiktok..)"
-              value={eventInfo.socialLink}
-              onChange={eventInfoChange}
-            /> */}
+
             <SocialLinkInput
-              eventData={eventData}
+              eventData={eventData!}
               setEventData={setEventData!}
               toast={toast}
             />
@@ -307,7 +321,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                   label="Event Type / Category"
                   name="eventType"
                   placeholder="Event Type"
-                  value={eventData?.eventType}
+                  value={eventData!?.eventType}
                   onChange={(e: any) => {
                     handleChangeForEventType!(e.target.value);
                   }}
@@ -323,7 +337,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
                   label="Event Type / Category"
                   name="eventType"
                   placeholder="Event Type"
-                  value={eventData?.eventType}
+                  value={eventData!?.eventType}
                   onChange={(e: any) => {
                     handleChangeForEventType!(e.target.value);
                   }}
@@ -406,7 +420,7 @@ const TemplateEventForm = ({ event }: any | { event: any | null }) => {
           <InputField
             id="amount"
             required={true}
-            type="text"
+            type="number"
             label="Amount per person"
             name="amountPerParticipant"
             placeholder="0.00 (NGN)"
