@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormContext } from "../contexts/FormContext";
 import loader from "../assets/images/loader.svg";
 import { AuthContext } from "../contexts/AuthContext";
@@ -17,18 +17,18 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
   let eventData: IEventData,
     banks,
     bankCode: any,
-    errorMessage,
-    setErrorMessage,
+    errorMessage: string,
+    setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
     setResolvedBankDetails,
     resolvedBankDetails,
     handleChangeAccountNumber: any,
     handleChangeBankName: any,
     handleChangeForCompletedSteps,
     user: any,
-    setCurrentStep,
-    creationSteps,
-    currentStep,
-    setCreationSteps;
+    setCurrentStep: React.Dispatch<React.SetStateAction<IStep>>,
+    creationSteps: IStep[],
+    currentStep: IStep,
+    setCreationSteps: React.Dispatch<React.SetStateAction<IStep[]>>;
   const formContext = useContext(FormContext);
   const authContext = useContext(AuthContext);
   const appContext = useContext(AppContext);
@@ -123,7 +123,15 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
     setCreationSteps!(newStep);
   };
 
-  // console.log("This is eventData", eventData);
+  useEffect(() => {
+    if (!event?.eventType && !eventData.eventType) {
+      toast(
+        "Please select a template or provide details for the event before proceeding here",
+        { type: "warning" },
+      );
+      setCurrentStep(creationSteps[1]);
+    }
+  }, []);
   return (
     <>
       <div className="payment_info_container">
@@ -170,7 +178,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
           )}
         </div>
 
-        {errorMessage && <div className="error">{errorMessage}</div>}
+        {errorMessage! && <div className="error">{errorMessage}</div>}
 
         <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
           <div className="w-full">

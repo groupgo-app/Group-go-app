@@ -5,11 +5,13 @@ import { ITemplate } from "./Template";
 
 export type AppContextState = {
   selectedTemplate?: ITemplate;
-  setSelectedTemplate: any;
+  setSelectedTemplate: React.Dispatch<
+    React.SetStateAction<ITemplate | undefined>
+  >;
   creationSteps: IStep[];
-  setCreationSteps: Function;
+  setCreationSteps: React.Dispatch<React.SetStateAction<IStep[]>>;
   currentStep: IStep;
-  setCurrentStep: Function;
+  setCurrentStep: React.Dispatch<React.SetStateAction<IStep>>;
 };
 
 export type AuthContextState = {
@@ -27,15 +29,15 @@ export type AuthContextState = {
 export type FormContextState = {
   eventData: IEventData;
   banks: any[];
-  bankCode?: any;
-  setImgUrl?: React.Dispatch<React.SetStateAction<string>>;
+  bankCode: any;
+  setImgUrl: React.Dispatch<React.SetStateAction<string>>;
   imgUrl: string;
 
   loading: boolean;
-  setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
-  setErrorMessage?: React.Dispatch<React.SetStateAction<string>>;
-  resolvedBankDetails?: any;
-  setResolvedBankDetails?: any;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  resolvedBankDetails: any;
+  setResolvedBankDetails: React.Dispatch<React.SetStateAction<any>>;
   errorMessage: string;
   setEventData: React.Dispatch<React.SetStateAction<IEventData>>;
   handleChangeForEventInfo?: any;
