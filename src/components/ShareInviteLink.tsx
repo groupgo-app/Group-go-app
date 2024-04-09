@@ -99,7 +99,7 @@ const ShareInviteLink = ({
         )}
         {showModals && (
           <>
-            <div>
+            <div className="my-4">
               <h5 className="font-noraml text-base">Send invite via:</h5>
               <div className="select_method_div">
                 {methods?.map((method, i) => (
