@@ -298,15 +298,14 @@ const Event = () => {
         </div>
 
         <div className="my-4">
-          {event.uid === user.uid &&
-            !isPassedCurrentTime(
-              event.eventInfo.endDate,
-              event.eventInfo.endTime,
-            ) && (
-              <>
-                <ShareInviteLink event={event} showModals={false} />
-              </>
-            )}
+          {!isPassedCurrentTime(
+            event.eventInfo.endDate,
+            event.eventInfo.endTime,
+          ) && (
+            <>
+              <ShareInviteLink event={event} showModals={false} />
+            </>
+          )}
         </div>
       </div>
     );

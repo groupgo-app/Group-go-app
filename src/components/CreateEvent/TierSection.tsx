@@ -20,8 +20,6 @@ const TierSection = ({
     setEventData(newData);
   };
   const handleAddTier = () => {
-    console.log("clicked", tiers);
-
     setTiers([
       ...tiers,
       { id: nanoid(), name: "", price: 0, numberOfTickets: 0 },

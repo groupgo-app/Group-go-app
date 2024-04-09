@@ -20,9 +20,11 @@ import { FaCheck, FaCopy, FaShare } from "react-icons/fa6";
 const ShareInviteLink = ({
   event,
   showModals = true,
+  showButtons = true,
 }: {
   event: IEventData;
   showModals?: boolean;
+  showButtons?: boolean;
 }) => {
   const methods = ["Invite Link", "Email"];
 
@@ -53,45 +55,48 @@ const ShareInviteLink = ({
     <>
       <div className="share_link_container">
         <h3 className="font-normal">Share Event</h3>
-        <div className="flex items-center gap-2">
-          <WhatsappShareButton url="https://groupgo.vercel.app">
-            <WhatsappIcon className="h-[40px] w-[40px]" />
-          </WhatsappShareButton>
-          <FacebookShareButton url={pageUrl}>
-            <FacebookIcon className="h-[40px] w-[40px]" />
-          </FacebookShareButton>
-          <TwitterShareButton url={pageUrl}>
-            <XIcon className="h-[40px] w-[40px]" />
-          </TwitterShareButton>
-          <EmailShareButton url={pageUrl}>
-            <EmailIcon className="h-[40px] w-[40px]" />
-          </EmailShareButton>
-          <CopyToClipboard
-            text={pageUrl}
-            onCopy={() => {
-              setCopied(true);
-              setTimeout(() => {
-                setCopied(false);
-              }, 3000);
-              toast("Link Copied", { type: "success" });
-            }}
-          >
-            <div className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center bg-black text-white">
-              {copied ? (
-                <FaCheck className="text-2xl" />
-              ) : (
-                <FaCopy className="text-2xl" />
-              )}
-            </div>
-          </CopyToClipboard>
-          <button
-            type="button"
-            className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center bg-black text-white"
-            onClick={handleShare}
-          >
-            <FaShare className="text-2zl" />
-          </button>
-        </div>
+        <p>Share this event with friends</p>
+        {showButtons && (
+          <div className="flex items-center gap-2">
+            <WhatsappShareButton url={pageUrl}>
+              <WhatsappIcon className="h-[40px] w-[40px] rounded-full" />
+            </WhatsappShareButton>
+            <FacebookShareButton url={pageUrl}>
+              <FacebookIcon className="h-[40px] w-[40px] rounded-full" />
+            </FacebookShareButton>
+            <TwitterShareButton url={pageUrl}>
+              <XIcon className="h-[40px] w-[40px] rounded-full" />
+            </TwitterShareButton>
+            <EmailShareButton url={pageUrl}>
+              <EmailIcon className="h-[40px] w-[40px] rounded-full" />
+            </EmailShareButton>
+            <CopyToClipboard
+              text={pageUrl}
+              onCopy={() => {
+                setCopied(true);
+                setTimeout(() => {
+                  setCopied(false);
+                }, 3000);
+                toast("Link Copied", { type: "success" });
+              }}
+            >
+              <div className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-black text-white">
+                {copied ? (
+                  <FaCheck className="text-2xl" />
+                ) : (
+                  <FaCopy className="text-2xl" />
+                )}
+              </div>
+            </CopyToClipboard>
+            <button
+              type="button"
+              className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full bg-black text-white"
+              onClick={handleShare}
+            >
+              <FaShare className="text-2zl" />
+            </button>
+          </div>
+        )}
         {showModals && (
           <>
             <div>
