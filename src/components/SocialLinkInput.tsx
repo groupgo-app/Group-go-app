@@ -15,7 +15,7 @@ const SocialLinkInput = ({
 }) => {
   const [userInput, setUserInput] = useState("");
   const [links, setLinks] = useState<string[]>([]);
-  const inputRef = useRef<any>(null);
+  // const inputRef = useRef<any>(null);
 
   const handleInputChange = (event: any) => {
     setUserInput(event.target.value);
@@ -74,11 +74,11 @@ const SocialLinkInput = ({
     setLinks(newLinks);
   };
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.blur(); // Remove focus after component mounts
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (inputRef.current) {
+  //     inputRef.current.blur(); // Remove focus after component mounts
+  //   }
+  // }, []);
   // useEffect(() => {
   //   document.addEventListener("keydown", handleEscape);
 
@@ -130,8 +130,9 @@ const SocialLinkInput = ({
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         autoFocus={false}
-        ref={inputRef}
+        // ref={inputRef}
       />
+
       <div className="flex flex-wrap items-center">{links.map(renderLink)}</div>
     </div>
   );

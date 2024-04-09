@@ -76,7 +76,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
     for (const obj of arr) {
       if (obj.hasOwnProperty("numberOfTickets")) {
         // Check if "number" property exists
-        totalSum += obj.numberOfTickets;
+        totalSum += Number(obj.numberOfTickets);
       }
     }
     return totalSum;

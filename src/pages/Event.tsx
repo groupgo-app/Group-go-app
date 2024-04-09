@@ -7,7 +7,16 @@ import moneyImg from "../assets/images/money.svg";
 import PageNotFound from "./PageNotFound";
 import { updateParticipantsCount } from "../utils/events";
 import { AuthContext } from "../contexts/AuthContext";
-
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+  XIcon,
+  LineShareButton,
+  LineIcon,
+} from "react-share";
 import { usePaystackPayment } from "react-paystack";
 import moment from "moment";
 import { nanoid } from "nanoid";
@@ -20,13 +29,14 @@ import { toast } from "react-toastify";
 import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
 import ShareInviteLink from "../components/ShareInviteLink";
 import { MdEmail } from "react-icons/md";
-import { FaUser } from "react-icons/fa6";
+import { FaMoneyBill, FaTicket, FaUser } from "react-icons/fa6";
 
 const Event = () => {
   let user;
   const [loading, setLoading] = useState(true);
   const { eventId } = useParams();
   const [event, setEvent] = useState<IEventData>();
+  const pageUrl = window.location.href;
 
   const authContext = useContext(AuthContext);
 
@@ -65,7 +75,7 @@ const Event = () => {
   const onClose = () => {
     toast("Your payment was unsuccessful, try again later!", { type: "error" });
   };
-
+  const Naira = <>&#8358;</>;
   const initializePayment = usePaystackPayment(config);
 
   const getDataSingleEvent = async () => {
@@ -96,7 +106,7 @@ const Event = () => {
           <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
         </div>
 
-        <div className="my-4 aspect-video w-full ">
+        <div className="my-4 aspect-video w-full">
           <img
             className="aspect-video w-full rounded-sm object-cover"
             src={event?.eventImg}
@@ -110,9 +120,11 @@ const Event = () => {
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="my-4 flex flex-wrap gap-2 ">
+        <div className="my-4 flex flex-wrap gap-2">
           {/* Date */}
-          <div className="  h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[45%]">
+          <div
+            className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] ${event.hasTiers ? "tablet:w-[45%] laptop:w-[30%]" : "tablet:w-[45%]"}`}
+          >
             <div className="flex items-center gap-[8px]">
               <img src={dateImg} alt="" />
               <p>Date and time</p>
@@ -134,82 +146,111 @@ const Event = () => {
             </div>
           </div>
           {/* Payment */}
-          <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
-            <div className="flex items-center gap-[8px]">
-              <img src={moneyImg} alt="" />
-              <p>Commitment per person</p>
-            </div>
 
-            <div className="">
-              <h5 className="font-medium">
-                &#8358; {event?.eventInfo?.amountPerParticipant}
-              </h5>
+          {event.hasTiers ? (
+            <div className="my-4 w-full">
+              <h3>Event Tiers</h3>
+              <div className="my-4 flex flex-wrap items-center gap-4">
+                {event.eventInfo.tiers?.map((tier) => (
+                  <div
+                    key={tier.id}
+                    className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
+                  >
+                    <h5>{tier.name}</h5>
+                    <div className="flex items-center gap-2">
+                      <FaMoneyBill /> {Naira} {tier.price}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FaTicket /> {tier.numberOfTickets} Tickets Available{" "}
+                    </div>
+                    <div>
+                      <button className="mt-1 w-full rounded-xl bg-orange-clr p-2 text-white">
+                        Buy ticket
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="my-4 flex items-center gap-[8px]">
-              <img src={profile} alt="" />
-              <p className="text-sm capitalize">
-                {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
-                {event?.eventInfo?.typeOfParticipants} Allowed
-              </p>
-            </div>
-            <div>
-              <h5 className="mb-[15px]">
-                {isPassedCurrentTime(
-                  event.eventInfo.endDate,
-                  event.eventInfo.endDate,
-                ) ? (
-                  "0"
-                ) : (
-                  <>
-                    {`${
-                      (event?.eventInfo?.maxNumOfParticipant || 0) -
-                      (event?.numberOfPaidParticipants || 0)
-                    }`}{" "}
-                  </>
-                )}
-                Tickets available
-              </h5>
-              <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
-              <button
-                onClick={handlePaymentSubmit}
-                disabled={
-                  event?.numberOfPaidParticipants ===
-                    Number(event?.eventInfo?.maxNumOfParticipant) ||
-                  isPassedCurrentTime(
+          ) : (
+            <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
+              <div className="flex items-center gap-[8px]">
+                <img src={moneyImg} alt="" />
+                <p>Commitment per person</p>
+              </div>
+
+              <div className="">
+                <h5 className="font-medium">
+                  &#8358; {event?.eventInfo?.amountPerParticipant}
+                </h5>
+              </div>
+              <div className="my-4 flex items-center gap-[8px]">
+                <img src={profile} alt="" />
+                <p className="text-sm capitalize">
+                  {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
+                  {event?.eventInfo?.typeOfParticipants} Allowed
+                </p>
+              </div>
+              <div>
+                <h5 className="mb-[15px]">
+                  {isPassedCurrentTime(
+                    event.eventInfo.endDate,
+                    event.eventInfo.endDate,
+                  ) ? (
+                    "0"
+                  ) : (
+                    <>
+                      {`${
+                        (event?.eventInfo?.maxNumOfParticipant || 0) -
+                        (event?.numberOfPaidParticipants || 0)
+                      }`}{" "}
+                    </>
+                  )}
+                  Tickets available
+                </h5>
+                <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
+                <button
+                  onClick={handlePaymentSubmit}
+                  disabled={
+                    event?.numberOfPaidParticipants ===
+                      Number(event?.eventInfo?.maxNumOfParticipant) ||
+                    isPassedCurrentTime(
+                      event?.eventInfo.endDate,
+                      event?.eventInfo.endTime,
+                    )
+                  }
+                  className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
+                    event?.numberOfPaidParticipants ===
+                      Number(event?.eventInfo?.maxNumOfParticipant) ||
+                    isPassedCurrentTime(
+                      event?.eventInfo.endDate,
+                      event?.eventInfo.endTime,
+                    )
+                      ? "cursor-not-allowed bg-red-900"
+                      : ""
+                  }`}
+                >
+                  {isPassedCurrentTime(
                     event?.eventInfo.endDate,
                     event?.eventInfo.endTime,
-                  )
-                }
-                className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
-                  event?.numberOfPaidParticipants ===
-                    Number(event?.eventInfo?.maxNumOfParticipant) ||
-                  isPassedCurrentTime(
-                    event?.eventInfo.endDate,
-                    event?.eventInfo.endTime,
-                  )
-                    ? "cursor-not-allowed bg-red-900"
-                    : ""
-                }`}
-              >
-                {isPassedCurrentTime(
-                  event?.eventInfo.endDate,
-                  event?.eventInfo.endTime,
-                ) ? (
-                  <>Event Ended</>
-                ) : (
-                  <>
-                    {event?.numberOfPaidParticipants ===
-                    Number(event?.eventInfo?.maxNumOfParticipant)
-                      ? "No more ticket"
-                      : "Apply for event"}
-                  </>
-                )}
-              </button>
+                  ) ? (
+                    <>Event Ended</>
+                  ) : (
+                    <>
+                      {event?.numberOfPaidParticipants ===
+                      Number(event?.eventInfo?.maxNumOfParticipant)
+                        ? "No more ticket"
+                        : "Apply for event"}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
+
         {/* Organiser Details */}
-        <div className="w-fit rounded-xl bg-gray-300 p-4">
+        <div className="my-4 w-fit rounded-xl bg-gray-300 p-4">
           <h4>Host / Organiser Details</h4>
           <div className="flex justify-center">
             <FaUser className="text-center text-4xl" />
@@ -228,7 +269,7 @@ const Event = () => {
           </p>
           <p className="flex flex-wrap items-center gap-1 text-sm">
             Event Links:{" "}
-            <div className="flex flex-wrap items-center gap-1">
+            <span className="flex flex-wrap items-center gap-1">
               {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
                 (link: string, i: number) => (
                   <span
@@ -242,7 +283,7 @@ const Event = () => {
                   </span>
                 ),
               )}
-            </div>
+            </span>
           </p>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
@@ -254,8 +295,6 @@ const Event = () => {
             {event.eventInfo.eventLocation.display_name}
           </p>
           <LocationMap location={event.eventInfo.eventLocation} />
-          {/* <img src={mapImg} alt="" className="w-full map" /> */}
-          {/* <div className="w-full"><iframe width="100%" height="281" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps vehicle tracker</a></iframe></div> */}
         </div>
 
         <div className="my-4">
@@ -265,55 +304,10 @@ const Event = () => {
               event.eventInfo.endTime,
             ) && (
               <>
-                <ShareInviteLink event={event} />
+                <ShareInviteLink event={event} showModals={false} />
               </>
             )}
         </div>
-
-        {/* <div className="my-[55px] flex flex-wrap gap-10">
-          <div className="flex w-fit max-w-full flex-col gap-[24px] laptop:w-[400px]">
-            <div className="flex flex-col gap-[6px]">
-              <h3 className="">{event?.eventInfo.title}</h3>
-              <p className="text-sm">Event Type: {event?.eventType}</p>
-              <div className="items-center gap-[22px]">
-                <div className="my-4 flex items-center gap-[8px]">
-                  <img src={location} alt="" />
-                  <p className="text-xs">
-                    {event?.eventInfo?.eventLocation?.display_name}
-                  </p>
-                </div>
-                <div className="my-4 flex items-center gap-[8px]">
-                  <img src={profile} alt="" />
-                  <p className="text-xs">
-                    {event?.eventInfo?.typeOfParticipants}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3>Event Description</h3>
-              <p>{event?.eventInfo?.eventDesc}</p>
-            </div>
-          </div>
-
-          <div className="flex w-fit max-w-full flex-col gap-[18px]">
-            <div className="flex flex-col gap-4 tablet:flex-row">
-              <div className="h-[149px] w-full flex-col  justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[50%]">
-                <div className="flex items-center gap-[8px]">
-                  <img src={moneyImg} alt="" />
-                  <p>Commitment per person</p>
-                </div>
-
-                <div className="">
-                  <h5 className="font-medium">
-                    &#8358; {event?.eventInfo?.amountPerParticipant}
-                  </h5>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     );
   } else {

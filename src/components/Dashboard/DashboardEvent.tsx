@@ -37,15 +37,10 @@ const DashboardEvent = ({
                 fill="white"
               />
             </svg>
-            {draft
-              ? "Edit Details"
-              : completed
-                ? "View Details"
-                : "View and Apply"}
+            {draft ? "Edit Details" : completed ? "View Details" : "View"}
           </Link>
         </figcaption>
       </figure>
-      <div></div>
     </>
   );
 };

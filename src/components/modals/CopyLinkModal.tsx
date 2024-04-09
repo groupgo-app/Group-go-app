@@ -32,7 +32,7 @@ const CopyLInkModal = ({ event }: { event: IEventData }) => {
     <>
       <div className="w-full">
         <div className="flex w-full flex-col justify-between gap-[15px] rounded-[15px] bg-white px-2 py-[6px] font-light text-black-clr tablet:flex-row tablet:items-center tablet:gap-0 tablet:border-[1px] tablet:border-[#06081121]">
-          <p className="text-wrap rounded-[15px] border-[1px] border-[#06081121] px-2 py-[6px] text-base font-light text-black-clr tablet:border-none ">
+          <p className="overflow-x-scroll text-wrap rounded-[15px] border-[1px] border-[#06081121] px-2 py-[6px] text-base font-light text-black-clr tablet:border-none">
             {`${import.meta.env.VITE_REACT_SITE_URL}/${event.eventId}`}
           </p>
           <button
