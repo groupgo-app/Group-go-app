@@ -97,6 +97,7 @@ const PaymentPage = ({}) => {
     await initializePayment(onSuccess, onClose);
   };
 
+  const astesrisk = <span className="text-red-500">*</span>;
   return (
     <form
       action=""
@@ -123,8 +124,9 @@ const PaymentPage = ({}) => {
         <div className="my-4">
           <InputField
             type="text"
-            label="First Name (required)"
+            label="First Name"
             placeholder="First Name"
+            required
             value={firstName}
             onChange={(e: any) => {
               setFirstName(e.target.value);
@@ -134,9 +136,10 @@ const PaymentPage = ({}) => {
         <div className="my-4">
           <InputField
             type="text"
-            label="Last Name (required)"
+            label="Last Name"
             placeholder="Last Name"
             value={lastName}
+            required
             onChange={(e: any) => {
               setLastName(e.target.value);
             }}
@@ -145,8 +148,9 @@ const PaymentPage = ({}) => {
         <div className="my-4">
           <InputField
             type="email"
-            label="Email (required)"
+            label="Email"
             placeholder="user@email.com"
+            required
             name="email"
             value={email}
             onChange={(e: any) => {
@@ -157,9 +161,10 @@ const PaymentPage = ({}) => {
         <div className="my-4">
           <InputField
             type="email"
-            label="Confirm Email (required)"
+            label="Confirm Email"
             name="confirmEmail"
             placeholder="user@email.com"
+            required
             value={confirmEmail}
             onChange={(e: any) => {
               setConfirmEmail(e.target.value);
@@ -169,8 +174,9 @@ const PaymentPage = ({}) => {
         <div className="my-4">
           <InputField
             type="text"
-            label="Phone Number (required)"
+            label="Phone Number"
             placeholder="+234XXXXXXXXXX"
+            required
             value={phoneNumber}
             onChange={(e: any) => {
               setPhoneNumber(e.target.value);

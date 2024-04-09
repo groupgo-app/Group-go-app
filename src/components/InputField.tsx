@@ -9,12 +9,18 @@ const InputField = ({
   autoFocus,
   onKeyDown,
   onBlur,
+  required,
   ref,
 }: any) => {
+  const asterisk = <span className="text-red-500">*</span>;
   return (
     <>
       <div className="field_set_div">
-        {label && <label htmlFor={id}>{label}</label>}
+        {label && (
+          <label htmlFor={id}>
+            {required && asterisk} {label}
+          </label>
+        )}
         {type === "textarea" ? (
           <textarea
             cols={50}

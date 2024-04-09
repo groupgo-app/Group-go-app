@@ -156,8 +156,13 @@ const Event = () => {
                     </div>
                     <div>
                       <button
-                        className="mt-1 w-full rounded-xl bg-orange-clr p-2 text-white"
+                        className={`mt-1 w-full rounded-xl bg-orange-clr p-2 text-white ${
+                          tier.numberOfTickets === 0 || isEnded
+                            ? "cursor-not-allowed bg-red-900"
+                            : ""
+                        }`}
                         type="button"
+                        disabled={tier.numberOfTickets === 0 || isEnded}
                         onClick={(e) => {
                           handleTierPayment(e, tier, i);
                         }}
