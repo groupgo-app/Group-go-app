@@ -5,6 +5,7 @@ import { fetchBanks } from "../api/banks";
 import { AppContext } from "./AppContext";
 import { templates } from "../data/templates";
 import { FormContextState } from "../types/contexts";
+import { IPayEvent } from "../types/Event";
 
 export const FormContext = createContext<FormContextState | null>(null);
 
@@ -29,6 +30,11 @@ export const FormContextProvider = ({
   const [resolvedBankDetails, setResolvedBankDetails] = React.useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [eventData, setEventData] = useState(initialEventData);
+  const [paymentData, setPaymentData] = useState<IPayEvent>({
+    amount: 0,
+    eventId: "",
+    title: "",
+  });
 
   const handleRedirect = async (id: any) => {
     const selectTemplate = templates.find((template) => template.id === id);
@@ -145,6 +151,8 @@ export const FormContextProvider = ({
         setResolvedBankDetails,
         handleRedirect,
         errorMessage,
+        paymentData,
+        setPaymentData,
         setErrorMessage,
         setEventData,
         handleChangeForEventInfo,

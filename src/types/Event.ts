@@ -6,6 +6,15 @@ export type IEventTier = {
   price: number;
   numberOfTickets: number;
 };
+
+export type IPayEvent = {
+  eventId: string;
+  tier?: IEventTier;
+  tierIndex?: number;
+  hasTier?: boolean;
+  amount: number;
+  title: string;
+};
 export type IEventData = {
   id?: string;
   uid: string;

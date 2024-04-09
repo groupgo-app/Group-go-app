@@ -109,12 +109,50 @@ export const fetchEventById = async (eventId: string) => {
 
 export const updateParticipantsCount = async (eventId: string) => {
   try {
-    // const eventRef = query();
-    const eventRef = doc(db, "event", eventId);
-    await updateDoc(eventRef, {
-      numberOfPaidParticipants: increment(1),
+    const dataList: any[] = [];
+    const q = query(eventsCollectionRef, where("eventId", "==", eventId));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      let data = doc.data();
+      data.id = doc.id;
+      dataList.push(data);
     });
-  } catch (error: any) {
-    console.log(error.stack);
+    if (dataList[0]) {
+      const eventDoc = doc(db, "events", dataList[0].id);
+      await updateDoc(eventDoc, {
+        numberOfPaidParticipants: increment(1),
+      });
+    } else {
+      return Error("Data not found");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateTicketCount = async (
+  eventId: string,
+  eventData: IEventData,
+) => {
+  try {
+    const dataList: any[] = [];
+    const q = query(eventsCollectionRef, where("eventId", "==", eventId));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      let data = doc.data();
+      data.id = doc.id;
+      dataList.push(data);
+    });
+    if (dataList[0]) {
+      const eventDoc = doc(db, "events", dataList[0].id);
+
+      await updateDoc(eventDoc, eventData);
+    } else {
+      return Error("Data not found");
+    }
+  } catch (error) {
+    console.error(error);
   }
 };

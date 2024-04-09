@@ -1,86 +1,78 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import location from "../assets/images/location.svg";
 import profile from "../assets/images/profile.svg";
 import dateImg from "../assets/images/date.svg";
 import moneyImg from "../assets/images/money.svg";
 import PageNotFound from "./PageNotFound";
-import { updateParticipantsCount } from "../utils/events";
 import { AuthContext } from "../contexts/AuthContext";
-import {
-  FacebookIcon,
-  FacebookShareButton,
-  TwitterShareButton,
-  WhatsappIcon,
-  WhatsappShareButton,
-  XIcon,
-  LineShareButton,
-  LineIcon,
-} from "react-share";
-import { usePaystackPayment } from "react-paystack";
 import moment from "moment";
-import { nanoid } from "nanoid";
-import { IEventData } from "../types/Event";
+import { IEventData, IEventTier, IPayEvent } from "../types/Event";
 import { fetchEventById } from "../api/events";
 import { SocialIcon } from "react-social-icons";
 import LocationMap from "../components/CreateEvent/LocationMap";
 import Loader from "../components/Loader";
-import { toast } from "react-toastify";
+
 import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
 import ShareInviteLink from "../components/ShareInviteLink";
 import { MdEmail } from "react-icons/md";
 import { FaMoneyBill, FaTicket, FaUser } from "react-icons/fa6";
+import { FormContext } from "../contexts/FormContext";
 
 const Event = () => {
-  let user;
+  // let user;
+  let setPaymentData: React.Dispatch<React.SetStateAction<IPayEvent>>,
+    setEventData: any;
   const [loading, setLoading] = useState(true);
   const { eventId } = useParams();
   const [event, setEvent] = useState<IEventData>();
-  const pageUrl = window.location.href;
 
   const authContext = useContext(AuthContext);
+  const formContext = useContext(FormContext);
 
-  if (authContext) {
-    ({ user } = authContext);
+  const navigate = useNavigate();
+  if (authContext && formContext) {
+    // ({ user } = authContext);
+    ({ setPaymentData, setEventData } = formContext);
   }
 
   const startDate = moment(event?.eventInfo?.startDate).format("DD MMM, YYYY");
   const endDate = moment(event?.eventInfo?.endDate).format("DD MMM, YYYY");
-
   const startTime = moment(event?.eventInfo?.startTime, "HH:mm").format(
     "hh:mm A",
   );
   const endTime = moment(event?.eventInfo?.endTime, "HH:mm").format("hh:mm A");
 
-  const config = {
-    reference: nanoid(),
-    email: user?.email,
-    publicKey: import.meta.env.VITE_REACT_PAYSTACK_API,
-    amount: Number(event?.eventInfo?.amountPerParticipant) * 100,
-    metadata: {
-      custom_fields: [
-        {
-          display_name: user?.email,
-          variable_name: user?.email,
-          value: user?.email,
-        },
-      ],
-    },
-  };
-
-  const onSuccess = () => {
-    updateParticipantsCount(eventId);
-  };
-
-  const onClose = () => {
-    toast("Your payment was unsuccessful, try again later!", { type: "error" });
-  };
   const Naira = <>&#8358;</>;
-  const initializePayment = usePaystackPayment(config);
+
+  const handleTierPayment = (e: any, tier: IEventTier, index: number) => {
+    e.preventDefault();
+    setPaymentData({
+      amount: tier.price,
+      eventId: event?.eventId!,
+      title: event?.eventInfo.title!,
+      hasTier: event?.hasTiers,
+      tier,
+      tierIndex: index,
+    });
+    navigate(`/${eventId}/pay`);
+  };
+
+  const handleNonTierPayment = (e: any) => {
+    e.preventDefault();
+    setPaymentData({
+      amount: event?.eventInfo.amountPerParticipant!,
+      eventId: event?.eventId!,
+      title: event?.eventInfo.title!,
+      hasTier: event?.hasTiers,
+    });
+    navigate(`/${eventId}/pay`);
+  };
 
   const getDataSingleEvent = async () => {
     try {
       const saveDataEvent = await fetchEventById(eventId!);
+      setEventData(saveDataEvent);
       setEvent(saveDataEvent);
       setLoading(false);
     } catch (error: any) {
@@ -91,14 +83,13 @@ const Event = () => {
   useEffect(() => {
     getDataSingleEvent();
   }, [eventId]);
+  const isEnded = isPassedCurrentTime(
+    event?.eventInfo.endDate,
+    event?.eventInfo.endDate,
+  );
 
-  const handlePaymentSubmit = async () => {
-    await initializePayment(onSuccess, onClose);
-  };
-
-  if (loading) {
-    return <Loader />;
-  } else if (event) {
+  if (loading) return <Loader />;
+  else if (event) {
     return (
       <div className="w-full overflow-hidden">
         <div>
@@ -151,7 +142,7 @@ const Event = () => {
             <div className="my-4 w-full">
               <h3>Event Tiers</h3>
               <div className="my-4 flex flex-wrap items-center gap-4">
-                {event.eventInfo.tiers?.map((tier) => (
+                {event.eventInfo.tiers?.map((tier, i) => (
                   <div
                     key={tier.id}
                     className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
@@ -164,7 +155,13 @@ const Event = () => {
                       <FaTicket /> {tier.numberOfTickets} Tickets Available{" "}
                     </div>
                     <div>
-                      <button className="mt-1 w-full rounded-xl bg-orange-clr p-2 text-white">
+                      <button
+                        className="mt-1 w-full rounded-xl bg-orange-clr p-2 text-white"
+                        type="button"
+                        onClick={(e) => {
+                          handleTierPayment(e, tier, i);
+                        }}
+                      >
                         Buy ticket
                       </button>
                     </div>
@@ -193,10 +190,7 @@ const Event = () => {
               </div>
               <div>
                 <h5 className="mb-[15px]">
-                  {isPassedCurrentTime(
-                    event.eventInfo.endDate,
-                    event.eventInfo.endDate,
-                  ) ? (
+                  {isEnded ? (
                     "0"
                   ) : (
                     <>
@@ -210,22 +204,14 @@ const Event = () => {
                 </h5>
                 <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
                 <button
-                  onClick={handlePaymentSubmit}
+                  onClick={handleNonTierPayment}
                   disabled={
                     event?.numberOfPaidParticipants ===
-                      Number(event?.eventInfo?.maxNumOfParticipant) ||
-                    isPassedCurrentTime(
-                      event?.eventInfo.endDate,
-                      event?.eventInfo.endTime,
-                    )
+                      Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
                   }
                   className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
                     event?.numberOfPaidParticipants ===
-                      Number(event?.eventInfo?.maxNumOfParticipant) ||
-                    isPassedCurrentTime(
-                      event?.eventInfo.endDate,
-                      event?.eventInfo.endTime,
-                    )
+                      Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
                       ? "cursor-not-allowed bg-red-900"
                       : ""
                   }`}

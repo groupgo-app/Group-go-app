@@ -1,5 +1,5 @@
 import React from "react";
-import { IEventData } from "./Event";
+import { IEventData, IPayEvent } from "./Event";
 import { IStep } from "./Step";
 import { ITemplate } from "./Template";
 
@@ -32,7 +32,8 @@ export type FormContextState = {
   bankCode: any;
   setImgUrl: React.Dispatch<React.SetStateAction<string>>;
   imgUrl: string;
-
+  paymentData?: IPayEvent;
+  setPaymentData: React.Dispatch<React.SetStateAction<IPayEvent>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
