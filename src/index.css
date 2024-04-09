@@ -153,7 +153,7 @@ ul li {
 }
 
 .share_link_container {
-  @apply flex w-full flex-col gap-8;
+  @apply flex w-full flex-col;
 }
 
 .select_method_div {

@@ -54,10 +54,10 @@ const ShareInviteLink = ({
   return (
     <>
       <div className="share_link_container">
-        <h3 className="font-normal">Share Event</h3>
+        <h3 className="text-5xl font-normal">Share Event</h3>
         <p>Share this event with friends</p>
         {showButtons && (
-          <div className="flex items-center gap-2">
+          <div className="my-4 flex items-center gap-2">
             <WhatsappShareButton url={pageUrl}>
               <WhatsappIcon className="h-[40px] w-[40px] rounded-full" />
             </WhatsappShareButton>
