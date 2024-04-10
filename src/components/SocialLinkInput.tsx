@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState} from "react";
 import { SocialIcon } from "react-social-icons";
 import InputField from "./InputField";
 import { BiTrash } from "react-icons/bi";
@@ -92,9 +92,9 @@ const SocialLinkInput = ({
     return (
       <div
         key={link}
-        className="m-1 flex items-center justify-between gap-2 rounded-full bg-gray-300 px-2 py-1"
+        className="flex gap-2 justify-between items-center px-2 py-1 m-1 bg-gray-300 rounded-full"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <SocialIcon url={link} style={{ width: "15px", height: "15px" }} />
           <a
             href={link}
@@ -106,7 +106,7 @@ const SocialLinkInput = ({
           </a>
         </div>
         <div
-          className="cursor-pointer text-xs text-red-500"
+          className="text-xs text-red-500 cursor-pointer"
           onClick={() => {
             handleDelete(i);
           }}

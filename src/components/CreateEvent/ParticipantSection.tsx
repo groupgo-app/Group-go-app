@@ -1,4 +1,3 @@
-import React from "react";
 import { IEventData } from "../../types/Event";
 import FormSection from "./FormSection";
 import InputField from "../InputField";
