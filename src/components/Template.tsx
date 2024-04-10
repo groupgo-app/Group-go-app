@@ -16,7 +16,13 @@ const Template = ({
   if (formContext) ({ handleChangeForCompletedSteps } = formContext);
   return (
     <>
-      <div className="template_module_container max-w-[300px] grow tablet:max-w-[250px]">
+      <div
+        className="template_module_container max-w-[300px] grow cursor-pointer tablet:max-w-[250px]"
+        onClick={() => {
+          handleChangeForCompletedSteps!([true, false, false, false]);
+          handleRedirect(template.id);
+        }}
+      >
         <div className="w-full">
           <img
             src={template.imgUrl}
@@ -27,13 +33,7 @@ const Template = ({
         <p className="pl-1 font-normal text-black-clr">
           {template.templateName}
         </p>
-        <div
-          className="choose_template_button"
-          onClick={() => {
-            handleChangeForCompletedSteps!([true, false, false, false]);
-            handleRedirect(template.id);
-          }}
-        >
+        <div className="choose_template_button">
           <p className="text-[15px]">Choose template</p>
           <svg
             width="20"

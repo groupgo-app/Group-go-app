@@ -93,7 +93,7 @@ const Event = () => {
   if (loading) return <Loader />;
   else if (event) {
     return (
-      <div className="w-full overflow-hidden">
+      <div className="overflow-hidden w-full">
         <Helmet>
           <title>Groupgo | {event.eventInfo.title}</title>
           <meta
@@ -142,9 +142,9 @@ const Event = () => {
           <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
         </div>
 
-        <div className="my-4 aspect-video w-full">
+        <div className="my-4 w-full aspect-video">
           <img
-            className="aspect-video w-full rounded-sm object-cover"
+            className="object-cover w-full rounded-sm aspect-video"
             src={event?.eventImg}
             alt=""
           />
@@ -156,7 +156,7 @@ const Event = () => {
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="my-4 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 my-4">
           {/* Date */}
           <div
             className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] ${event.hasTiers ? "tablet:w-[45%] laptop:w-[30%]" : "tablet:w-[45%]"}`}
@@ -186,17 +186,17 @@ const Event = () => {
           {event.hasTiers ? (
             <div className="my-4 w-full">
               <h3>Event Tiers</h3>
-              <div className="my-4 flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap gap-4 items-center my-4">
                 {event.eventInfo.tiers?.map((tier, i) => (
                   <div
                     key={tier.id}
                     className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
                   >
                     <h5>{tier.name}</h5>
-                    <div className="flex items-center gap-2">
+                    <div className="flex gap-2 items-center">
                       <FaMoneyBill /> {Naira} {tier.price}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex gap-2 items-center">
                       <FaTicket /> {tier.numberOfTickets} Tickets Available{" "}
                     </div>
                     <div>
@@ -286,15 +286,15 @@ const Event = () => {
         </div>
 
         {/* Organiser Details */}
-        <div className="my-4 w-fit rounded-xl bg-gray-300 p-4">
+        <div className="p-4 my-4 bg-gray-300 rounded-xl w-fit">
           <h4>Host / Organiser Details</h4>
           <div className="flex justify-center">
-            <FaUser className="text-center text-4xl" />
+            <FaUser className="text-4xl text-center" />
           </div>
           <h5 className="text-center">
             <strong>{event?.eventInfo?.creatorName}</strong>
           </h5>
-          <p className="flex items-center gap-2 text-sm">
+          <p className="flex gap-2 items-center text-sm">
             <MdEmail />
             <span>
               Email:{" "}
@@ -303,14 +303,14 @@ const Event = () => {
               </a>
             </span>
           </p>
-          <p className="flex flex-wrap items-center gap-1 text-sm">
+          <p className="flex flex-wrap gap-1 items-center text-sm">
             Event Links:{" "}
-            <span className="flex flex-wrap items-center gap-1">
+            <span className="flex flex-wrap gap-1 items-center">
               {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
                 (link: string, i: number) => (
                   <span
                     key={i}
-                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
+                    className="flex gap-3 items-center p-2 rounded-xl w-fit hover:bg-gray-300"
                   >
                     <SocialIcon
                       url={link}
@@ -323,7 +323,7 @@ const Event = () => {
           </p>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
-          <h3 className="flex items-center gap-4">
+          <h3 className="flex gap-4 items-center">
             <img src={location} alt="" />
             Location
           </h3>

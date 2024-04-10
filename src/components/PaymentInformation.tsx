@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { FormContext } from "../contexts/FormContext";
-import loader from "../assets/images/loader.svg";
 import { AuthContext } from "../contexts/AuthContext";
 import { findUser } from "../utils/events";
 import { AppContext } from "../contexts/AppContext";
@@ -58,7 +57,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmitForm = async (e: any) => {
+  const handleSubmitForm = async (e: any, accountNumber: string | number) => {
     e.preventDefault();
     setLoading(true);
 
@@ -70,7 +69,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
         eventData.paymentInfo.accountNumber
       ) {
         isBankResolutionSuccessful = await resolveBankAccount({
-          accountNumber: eventData.paymentInfo.accountNumber,
+          accountNumber,
           bankCode: bankCode,
           setErrorMessage: setErrorMessage!,
           setCurrentStep: setCurrentStep!,
@@ -82,14 +81,24 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       }
 
       if (!isBankResolutionSuccessful)
-        return toast("Bank resolution was not successful", { type: "error" });
+        return toast(
+          "Bank resolution was not successful please check the details and check again",
+          { type: "error" },
+        );
     } catch (error) {
-      // console.error("Error handling form submission:", error);
       if (error) return;
-      // setCurrentStep!(creationSteps![2]);
     } finally {
       setLoading(false);
     }
+  };
+  const numberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChangeAccountNumber(e.target.value);
+    setErrorMessage("");
+    if (
+      eventData.paymentInfo.bankName.length > 0 &&
+      e.target.value.length === 10
+    )
+      handleSubmitForm(e, e.target.value);
   };
   const goForward = async () => {
     const userFound = await findUser(user?.uid);
@@ -136,7 +145,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       <div className="payment_info_container">
         <button
           onClick={handleBackButton}
-          className="flex items-center gap-2 text-orange-clr"
+          className="flex gap-2 items-center text-orange-clr"
         >
           <FiArrowLeft />
           Go back
@@ -145,7 +154,8 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
         <label htmlFor="bankName">Bank Name:</label>
         <select
           className="inputs"
-          // type="select"
+          id="bankName"
+          disabled={loading}
           value={eventData!?.paymentInfo?.bankName}
           onChange={(event) => handleChangeBankName(event.target.value)}
         >
@@ -157,12 +167,14 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
           ))}
         </select>
         <div>
-          <label htmlFor="bankName">Account Number:</label>
+          <label htmlFor="accountNumber">Account Number:</label>
           <input
             type="text"
             className="inputs"
+            id="accoundNumber"
+            disabled={loading}
             value={eventData!.paymentInfo.accountNumber}
-            onChange={(event) => handleChangeAccountNumber(event.target.value)}
+            onChange={(event) => numberChange(event)}
             placeholder="Enter your account number"
           />
         </div>
@@ -190,31 +202,17 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
             </button>
           </div>
           <div className="w-full">
-            {bankResolutionSuccessful ? (
-              <>
-                <button
-                  type="button"
-                  className="rounded-xl bg-green-500 p-2 text-white tablet:w-full"
-                  onClick={() => {
-                    goForward();
-                  }}
-                >
-                  Continue
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="submit"
-                  // type="button"
-                  disabled={loading}
-                  onClick={handleSubmitForm}
-                  className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
-                >
-                  {!loading ? "Verify Details" : <img src={loader} />}
-                </button>
-              </>
-            )}
+            <button
+              type="submit"
+              // type="button"
+              disabled={loading || !bankResolutionSuccessful}
+              onClick={() => {
+                goForward();
+              }}
+              className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
+            >
+              {!loading ? "Continue" : <Loader variant="small" />}
+            </button>
           </div>
         </div>
       </div>

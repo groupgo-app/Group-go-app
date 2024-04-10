@@ -1,4 +1,3 @@
-import React from "react";
 import { FiArrowLeft, FiUpload } from "react-icons/fi";
 import { IEventData } from "../../types/Event";
 import Loader from "../Loader";
@@ -20,7 +19,7 @@ const FormImageSection = ({
     <div className="mb-12 space-y-3">
       <button
         onClick={handleBackButton}
-        className="flex items-center gap-2 text-orange-clr"
+        className="flex gap-2 items-center text-orange-clr"
       >
         <FiArrowLeft />
         Go back
@@ -47,7 +46,7 @@ const FormImageSection = ({
               id="eventImg"
             />
             <label
-              className={`absolute bottom-[30px] right-[40px] z-[50] m-auto flex h-[30px] w-[30px] cursor-pointer flex-col items-center justify-center gap-8 rounded-full bg-black text-white opacity-90`}
+              className={`flex absolute flex-col gap-8 justify-center items-center m-auto text-white bg-black rounded-full opacity-90 cursor-pointer bottom-[30px] right-[40px] z-[50] h-[30px] w-[30px]`}
               htmlFor="eventImg"
             >
               <FiUpload className="text-xl text-white" />

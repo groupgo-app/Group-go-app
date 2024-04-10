@@ -24,6 +24,7 @@ const CreateEvent = () => {
   return (
     <>
       <Helmet>
+        <title>Groupgo | Create</title>
         <meta
           name="description"
           content="Get ready to create astonishing and thrilling events"
@@ -66,7 +67,7 @@ const CreateEvent = () => {
           name="linkedin:description"
           content="Get ready to create astonishing and thrilling events"
         />
-        <link rel="canonical" href="https://www.yourwebsite.com/" />
+        <link rel="canonical" href="https://groupgo.vercel.app/create" />
       </Helmet>
       <StepProgress />
 

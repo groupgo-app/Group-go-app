@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FormContext } from "../contexts/FormContext";
 import { initialEventData } from "../data/events";
 import { AppContext } from "../contexts/AppContext";
+import { Helmet } from "react-helmet";
 
 const HomeProcessSection = ({
   children,
@@ -33,9 +34,9 @@ const SectionTitle = ({
   btnText?: string;
 }) => {
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       {btnText && (
-        <p className="w-fit rounded-full bg-orange-clr bg-opacity-15 px-4 py-2 text-center text-orange-clr">
+        <p className="px-4 py-2 text-center rounded-full w-fit bg-orange-clr bg-opacity-15 text-orange-clr">
           {btnText}
         </p>
       )}
@@ -80,6 +81,93 @@ const Home = () => {
   }
   return (
     <section>
+      <Helmet>
+        <title data-react-helmet="true">Groupgo | Home</title>
+
+        <meta
+          name="description"
+          data-react-helmet="true"
+          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+        />
+
+        <meta
+          property="og:url"
+          data-react-helmet="true"
+          content="https://groupgo.vercel.app"
+        />
+        <meta
+          property="og:title"
+          data-react-helmet="true"
+          content="GroupGo | Home"
+        />
+        <meta
+          property="og:description"
+          data-react-helmet="true"
+          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+        />
+        <meta
+          property="og:image"
+          data-react-helmet="true"
+          content="https://groupgo.vercel.app/site_img.png"
+        />
+        <meta
+          property="og:site_name"
+          content="GroupGo"
+          data-react-helmet="true"
+        />
+
+        <meta
+          name="twitter:card"
+          data-react-helmet="true"
+          content="summary_large_image"
+        />
+        <meta
+          name="twitter:site"
+          data-react-helmet="true"
+          content="@your_twitter_handle"
+        />
+        <meta
+          name="twitter:title"
+          data-react-helmet="true"
+          content="Groupgo | Home"
+        />
+        <meta
+          name="twitter:description"
+          data-react-helmet="true"
+          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+        />
+        <meta
+          name="twitter:image"
+          data-react-helmet="true"
+          content="https://groupgo.vercel.app/site_img.png"
+        />
+        <meta
+          name="pinterest:description"
+          data-react-helmet="true"
+          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+        />
+        <meta
+          name="pinterest:image"
+          data-react-helmet="true"
+          content="https://groupgo.vercel.app/site_img.png"
+        />
+
+        <meta
+          name="linkedin:title"
+          data-react-helmet="true"
+          content="Groupgo"
+        />
+        <meta
+          name="linkedin:description"
+          data-react-helmet="true"
+          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+        />
+        <link
+          rel="canonical"
+          data-react-helmet="true"
+          href="https://groupgo.vercel.app/"
+        />
+      </Helmet>
       <div className="mb-10 mt-[20px] flex w-full flex-col-reverse justify-center laptop:mb-0 laptop:mt-[50px] laptop:flex-row">
         <div className="flex w-full flex-col gap-[35px] laptop:w-[60%] laptop:gap-[28px]">
           <div>
@@ -209,7 +297,7 @@ const Home = () => {
         </HomeProcessSection>
       </div>
       {/* CTA */}
-      <div className="flex flex-wrap items-center gap-8 pt-16">
+      <div className="flex flex-wrap gap-8 items-center pt-16">
         <h5 className="text-5xl">Create Your First GroupGo Event Today!</h5>
         <CreateButton
           setCurrentStep={setCurrentStep}

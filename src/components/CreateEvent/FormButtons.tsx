@@ -1,4 +1,3 @@
-import React from "react";
 import Loader from "../Loader";
 
 const FormButtons = ({
@@ -24,13 +23,13 @@ const FormButtons = ({
       <div className="w-full">
         <button
           onClick={handleSubmit}
-          className="primary_button block tablet:w-[100%]"
+          className="primary_button flex items-center justify-center tablet:w-[100%] "
           disabled={isLoadingSubmit}
           type="submit"
         >
           {isLoadingSubmit ? (
             <>
-              <Loader />
+              <Loader variant="small" />
             </>
           ) : (
             <>Save and Continue</>

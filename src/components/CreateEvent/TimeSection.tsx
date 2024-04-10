@@ -1,4 +1,3 @@
-import React from "react";
 import FormSection from "./FormSection";
 import EventSchedule from "../EventSchedule";
 import { IEventData } from "../../types/Event";
