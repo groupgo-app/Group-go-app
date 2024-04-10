@@ -14,6 +14,7 @@ import Loader from "../components/Loader";
 import Underliner from "../components/Underliner";
 import { IEventData } from "../types/Event";
 import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
+import { Helmet } from "react-helmet";
 
 const Dashboard = () => {
   let setEventData, user: any, setCurrentStep, creationSteps;
@@ -83,6 +84,58 @@ const Dashboard = () => {
   } else if (user) {
     return (
       <>
+        <Helmet>
+          <title>Groupgo | Dashboard</title>
+          <meta
+            name="description"
+            content="Beautiful Dashboard for your events"
+          />
+          {/* <!-- <meta name="robots" content="index, follow" /> --> */}
+          <meta
+            property="og:url"
+            content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
+          />
+          <meta property="og:title" content={"Groupgo | Dashboard"} />
+          <meta
+            property="og:description"
+            content={"Beautiful Dashboard for your events"}
+          />
+          <meta
+            property="og:image"
+            content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
+          />
+          <meta property="og:site_name" content="Group Go" />
+
+          <meta name="twitter:card" content="summary_large_image" />
+          {/* <meta name="twitter:site" content="@your_twitter_handle" /> */}
+          <meta name="twitter:title" content={"Groupgo | Dashboard"} />
+          <meta
+            name="twitter:description"
+            content={"Beautiful Dashboard for your events"}
+          />
+          <meta
+            name="twitter:image"
+            content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
+          />
+          <meta
+            name="pinterest:description"
+            content={"Beautiful Dashboard for your events"}
+          />
+          <meta
+            name="pinterest:image"
+            content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
+          />
+
+          <meta name="linkedin:title" content={"Groupgo | Dashboard"} />
+          <meta
+            name="linkedin:description"
+            content={"Beautiful Dashboard for your events"}
+          />
+          <link
+            rel="canonical"
+            href={`${import.meta.env.VITE_REACT_SITE_URL}/dashboard`}
+          />
+        </Helmet>
         <div className="w-full space-y-16">
           <div className="space-y-5">
             <h5 className="text-[24px] font-medium">Events</h5>

@@ -24,7 +24,7 @@ const SocialLinkInput = ({
   const handleKeyDown = (e: any) => {
     if (e.key === "," && userInput.trim() !== "") {
       if (isUrl(e.target.value)) {
-        const newLink: string = userInput.trim();
+        const newLink: string = userInput.trim().split(",")[0];
         const newData = {
           ...eventData,
           eventInfo: {
@@ -34,10 +34,10 @@ const SocialLinkInput = ({
         };
         setLinks([...links, newLink]);
         setEventData(newData);
-        setUserInput(""); // Clear input field after adding a link
       } else {
         toast("That is not a url");
       }
+      setUserInput("");
     }
     if (e.key === "Escape") {
       setUserInput("");
@@ -57,7 +57,7 @@ const SocialLinkInput = ({
       setEventData(newData);
       setUserInput("");
     } else {
-      toast("That is not a url");
+      if (userInput.length) toast("That is not a url");
     }
   };
 
@@ -130,6 +130,7 @@ const SocialLinkInput = ({
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         autoFocus={false}
+        required
         // ref={inputRef}
       />
 

@@ -35,7 +35,9 @@ const ParticipantSection = ({
       />
 
       <div className="field_set_div">
-        <label htmlFor="gender">Participants gender</label>
+        <label htmlFor="gender">
+          <span className="text-red-500">*</span> Participants gender
+        </label>
         <select
           name="typeOfParticipants"
           id="gender"

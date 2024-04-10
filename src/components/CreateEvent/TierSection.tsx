@@ -100,7 +100,7 @@ const TierSection = ({
       {eventData.hasTiers ? (
         <>
           {eventData.eventInfo.tiers?.map((tier, index) => (
-            <div>
+            <div key={`tier ${index + 1}`}>
               <InputField
                 type={"text"}
                 value={tier.name}
@@ -138,14 +138,15 @@ const TierSection = ({
             </div>
           ))}
           <div>
-            <button
+            <div
               onClick={() => {
                 handleAddTier();
               }}
-              className="primary_button"
+              role="button"
+              className="primary_button w-fit"
             >
               Add tier
-            </button>
+            </div>
           </div>
         </>
       ) : (

@@ -1,17 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import EventSchedule from "../EventSchedule";
 import { AppContext } from "../../contexts/AppContext";
 import InputField from "../InputField";
 import { AuthContext } from "../../contexts/AuthContext";
 import { FormContext } from "../../contexts/FormContext";
-import { FiArrowLeft, FiUpload } from "react-icons/fi";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../config/firebase";
 import { saveEvent, updateEvent } from "../../api/events";
 import { useNavigate } from "react-router-dom";
-import Loader from "../Loader";
 import { toast } from "react-toastify";
-import SocialLinkInput from "../SocialLinkInput";
 import isUrl from "../../utils/isUrl";
 import FormSection from "./FormSection";
 import LocationSection from "./LocationSection";
@@ -232,6 +228,14 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
           )
             return toast(
               "Your number of tickets should not be less than the number of people",
+              { type: "error" },
+            );
+          if (
+            sumNumbersInObjects(eventData.eventInfo.tiers) >
+            eventData.eventInfo.maxNumOfParticipant
+          )
+            return toast(
+              "Your number of tickets should not be more than the number of people",
               { type: "error" },
             );
 

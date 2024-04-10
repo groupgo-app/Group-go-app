@@ -17,10 +17,10 @@ const HomeProcessSection = ({
     <section
       className={`my-4 flex flex-wrap  items-center justify-between gap-8 laptop:my-7 ${reverse && "flex-row-reverse"}`}
     >
-      <div className="w-full tablet:max-w-[45%]">{children}</div>
       <div className="w-full tablet:max-w-[45%]">
         <img src={src} alt="" />
       </div>
+      <div className="w-full tablet:max-w-[45%]">{children}</div>
     </section>
   );
 };
@@ -98,12 +98,12 @@ const Home = () => {
               setEventData={setEventData}
             />
             <div>
-              <Link
+              <a
                 className="rounded-[15px] border border-[#060811] px-6 py-[14px] text-[18px] font-medium text-[#060811] "
-                to={"#about"}
+                href={"#about"}
               >
                 Learn more
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ const Home = () => {
           title="About Us"
           btnText="Create lasting memories with GroupGo."
         />
-        <HomeProcessSection src="/about.svg" reverse>
+        <HomeProcessSection src="/about.svg">
           <h3>Who are we?</h3>
           <p>
             GroupGo is more than just an event planning platform; we're
@@ -137,7 +137,7 @@ const Home = () => {
           title="How it works"
           btnText="Planning Events Simplified."
         />
-        <HomeProcessSection src="/template.svg">
+        <HomeProcessSection src="/template.svg" reverse>
           <h3 className="text-center">Find Your Perfect Template</h3>
           <p>
             Struggling to visualize your dream group event? No worries! Browse
@@ -154,7 +154,7 @@ const Home = () => {
             getaways, road trips, or group vacations.
           </p>
         </HomeProcessSection>
-        <HomeProcessSection src="/customise.svg" reverse>
+        <HomeProcessSection src="/customise.svg">
           <h3>Customize Your Event</h3>
           <p>
             Our user-friendly form makes it simple to personalize your event and
@@ -176,14 +176,14 @@ const Home = () => {
           </p>
           <p>Fill out our intuitive form to personalize your event.</p>
         </HomeProcessSection>
-        <HomeProcessSection src="/payment.svg">
+        <HomeProcessSection src="/payment.svg" reverse>
           <h3>Secure Payments</h3>
           <p>
             Choose your preferred method to receive payments for tickets.
             GroupGo offers verified and secure payment processing.
           </p>
         </HomeProcessSection>
-        <HomeProcessSection src="/share.svg" reverse={true}>
+        <HomeProcessSection src="/share.svg">
           <h3>Get Ready to Have Fun and Spread the Word!</h3>
           <p>
             Manage tickets, share details, and track your group within the
@@ -195,7 +195,7 @@ const Home = () => {
             invitation tools.
           </p>
         </HomeProcessSection>
-        <HomeProcessSection src={"/bonus.svg"}>
+        <HomeProcessSection src={"/bonus.svg"} reverse>
           <h3>Bonus Features</h3>
           <p>
             Effortless Management: Enjoy a dedicated dashboard to manage all

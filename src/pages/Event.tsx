@@ -18,6 +18,8 @@ import ShareInviteLink from "../components/ShareInviteLink";
 import { MdEmail } from "react-icons/md";
 import { FaMoneyBill, FaTicket, FaUser } from "react-icons/fa6";
 import { FormContext } from "../contexts/FormContext";
+import { Helmet } from "react-helmet";
+import { getFirst100Chars } from "../utils/get100Chars";
 
 const Event = () => {
   // let user;
@@ -92,6 +94,49 @@ const Event = () => {
   else if (event) {
     return (
       <div className="w-full overflow-hidden">
+        <Helmet>
+          <title>Groupgo | {event.eventInfo.title}</title>
+          <meta
+            name="description"
+            content={getFirst100Chars(event.eventInfo.eventDesc)}
+          />
+          {/* <!-- <meta name="robots" content="index, follow" /> --> */}
+          <meta
+            property="og:url"
+            content={`${import.meta.env.REACT_VITE_SITE_URL}/${eventId}`}
+          />
+          <meta property="og:title" content={event.eventInfo.title} />
+          <meta
+            property="og:description"
+            content={getFirst100Chars(event.eventInfo.eventDesc)}
+          />
+          <meta property="og:image" content={event.eventImg} />
+          <meta property="og:site_name" content="Group Go" />
+
+          <meta name="twitter:card" content="summary_large_image" />
+          {/* <meta name="twitter:site" content="@your_twitter_handle" /> */}
+          <meta name="twitter:title" content={event.eventInfo.title} />
+          <meta
+            name="twitter:description"
+            content={getFirst100Chars(event.eventInfo.eventDesc)}
+          />
+          <meta name="twitter:image" content={event.eventImg} />
+          <meta
+            name="pinterest:description"
+            content={getFirst100Chars(event.eventInfo.eventDesc)}
+          />
+          <meta name="pinterest:image" content={event.eventImg} />
+
+          <meta name="linkedin:title" content={event.eventInfo.title} />
+          <meta
+            name="linkedin:description"
+            content={getFirst100Chars(event.eventInfo.eventDesc)}
+          />
+          <link
+            rel="canonical"
+            href={`${import.meta.env.VITE_REACT_SITE_URL}/${eventId}`}
+          />
+        </Helmet>
         <div>
           <h2 className="">{event?.eventInfo.title}</h2>
           <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
