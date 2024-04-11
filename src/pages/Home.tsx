@@ -244,7 +244,7 @@ const Home = () => {
           <p className="my-2">Customise every detail of your event</p>
           <p className="my-2">
             Our user-friendly form lets you
-            <ul>
+            <ul className="list-disc pl-8">
               <li>Set the scene (date, time, location)</li>
               <li>Craft your event description</li>
               <li>Offered tiered tickets (optional)</li>
