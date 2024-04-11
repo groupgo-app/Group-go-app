@@ -85,50 +85,79 @@ const Dashboard = () => {
     return (
       <>
         <Helmet>
-          <title>Groupgo | Dashboard</title>
+          <title data-react-helmet="true">Groupgo | Dashboard</title>
           <meta
             name="description"
+            data-react-helmet="true"
             content="Beautiful Dashboard for your events"
           />
-          {/* <!-- <meta name="robots" content="index, follow" /> --> */}
+          {/* <!-- <meta name="robots" data-react-helmet="true" content="index, follow" /> --> */}
           <meta
             property="og:url"
+            data-react-helmet="true"
             content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
           />
-          <meta property="og:title" content={"Groupgo | Dashboard"} />
+          <meta
+            property="og:title"
+            data-react-helmet="true"
+            content={"Groupgo | Dashboard"}
+          />
           <meta
             property="og:description"
+            data-react-helmet="true"
             content={"Beautiful Dashboard for your events"}
           />
           <meta
             property="og:image"
+            data-react-helmet="true"
             content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
           />
-          <meta property="og:site_name" content="Group Go" />
+          <meta
+            property="og:site_name"
+            data-react-helmet="true"
+            content="Group Go"
+          />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          {/* <meta name="twitter:site" content="@your_twitter_handle" /> */}
-          <meta name="twitter:title" content={"Groupgo | Dashboard"} />
+          <meta
+            name="twitter:card"
+            data-react-helmet="true"
+            content="summary_large_image"
+          />
+          {/* <meta name="twitter:site" data-react-helmet="true" content="@your_twitter_handle" /> */}
+          <meta
+            name="twitter:title"
+            data-react-helmet="true"
+            content={"Groupgo | Dashboard"}
+          />
           <meta
             name="twitter:description"
+            data-react-helmet="true"
             content={"Beautiful Dashboard for your events"}
           />
           <meta
             name="twitter:image"
+            data-react-helmet="true"
             content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
           />
           <meta
             name="pinterest:description"
+            data-react-helmet="true"
             content={"Beautiful Dashboard for your events"}
           />
           <meta
             name="pinterest:image"
+            data-react-helmet="true"
             content={`${import.meta.env.VITE_REACT_SITE_URL}/site_img.png`}
           />
 
-          <meta name="linkedin:title" content={"Groupgo | Dashboard"} />
+          <meta
+            name="linkedin:title"
+            data-react-helmet="true"
+            content={"Groupgo | Dashboard"}
+          />
           <meta
             name="linkedin:description"
+            data-react-helmet="true"
             content={"Beautiful Dashboard for your events"}
           />
           <link

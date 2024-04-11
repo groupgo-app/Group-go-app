@@ -91,7 +91,7 @@ const Home = () => {
         <meta
           name="description"
           data-react-helmet="true"
-          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+          content="GroupGo was built by creators, for creators. We understand the importance of building an online community, but sometimes the best connections happen offline. We make it easy for you to bring your online community together in real-life experiences that strengthen bonds and create lasting memories."
         />
 
         <meta
@@ -107,7 +107,7 @@ const Home = () => {
         <meta
           property="og:description"
           data-react-helmet="true"
-          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+          content="GroupGo was built by creators, for creators. We understand the importance of building an online community, but sometimes the best connections happen offline. We make it easy for you to bring your online community together in real-life experiences that strengthen bonds and create lasting memories."
         />
         <meta
           property="og:image"
@@ -125,11 +125,11 @@ const Home = () => {
           data-react-helmet="true"
           content="summary_large_image"
         />
-        <meta
+        {/* <meta
           name="twitter:site"
           data-react-helmet="true"
           content="@your_twitter_handle"
-        />
+        /> */}
         <meta
           name="twitter:title"
           data-react-helmet="true"
@@ -138,7 +138,7 @@ const Home = () => {
         <meta
           name="twitter:description"
           data-react-helmet="true"
-          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+          content="GroupGo was built by creators, for creators. We understand the importance of building an online community, but sometimes the best connections happen offline. We make it easy for you to bring your online community together in real-life experiences that strengthen bonds and create lasting memories."
         />
         <meta
           name="twitter:image"
@@ -148,7 +148,7 @@ const Home = () => {
         <meta
           name="pinterest:description"
           data-react-helmet="true"
-          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+          content="GroupGo was built by creators, for creators. We understand the importance of building an online community, but sometimes the best connections happen offline. We make it easy for you to bring your online community together in real-life experiences that strengthen bonds and create lasting memories."
         />
         <meta
           name="pinterest:image"
@@ -164,7 +164,7 @@ const Home = () => {
         <meta
           name="linkedin:description"
           data-react-helmet="true"
-          content="GroupGo is more than just an event planning platform; we're passionate about fostering unforgettable group experiences. We believe that life's most cherished moments are best shared with the people you love. That's why we created a platform that simplifies group event planning, taking the stress out of the process and allowing you to focus on the fun."
+          content="GroupGo was built by creators, for creators. We understand the importance of building an online community, but sometimes the best connections happen offline. We make it easy for you to bring your online community together in real-life experiences that strengthen bonds and create lasting memories."
         />
         <link
           rel="canonical"
@@ -245,18 +245,10 @@ const Home = () => {
           <p className="my-2">
             Our user-friendly form lets you
             <ul>
-              <li>
-                <p></p>
-              </li>
-              <li>
-                <p></p>
-              </li>
-              <li>
-                <p></p>
-              </li>
-              <li>
-                <p></p>
-              </li>
+              <li>Set the scene (date, time, location)</li>
+              <li>Craft your event description</li>
+              <li>Offered tiered tickets (optional)</li>
+              <li>Add event links (website, socials, booking)</li>
             </ul>
           </p>
         </HomeProcessSection>
