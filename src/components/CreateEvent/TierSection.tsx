@@ -105,6 +105,7 @@ const TierSection = ({
                 type={"text"}
                 value={tier.name}
                 label={`Tier ${index + 1} name`}
+                required
                 onChange={(e: any) => {
                   handleNameChange(e, index);
                 }}
@@ -113,6 +114,7 @@ const TierSection = ({
                 type="number"
                 value={tier.price}
                 label={`Tier ${index + 1} price`}
+                required
                 onChange={(e: any) => {
                   handlePriceChange(e, index);
                 }}
@@ -121,6 +123,7 @@ const TierSection = ({
                 type="number"
                 value={tier.numberOfTickets}
                 label={`Number of Tickets for Tier ${index + 1}`}
+                required
                 onChange={(e: any) => {
                   handleTicketNumberChange(e, index);
                 }}

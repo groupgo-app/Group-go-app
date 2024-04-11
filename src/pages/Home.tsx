@@ -18,10 +18,10 @@ const HomeProcessSection = ({
     <section
       className={`my-4 flex flex-wrap  items-center justify-between gap-8 laptop:my-7 ${reverse && "flex-row-reverse"}`}
     >
+      <div className="w-full tablet:max-w-[45%]">{children}</div>
       <div className="w-full tablet:max-w-[45%]">
         <img src={src} alt="" />
       </div>
-      <div className="w-full tablet:max-w-[45%]">{children}</div>
     </section>
   );
 };
@@ -29,18 +29,22 @@ const HomeProcessSection = ({
 const SectionTitle = ({
   title,
   btnText,
+  center,
 }: {
-  title: string;
+  title?: string;
   btnText?: string;
+  center?: boolean;
 }) => {
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className={`${center && "items-center"} flex w-full flex-col`}>
       {btnText && (
-        <p className="px-4 py-2 text-center rounded-full w-fit bg-orange-clr bg-opacity-15 text-orange-clr">
+        <p
+          className={`${center && "text-center"} w-fit rounded-full bg-orange-clr bg-opacity-15 px-4 py-2 text-orange-clr`}
+        >
           {btnText}
         </p>
       )}
-      <h2>{title}</h2>
+      <h2>{title && title}</h2>
     </div>
   );
 };
@@ -207,16 +211,17 @@ const Home = () => {
         <SectionTitle
           title="About Us"
           btnText="Create lasting memories with GroupGo."
+          center
         />
+
         <HomeProcessSection src="/about.svg">
           <h3>Who are we?</h3>
           <p>
-            GroupGo is more than just an event planning platform; we're
-            passionate about fostering unforgettable group experiences. We
-            believe that life's most cherished moments are best shared with the
-            people you love. That's why we created a platform that simplifies
-            group event planning, taking the stress out of the process and
-            allowing you to focus on the fun.
+            GroupGo was built by creators, for creators. We understand the
+            importance of building an online community, but sometimes the best
+            connections happen offline. We make it easy for you to bring your
+            online community together in real-life experiences that strengthen
+            bonds and create lasting memories.
           </p>
         </HomeProcessSection>
       </div>
@@ -224,80 +229,66 @@ const Home = () => {
         <SectionTitle
           title="How it works"
           btnText="Planning Events Simplified."
+          center
         />
         <HomeProcessSection src="/template.svg" reverse>
-          <h3 className="text-center">Find Your Perfect Template</h3>
+          <h3>Find Your Perfect Template</h3>
           <p>
-            Struggling to visualize your dream group event? No worries! Browse
-            our extensive library of pre-made event templates, categorized for
-            different occasions:
-          </p>
-
-          <p className="my-2">
-            Sports: Get Active! Find templates for sporting events, marathons,
-            or game nights.
-          </p>
-          <p className="my-2">
-            Travel: Explore the World Together! Utilize templates for weekend
-            getaways, road trips, or group vacations.
+            Browse our event templates for Restaurant ideas, Sports lovers,
+            Group tours & more. Plan the perfect outing in a minute
           </p>
         </HomeProcessSection>
         <HomeProcessSection src="/customise.svg">
           <h3>Customize Your Event</h3>
-          <p>
-            Our user-friendly form makes it simple to personalize your event and
-            bring your vision to life:
-          </p>
+
+          <p className="my-2">Customise every detail of your event</p>
           <p className="my-2">
-            Event Details: Set the date, time, location, and craft a captivating
-            description that will have everyone excited!
+            Our user-friendly form lets you
+            <ul>
+              <li>
+                <p></p>
+              </li>
+              <li>
+                <p></p>
+              </li>
+              <li>
+                <p></p>
+              </li>
+              <li>
+                <p></p>
+              </li>
+            </ul>
           </p>
-          <p className="my-2">
-            Tiered Ticketing (Optional): Cater to different budgets and
-            preferences by offering tiered ticketing options. Create "VIP"
-            tickets with exclusive perks or "Early Bird" discounts for early
-            sign-ups.
-          </p>
-          <p className="my-2">
-            Event Links: Link to relevant resources like the official event
-            website, booking pages, or additional information for your attendees
-          </p>
-          <p>Fill out our intuitive form to personalize your event.</p>
         </HomeProcessSection>
         <HomeProcessSection src="/payment.svg" reverse>
-          <h3>Secure Payments</h3>
+          <h3>Seamless Payments</h3>
           <p>
-            Choose your preferred method to receive payments for tickets.
-            GroupGo offers verified and secure payment processing.
+            Creators can now focus on creating amazing experiences. GroupGo
+            integrates securely with truste payment providers, so you can accept
+            payments with ease and get your funds delivered straight to your
+            preferred account. No more juggling screenshots and bank apps
           </p>
         </HomeProcessSection>
         <HomeProcessSection src="/share.svg">
-          <h3>Get Ready to Have Fun and Spread the Word!</h3>
+          <h3>Share</h3>
           <p>
-            Manage tickets, share details, and track your group within the
-            platform.
-          </p>
-          <p>Share your event with friends and family effortlessly.</p>
-          <p>
-            Utilize built-in social media sharing buttons and automated
-            invitation tools.
+            Groupgo makes group outinh simple. Create and share details of your
+            event with your online community across different social platforms
           </p>
         </HomeProcessSection>
         <HomeProcessSection src={"/bonus.svg"} reverse>
-          <h3>Bonus Features</h3>
+          <SectionTitle
+            title="Bonus Features"
+            btnText="Dashboard"
+          ></SectionTitle>
           <p>
-            Effortless Management: Enjoy a dedicated dashboard to manage all
-            your events. Track RSVPs, ticket sales, and communication with your
-            group in one place.
-          </p>
-          <p>
-            Peace of Mind: Focus on creating amazing experiences, knowing
-            GroupGo handles the rest.
+            Manage all your created events in one place. Track RSVPs, ticket
+            sales and communicate seamlessly with your group
           </p>
         </HomeProcessSection>
       </div>
       {/* CTA */}
-      <div className="flex flex-wrap gap-8 items-center pt-16">
+      <div className="flex flex-wrap items-center gap-8 pt-16">
         <h5 className="text-5xl">Create Your First GroupGo Event Today!</h5>
         <CreateButton
           setCurrentStep={setCurrentStep}

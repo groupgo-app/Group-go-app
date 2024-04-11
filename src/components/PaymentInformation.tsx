@@ -55,6 +55,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
     boolean | undefined
   >(false);
   const [loading, setLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmitForm = async (e: any, accountNumber: string | number) => {
@@ -101,7 +102,9 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       handleSubmitForm(e, e.target.value);
   };
   const goForward = async () => {
+    setUserLoading(true);
     const userFound = await findUser(user?.uid);
+    // setLoading(true)
     if (userFound) {
       handleChangeForCompletedSteps!([true, true, true, true]);
       const newData: IEventData = {
@@ -110,7 +113,8 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
         inCreation: false,
       };
       await updateEvent(eventData.eventId, user?.uid, newData);
-      toast("Bank Resolution Successful", { type: "success" });
+      setUserLoading(false);
+      toast("Successfully fininished creating your event", { type: "success" });
     } else {
       console.log("User not found.");
     }
@@ -145,7 +149,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       <div className="payment_info_container">
         <button
           onClick={handleBackButton}
-          className="flex gap-2 items-center text-orange-clr"
+          className="flex items-center gap-2 text-orange-clr"
         >
           <FiArrowLeft />
           Go back
@@ -211,7 +215,11 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
               }}
               className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
             >
-              {!loading ? "Continue" : <Loader variant="small" />}
+              {!loading || !userLoading ? (
+                "Continue"
+              ) : (
+                <Loader variant="small" />
+              )}
             </button>
           </div>
         </div>

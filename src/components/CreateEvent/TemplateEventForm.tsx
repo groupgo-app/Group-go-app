@@ -191,7 +191,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
         eventData.eventInfo.creatorEmail.length > 0 &&
         eventData.eventInfo.socialLinks.length > 0 &&
         eventData.eventInfo.eventDesc.length > 0 &&
-        eventData.eventInfo.eventLocation.display_name.length > 0 &&
+        eventData.eventInfo.eventLocation.length > 0 &&
         eventData.eventInfo.startDate.length > 0 &&
         eventData.eventInfo.endDate.length > 0 &&
         eventData.eventInfo.startTime.length > 0 &&

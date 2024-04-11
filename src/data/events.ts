@@ -17,13 +17,7 @@ export const initialEventData: IEventData = {
     creatorEmail: "",
     socialLinks: [],
     eventDesc: "",
-    eventLocation: {
-      display_name: "",
-      lat: "",
-      lon: "",
-      licence: "",
-      place_id: 1,
-    },
+    eventLocation: "",
     tiers: [],
     startDate: "",
     endDate: "",
@@ -40,3 +34,11 @@ export const initialEventData: IEventData = {
     accountNumber: "",
   },
 };
+
+// {
+//       display_name: "",
+//       lat: "",
+//       lon: "",
+//       licence: "",
+//       place_id: 1,
+//     },

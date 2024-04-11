@@ -10,7 +10,7 @@ import moment from "moment";
 import { IEventData, IEventTier, IPayEvent } from "../types/Event";
 import { fetchEventById } from "../api/events";
 import { SocialIcon } from "react-social-icons";
-import LocationMap from "../components/CreateEvent/LocationMap";
+// import LocationMap from "../components/CreateEvent/LocationMap";
 import Loader from "../components/Loader";
 
 import { isPassedCurrentTime } from "../utils/isPassedCurrentTime";
@@ -28,6 +28,7 @@ const Event = () => {
   const [loading, setLoading] = useState(true);
   const { eventId } = useParams();
   const [event, setEvent] = useState<IEventData>();
+  const [isEnded, setIsEnded] = useState<boolean>(false);
 
   const authContext = useContext(AuthContext);
   const formContext = useContext(FormContext);
@@ -77,6 +78,12 @@ const Event = () => {
       setEventData(saveDataEvent);
       setEvent(saveDataEvent);
       setLoading(false);
+      setIsEnded(
+        isPassedCurrentTime(
+          saveDataEvent?.eventInfo.endDate,
+          saveDataEvent?.eventInfo.endTime,
+        ),
+      );
     } catch (error: any) {
       console.log(error?.stack);
     }
@@ -85,51 +92,87 @@ const Event = () => {
   useEffect(() => {
     getDataSingleEvent();
   }, [eventId]);
-  const isEnded = isPassedCurrentTime(
-    event?.eventInfo.endDate,
-    event?.eventInfo.endDate,
-  );
 
   if (loading) return <Loader />;
   else if (event) {
     return (
-      <div className="overflow-hidden w-full">
+      <div className="w-full overflow-hidden">
         <Helmet>
-          <title>Groupgo | {event.eventInfo.title}</title>
+          <title data-react-helmet="true">
+            Groupgo | {event.eventInfo.title}
+          </title>
           <meta
             name="description"
+            data-react-helmet="true"
             content={getFirst100Chars(event.eventInfo.eventDesc)}
           />
           {/* <!-- <meta name="robots" content="index, follow" /> --> */}
           <meta
             property="og:url"
+            data-react-helmet="true"
             content={`${import.meta.env.REACT_VITE_SITE_URL}/${eventId}`}
           />
-          <meta property="og:title" content={event.eventInfo.title} />
+          <meta
+            property="og:title"
+            data-react-helmet="true"
+            content={event.eventInfo.title}
+          />
           <meta
             property="og:description"
+            data-react-helmet="true"
             content={getFirst100Chars(event.eventInfo.eventDesc)}
           />
-          <meta property="og:image" content={event.eventImg} />
-          <meta property="og:site_name" content="Group Go" />
+          <meta
+            property="og:image"
+            data-react-helmet="true"
+            content={event.eventImg}
+          />
+          <meta
+            property="og:site_name"
+            data-react-helmet="true"
+            content="Group Go"
+          />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          {/* <meta name="twitter:site" content="@your_twitter_handle" /> */}
-          <meta name="twitter:title" content={event.eventInfo.title} />
+          <meta
+            name="twitter:card"
+            data-react-helmet="true"
+            content="summary_large_image"
+          />
+          {/* <meta name="twitter:site" data-react-helmet="true" content="@your_twitter_handle" /> */}
+          <meta
+            name="twitter:title"
+            data-react-helmet="true"
+            content={event.eventInfo.title}
+          />
           <meta
             name="twitter:description"
+            data-react-helmet="true"
             content={getFirst100Chars(event.eventInfo.eventDesc)}
           />
-          <meta name="twitter:image" content={event.eventImg} />
+          <meta
+            name="twitter:image"
+            data-react-helmet="true"
+            content={event.eventImg}
+          />
           <meta
             name="pinterest:description"
+            data-react-helmet="true"
             content={getFirst100Chars(event.eventInfo.eventDesc)}
           />
-          <meta name="pinterest:image" content={event.eventImg} />
+          <meta
+            name="pinterest:image"
+            data-react-helmet="true"
+            content={event.eventImg}
+          />
 
-          <meta name="linkedin:title" content={event.eventInfo.title} />
+          <meta
+            name="linkedin:title"
+            data-react-helmet="true"
+            content={event.eventInfo.title}
+          />
           <meta
             name="linkedin:description"
+            data-react-helmet="true"
             content={getFirst100Chars(event.eventInfo.eventDesc)}
           />
           <link
@@ -142,9 +185,9 @@ const Event = () => {
           <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
         </div>
 
-        <div className="my-4 w-full aspect-video">
+        <div className="my-4 aspect-video w-full">
           <img
-            className="object-cover w-full rounded-sm aspect-video"
+            className="aspect-video w-full rounded-sm object-cover"
             src={event?.eventImg}
             alt=""
           />
@@ -156,7 +199,7 @@ const Event = () => {
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="flex flex-wrap gap-2 my-4">
+        <div className="my-4 flex flex-wrap gap-2">
           {/* Date */}
           <div
             className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] ${event.hasTiers ? "tablet:w-[45%] laptop:w-[30%]" : "tablet:w-[45%]"}`}
@@ -186,17 +229,17 @@ const Event = () => {
           {event.hasTiers ? (
             <div className="my-4 w-full">
               <h3>Event Tiers</h3>
-              <div className="flex flex-wrap gap-4 items-center my-4">
+              <div className="my-4 flex flex-wrap items-center gap-4">
                 {event.eventInfo.tiers?.map((tier, i) => (
                   <div
                     key={tier.id}
                     className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
                   >
                     <h5>{tier.name}</h5>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex items-center gap-2">
                       <FaMoneyBill /> {Naira} {tier.price}
                     </div>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex items-center gap-2">
                       <FaTicket /> {tier.numberOfTickets} Tickets Available{" "}
                     </div>
                     <div>
@@ -241,7 +284,7 @@ const Event = () => {
               <div>
                 <h5 className="mb-[15px]">
                   {isEnded ? (
-                    "0"
+                    "0 "
                   ) : (
                     <>
                       {`${
@@ -266,10 +309,7 @@ const Event = () => {
                       : ""
                   }`}
                 >
-                  {isPassedCurrentTime(
-                    event?.eventInfo.endDate,
-                    event?.eventInfo.endTime,
-                  ) ? (
+                  {isEnded ? (
                     <>Event Ended</>
                   ) : (
                     <>
@@ -286,15 +326,15 @@ const Event = () => {
         </div>
 
         {/* Organiser Details */}
-        <div className="p-4 my-4 bg-gray-300 rounded-xl w-fit">
+        <div className="my-4 w-fit rounded-xl bg-gray-300 p-4">
           <h4>Host / Organiser Details</h4>
           <div className="flex justify-center">
-            <FaUser className="text-4xl text-center" />
+            <FaUser className="text-center text-4xl" />
           </div>
           <h5 className="text-center">
             <strong>{event?.eventInfo?.creatorName}</strong>
           </h5>
-          <p className="flex gap-2 items-center text-sm">
+          <p className="flex items-center gap-2 text-sm">
             <MdEmail />
             <span>
               Email:{" "}
@@ -303,14 +343,14 @@ const Event = () => {
               </a>
             </span>
           </p>
-          <p className="flex flex-wrap gap-1 items-center text-sm">
+          <p className="flex flex-wrap items-center gap-1 text-sm">
             Event Links:{" "}
-            <span className="flex flex-wrap gap-1 items-center">
+            <span className="flex flex-wrap items-center gap-1">
               {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
                 (link: string, i: number) => (
                   <span
                     key={i}
-                    className="flex gap-3 items-center p-2 rounded-xl w-fit hover:bg-gray-300"
+                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
                   >
                     <SocialIcon
                       url={link}
@@ -323,14 +363,12 @@ const Event = () => {
           </p>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
-          <h3 className="flex gap-4 items-center">
+          <h3 className="flex items-center gap-4">
             <img src={location} alt="" />
             Location
           </h3>
-          <p className="font-medium">
-            {event.eventInfo.eventLocation.display_name}
-          </p>
-          <LocationMap location={event.eventInfo.eventLocation} />
+          <p className="font-medium">{event.eventInfo.eventLocation}</p>
+          {/* <LocationMap location={event.eventInfo.eventLocation} /> */}
         </div>
 
         <div className="my-4">
