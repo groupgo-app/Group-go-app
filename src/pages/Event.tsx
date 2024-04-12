@@ -288,7 +288,7 @@ const Event = () => {
         {event.hasTiers && (
           <div className="my-4 w-full">
             <h3>Event Tiers</h3>
-            <div className="my-4 flex flex-wrap items-center gap-4">
+            <div className="my-4 flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
               {event.eventInfo.tiers?.map((tier, i) => (
                 <div
                   key={tier.id}
