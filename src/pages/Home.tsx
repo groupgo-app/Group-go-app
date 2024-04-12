@@ -256,15 +256,15 @@ const Home = () => {
           <h3>Seamless Payments</h3>
           <p>
             Creators can now focus on creating amazing experiences. GroupGo
-            integrates securely with truste payment providers, so you can accept
-            payments with ease and get your funds delivered straight to your
-            preferred account. No more juggling screenshots and bank apps
+            integrates securely with trusted payment providers, so you can
+            accept payments with ease and get your funds delivered straight to
+            your preferred account. No more juggling screenshots and bank apps.
           </p>
         </HomeProcessSection>
         <HomeProcessSection src="/share.svg">
           <h3>Share</h3>
           <p>
-            Groupgo makes group outinh simple. Create and share details of your
+            Groupgo makes group outing simple. Create and share details of your
             event with your online community across different social platforms
           </p>
         </HomeProcessSection>

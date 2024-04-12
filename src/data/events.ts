@@ -26,12 +26,12 @@ export const initialEventData: IEventData = {
     maxNumOfParticipant: 10,
     minNumOfParticipant: 1,
     typeOfParticipants: "",
-
     amountPerParticipant: 0,
   },
   paymentInfo: {
     bankName: "",
     accountNumber: "",
+    accountName: "",
   },
 };
 

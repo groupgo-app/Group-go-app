@@ -19,10 +19,12 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
     errorMessage: string,
     setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
     setResolvedBankDetails,
-    resolvedBankDetails,
-    handleChangeAccountNumber: any,
+    // resolvedBankDetails: any,
+    // handleChangeAccountNumber: any,
     handleChangeBankName: any,
     handleChangeForCompletedSteps,
+    // handleChangeAccountName: any,
+    setEventData: any,
     user: any,
     setCurrentStep: React.Dispatch<React.SetStateAction<IStep>>,
     creationSteps: IStep[],
@@ -41,11 +43,12 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       errorMessage,
       setErrorMessage,
       setResolvedBankDetails,
-      resolvedBankDetails,
-      handleChangeAccountNumber,
+      // resolvedBankDetails,
+      // handleChangeAccountNumber,
       handleChangeBankName,
-
+      // handleChangeAccountName,
       handleChangeForCompletedSteps,
+      setEventData,
     } = formContext);
     ({ user } = authContext);
     ({ setCurrentStep, creationSteps, currentStep, setCreationSteps } =
@@ -56,29 +59,28 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
   >(false);
   const [loading, setLoading] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
+  const [formAccountNumber, setFormAccountNumber] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmitForm = async (e: any, accountNumber: string | number) => {
+  const handleSubmitForm = async (e: any, accountNumber: string) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       // Flag to indicate if bank account resolution was successful
       let isBankResolutionSuccessful: boolean | undefined = false;
-      if (
-        eventData.paymentInfo.bankName &&
-        eventData.paymentInfo.accountNumber
-      ) {
+      if (eventData.paymentInfo.bankName) {
         isBankResolutionSuccessful = await resolveBankAccount({
           accountNumber,
-          bankCode: bankCode,
+          bankCode,
           setErrorMessage: setErrorMessage!,
           setCurrentStep: setCurrentStep!,
           setResolvedBankDetails: setResolvedBankDetails!,
           creationSteps: creationSteps!,
+          eventData,
+          setEventData,
         });
         setBankResolutionSuccessful(isBankResolutionSuccessful);
-        // If resolveBankAccount succeeds, set flag to true
       }
 
       if (!isBankResolutionSuccessful)
@@ -93,32 +95,36 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
     }
   };
   const numberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChangeAccountNumber(e.target.value);
+    // handleChangeAccountNumber(formAccountNumber);
+    setFormAccountNumber(e.target.value);
     setErrorMessage("");
     if (
       eventData.paymentInfo.bankName.length > 0 &&
-      e.target.value.length === 10
+      e.target.value.toString().length === 10
     )
       handleSubmitForm(e, e.target.value);
   };
   const goForward = async () => {
     setUserLoading(true);
-    const userFound = await findUser(user?.uid);
-    // setLoading(true)
-    if (userFound) {
-      handleChangeForCompletedSteps!([true, true, true, true]);
-      const newData: IEventData = {
-        ...eventData,
-        completedSteps: [true, true, true, true],
-        inCreation: false,
-      };
-      await updateEvent(eventData.eventId, user?.uid, newData);
-      setUserLoading(false);
-      toast("Successfully fininished creating your event", { type: "success" });
-    } else {
-      console.log("User not found.");
-    }
-    setCurrentStep!(creationSteps![3]);
+    setTimeout(async () => {
+      const userFound = await findUser(user?.uid);
+      if (userFound) {
+        handleChangeForCompletedSteps!([true, true, true, true]);
+        const newData: IEventData = {
+          ...eventData,
+          completedSteps: [true, true, true, true],
+          inCreation: false,
+        };
+        await updateEvent(eventData.eventId, user?.uid, newData);
+        setUserLoading(false);
+        toast("Successfully fininished creating your event", {
+          type: "success",
+        });
+      } else {
+        console.log("User not found.");
+      }
+      setCurrentStep!(creationSteps![3]);
+    }, 1000);
   };
   const handleBackButton = () => {
     if (event) {
@@ -172,15 +178,32 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
         </select>
         <div>
           <label htmlFor="accountNumber">Account Number:</label>
-          <input
-            type="text"
-            className="inputs"
-            id="accoundNumber"
-            disabled={loading}
-            value={eventData!.paymentInfo.accountNumber}
-            onChange={(event) => numberChange(event)}
-            placeholder="Enter your account number"
-          />
+          {bankResolutionSuccessful &&
+          eventData!.paymentInfo.accountNumber?.length === 10 ? (
+            <>
+              <input
+                type="text"
+                className="inputs"
+                id="accoundNumber"
+                disabled={loading}
+                value={eventData!.paymentInfo.accountNumber}
+                onChange={(event) => numberChange(event)}
+                placeholder="Enter your account number"
+              />
+            </>
+          ) : (
+            <>
+              <input
+                type="text"
+                className="inputs"
+                id="accoundNumber"
+                disabled={loading}
+                value={formAccountNumber}
+                onChange={(event) => numberChange(event)}
+                placeholder="Enter your account number"
+              />
+            </>
+          )}
         </div>
 
         <div>
@@ -189,7 +212,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
               <Loader />
             </>
           ) : (
-            <p>{resolvedBankDetails?.account_name}</p>
+            <p>{eventData!.paymentInfo.accountName}</p>
           )}
         </div>
 
@@ -215,11 +238,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
               }}
               className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
             >
-              {!loading || !userLoading ? (
-                "Continue"
-              ) : (
-                <Loader variant="small" />
-              )}
+              {loading || userLoading ? <Loader variant="small" /> : "Continue"}
             </button>
           </div>
         </div>

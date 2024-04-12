@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { PaystackProps } from "react-paystack/dist/types";
 import { AuthContext } from "../contexts/AuthContext";
 import { IEventData, IEventTier, IPayEvent } from "../types/Event";
-
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
 import { FormContext } from "../contexts/FormContext";
@@ -12,6 +11,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { updateParticipantsCount, updateTicketCount } from "../api/events";
 import { FcLeft } from "react-icons/fc";
 import { BiInfoCircle } from "react-icons/bi";
+import emailjs from "@emailjs/browser";
+import { IConfirmEmailTicket } from "../types/email";
+import moment from "moment";
+import Loader from "../components/Loader";
 
 const PaymentPage = ({}) => {
   let paymentData: IPayEvent | undefined, eventData: IEventData;
@@ -21,6 +24,7 @@ const PaymentPage = ({}) => {
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const authContext = useContext(AuthContext);
   const formContext = useContext(FormContext);
@@ -33,26 +37,64 @@ const PaymentPage = ({}) => {
 
   const onSuccess = () => {
     const runCode = async () => {
-      toast("Payment successful", { type: "success" });
-      if (!paymentData?.hasTier) {
+      try {
+        setLoading(true);
+        toast("Payment successful", {
+          type: "success",
+        });
+
+        const templateParams: IConfirmEmailTicket = {
+          eventName: eventData.eventInfo.title,
+          toName: `${firstName} ${lastName}`,
+          startDate: moment(eventData?.eventInfo?.startDate).format(
+            "DD MMM, YYYY",
+          ),
+          startTime: moment(eventData?.eventInfo?.startTime, "HH:mm").format(
+            "hh:mm A",
+          ),
+          location: eventData.eventInfo.eventLocation!,
+          category: paymentData?.hasTier ? paymentData.tier?.name! : "General",
+          toEmail: email,
+          fromName: "GroupGo",
+          fromEmail: "groupgoverified@gmail.com",
+          endTime: moment(eventData?.eventInfo?.endTime, "HH:mm").format(
+            "hh:mm A",
+          ),
+          creatorEmail: eventData.eventInfo.creatorEmail,
+          creatorName: eventData.eventInfo.creatorName,
+        };
+        const response = await emailjs.send(
+          import.meta.env.VITE_REACT_EMAIL_SERVICE_ID!,
+          import.meta.env.VITE_REACT_SEND_TICKET_TEMPLATE_ID!,
+          // "#emailForm",
+          templateParams,
+          import.meta.env.VITE_REACT_EMAIL_PUBLIC_KEY!,
+        );
+
         await updateParticipantsCount(eventId!);
-        return navigate(`/${eventId}`);
+        if (!paymentData?.hasTier) return navigate(`/${eventId}`);
+        const newTiers: IEventTier[] = [...eventData.eventInfo.tiers];
+        const newTierData: IEventTier = {
+          ...newTiers[paymentData?.tierIndex!],
+          numberOfTickets:
+            newTiers[paymentData?.tierIndex!].numberOfTickets - 1,
+        };
+        newTiers[paymentData?.tierIndex!] = newTierData;
+        const newData: IEventData = {
+          ...eventData,
+          eventInfo: {
+            ...eventData.eventInfo,
+            tiers: newTiers,
+          },
+        };
+        await updateTicketCount(eventId!, newData);
+        if (response.status === 200)
+          toast("An email with the ticket has been sent", { type: "success" });
+        setLoading(false);
+        navigate(`/${eventId}`);
+      } catch (error) {
+        toast("Email could not be sent", { type: "error" });
       }
-      const newTiers: IEventTier[] = [...eventData.eventInfo.tiers];
-      const newTierData: IEventTier = {
-        ...newTiers[paymentData?.tierIndex!],
-        numberOfTickets: newTiers[paymentData?.tierIndex!].numberOfTickets - 1,
-      };
-      newTiers[paymentData?.tierIndex!] = newTierData;
-      const newData: IEventData = {
-        ...eventData,
-        eventInfo: {
-          ...eventData.eventInfo,
-          tiers: newTiers,
-        },
-      };
-      await updateTicketCount(eventId!, newData);
-      navigate(`/${eventId}`);
     };
     runCode();
   };
@@ -77,9 +119,46 @@ const PaymentPage = ({}) => {
     metadata: {
       custom_fields: [
         {
-          display_name: paymentData?.title ? paymentData?.title : "Event Title",
+          display_name: "Event Title",
           variable_name: "eventTitle",
           value: paymentData?.title ? paymentData?.title : "Event Title",
+        },
+        {
+          display_name: "Event Tier",
+          variable_name: "eventTier",
+          value: paymentData?.hasTier
+            ? eventData!.eventInfo.tiers[paymentData?.tierIndex!].name
+            : "General",
+        },
+        {
+          display_name: "Paid By",
+          variable_name: "paidBy",
+          value: `${firstName} ${lastName}`,
+        },
+        {
+          display_name: "Paid By Email",
+          variable_name: "paidByEmail",
+          value: email,
+        },
+        {
+          display_name: "Paid By Phone No.",
+          variable_name: "paidByPhone",
+          value: phoneNumber,
+        },
+        {
+          display_name: "Paid To (Account Name)",
+          variable_name: "accountName",
+          value: eventData!.paymentInfo.accountName,
+        },
+        {
+          display_name: "Paid To (Account Number)",
+          variable_name: "accountNumber",
+          value: eventData!.paymentInfo.accountNumber,
+        },
+        {
+          display_name: "Paid To (Bank Name)",
+          variable_name: "bankName",
+          value: eventData!.paymentInfo.bankName,
         },
       ],
     },
@@ -97,107 +176,115 @@ const PaymentPage = ({}) => {
     await initializePayment(onSuccess, onClose);
   };
 
-  const astesrisk = <span className="text-red-500">*</span>;
+  // const astesrisk = <span className="text-red-500">*</span>;
   return (
-    <form
-      action=""
-      className="flex w-full flex-col items-center rounded-sm p-4"
-    >
-      <div className="w-full rounded-xl border border-orange-clr bg-gray-200 p-4 tablet:w-3/4 laptop:w-1/2">
-        <div>
-          <Link
-            to={`/${eventId}`}
-            className="flex items-center gap-2 text-orange-clr"
+    <>
+      <form
+        action=""
+        className="flex w-full flex-col items-center rounded-sm p-4"
+      >
+        <div className="w-full rounded-xl border border-orange-clr bg-gray-200 p-4 tablet:w-3/4 laptop:w-1/2">
+          <div>
+            <Link
+              to={`/${eventId}`}
+              className="flex items-center gap-2 text-orange-clr"
+            >
+              <FcLeft />
+              Go Back
+            </Link>
+          </div>{" "}
+          <h3>Checkout</h3>
+          <div className="my-5">
+            <h4>
+              Confirm Payment for <br />
+              Event: {paymentData?.title}
+            </h4>
+            <p>{paymentData?.hasTier && <>Tier: {paymentData.tier?.name}</>}</p>
+          </div>
+          <div className="my-4">
+            <InputField
+              type="text"
+              label="First Name"
+              placeholder="First Name"
+              required
+              value={firstName}
+              onChange={(e: any) => {
+                setFirstName(e.target.value);
+              }}
+            />
+          </div>
+          <div className="my-4">
+            <InputField
+              type="text"
+              label="Last Name"
+              placeholder="Last Name"
+              value={lastName}
+              required
+              onChange={(e: any) => {
+                setLastName(e.target.value);
+              }}
+            />
+          </div>
+          <div className="my-4">
+            <InputField
+              type="email"
+              label="Email"
+              placeholder="user@email.com"
+              required
+              name="email"
+              value={email}
+              onChange={(e: any) => {
+                setEmail(e.target.value);
+              }}
+            />
+          </div>
+          <div className="my-4">
+            <InputField
+              type="email"
+              label="Confirm Email"
+              name="confirmEmail"
+              placeholder="user@email.com"
+              required
+              value={confirmEmail}
+              onChange={(e: any) => {
+                setConfirmEmail(e.target.value);
+              }}
+            />
+          </div>
+          <div className="my-4">
+            <InputField
+              type="text"
+              label="Phone Number"
+              placeholder="+234XXXXXXXXXX"
+              required
+              value={phoneNumber}
+              onChange={(e: any) => {
+                setPhoneNumber(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-4 rounded-xl p-4">
+            <BiInfoCircle className="text-3xl" color="orange" />
+            <p>
+              Tickets will only be sent to the email address you provide above
+            </p>
+          </div>
+          <button
+            className="my-4 flex w-full items-center justify-center rounded-xl bg-orange-clr p-2 text-white"
+            onClick={handlePaymentSubmit}
+            type="submit"
           >
-            <FcLeft />
-            Go Back
-          </Link>
-        </div>{" "}
-        <h3>Checkout</h3>
-        <div className="my-5">
-          <h4>
-            Confirm Payment for <br />
-            Event: {paymentData?.title}
-          </h4>
-          <p>{paymentData?.hasTier && <>Tier: {paymentData.tier?.name}</>}</p>
+            {loading ? (
+              <>
+                <Loader variant="small" />
+              </>
+            ) : (
+              "Pay"
+            )}
+          </button>
         </div>
-        <div className="my-4">
-          <InputField
-            type="text"
-            label="First Name"
-            placeholder="First Name"
-            required
-            value={firstName}
-            onChange={(e: any) => {
-              setFirstName(e.target.value);
-            }}
-          />
-        </div>
-        <div className="my-4">
-          <InputField
-            type="text"
-            label="Last Name"
-            placeholder="Last Name"
-            value={lastName}
-            required
-            onChange={(e: any) => {
-              setLastName(e.target.value);
-            }}
-          />
-        </div>
-        <div className="my-4">
-          <InputField
-            type="email"
-            label="Email"
-            placeholder="user@email.com"
-            required
-            name="email"
-            value={email}
-            onChange={(e: any) => {
-              setEmail(e.target.value);
-            }}
-          />
-        </div>
-        <div className="my-4">
-          <InputField
-            type="email"
-            label="Confirm Email"
-            name="confirmEmail"
-            placeholder="user@email.com"
-            required
-            value={confirmEmail}
-            onChange={(e: any) => {
-              setConfirmEmail(e.target.value);
-            }}
-          />
-        </div>
-        <div className="my-4">
-          <InputField
-            type="text"
-            label="Phone Number"
-            placeholder="+234XXXXXXXXXX"
-            required
-            value={phoneNumber}
-            onChange={(e: any) => {
-              setPhoneNumber(e.target.value);
-            }}
-          />
-        </div>
-        <div className="flex items-center gap-4 rounded-xl p-4">
-          <BiInfoCircle className="text-3xl" color="orange" />
-          <p>
-            Tickets will only be sent to the email address you provide above
-          </p>
-        </div>
-        <button
-          className="my-4 w-full rounded-xl bg-orange-clr p-2 text-white"
-          onClick={handlePaymentSubmit}
-          type="submit"
-        >
-          Pay
-        </button>
-      </div>
-    </form>
+      </form>
+    </>
   );
 };
 

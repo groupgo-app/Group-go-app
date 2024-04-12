@@ -10,7 +10,7 @@ import restaurantEvent from "/templateimages/mini restaurant template img.png";
 export const templates: ITemplate[] = [
   {
     id: 1,
-    templateName: "Resturant Event",
+    templateName: "Restaurant Event",
     imgUrl: restaurantEvent,
     coverImg: "",
     imageAlt: "mini restaurant template image",

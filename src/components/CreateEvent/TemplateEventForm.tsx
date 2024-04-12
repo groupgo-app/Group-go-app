@@ -201,6 +201,11 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
         eventData.eventInfo.typeOfParticipants.length > 0
       ) {
         setIsLoadingSubmit(true);
+        if (!(eventData.eventInfo.amountPerParticipant > 0))
+          return toast("Please pass in an amount per person", {
+            type: "error",
+          });
+
         if (eventData.hasTiers) {
           if (
             !eventData.eventInfo.tiers.length &&
@@ -211,25 +216,18 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
             });
 
           const areAllFilled = eventData.eventInfo.tiers.every(
-            (tier) =>
+            (tier: IEventTier) =>
               tier.name.length > 0 &&
               tier.price > 0 &&
-              tier.numberOfTickets > 0,
+              tier.numberOfTickets > 0 &&
+              tier.description.length > 0,
           );
           if (!areAllFilled)
             return toast(
-              "Please make sure all your tiers have names, prices and number of tickets",
+              "Please make sure all your tiers have names, prices and number of spaces and a description",
               { type: "error" },
             );
 
-          if (
-            sumNumbersInObjects(eventData.eventInfo.tiers) <
-            eventData.eventInfo.maxNumOfParticipant
-          )
-            return toast(
-              "Your number of tickets should not be less than the number of people",
-              { type: "error" },
-            );
           if (
             sumNumbersInObjects(eventData.eventInfo.tiers) >
             eventData.eventInfo.maxNumOfParticipant
@@ -238,62 +236,31 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
               "Your number of tickets should not be more than the number of people",
               { type: "error" },
             );
-
-          if (event) {
-            const newData: IEventData = {
-              ...eventData,
-
-              completedSteps: [true, true, false, false],
-            };
-            await updateEvent(eventData.eventId, user.uid, newData);
-            setEventData(newData);
-          } else {
-            const newData: IEventData = {
-              ...eventData,
-              uid: user.uid,
-              completedSteps: [true, true, false, false],
-            };
-            await saveEvent(newData);
-          }
-
-          setCurrentStep!(creationSteps![2]);
-
-          toast("Successfully created Event", {
-            type: "success",
-            autoClose: 3000,
-          });
-          navigate(`/edit/${eventData?.eventId}?step=3`);
-        } else {
-          if (!(eventData.eventInfo.amountPerParticipant > 0))
-            return toast("Please pass in an amount per person", {
-              type: "error",
-            });
-
-          if (event) {
-            const newData: IEventData = {
-              ...eventData,
-
-              completedSteps: [true, true, false, false],
-            };
-            await updateEvent(eventData.eventId, user.uid, newData);
-            setEventData(newData);
-          } else {
-            const newData: IEventData = {
-              ...eventData,
-              uid: user.uid,
-              completedSteps: [true, true, false, false],
-            };
-            await saveEvent(newData);
-          }
-
-          setCurrentStep!(creationSteps![2]);
-
-          toast("Successfully created Event", {
-            type: "success",
-            autoClose: 3000,
-          });
-          navigate(`/edit/${eventData?.eventId}?step=3`);
         }
+        if (event) {
+          const newData: IEventData = {
+            ...eventData,
+
+            completedSteps: [true, true, false, false],
+          };
+          await updateEvent(eventData.eventId, user.uid, newData);
+          setEventData(newData);
+        } else {
+          const newData: IEventData = {
+            ...eventData,
+            uid: user.uid,
+            completedSteps: [true, true, false, false],
+          };
+          await saveEvent(newData);
+        }
+
+        setCurrentStep!(creationSteps![2]);
+
+        toast("Successfully created Event", {
+          type: "success",
+          autoClose: 3000,
+        });
+        navigate(`/edit/${eventData?.eventId}?step=3`);
       } else {
         handleChangeForCompletedSteps!([true, false, false, false]);
         toast("Fill in all the inputs to proceed", {

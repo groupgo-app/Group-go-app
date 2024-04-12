@@ -1,3 +1,4 @@
+import { IEventData } from "../types/Event";
 import { IStep } from "../types/Step";
 
 export const fetchBanks = async () => {
@@ -22,13 +23,19 @@ export const resolveBankAccount = async ({
   setCurrentStep,
   setResolvedBankDetails,
   creationSteps,
+
+  eventData,
+  setEventData,
 }: {
-  accountNumber: string | number;
+  accountNumber: string;
   bankCode: string | number;
   setErrorMessage: Function;
   setCurrentStep: Function;
   setResolvedBankDetails: Function;
   creationSteps: IStep[];
+
+  eventData: IEventData;
+  setEventData: any;
 }) => {
   try {
     const response = await fetch(
@@ -50,6 +57,13 @@ export const resolveBankAccount = async ({
     } else {
       const data = await response.json();
       setResolvedBankDetails(data.data);
+      const accountName = await data.data.account_name;
+      const newData: IEventData = {
+        ...eventData,
+        paymentInfo: { ...eventData?.paymentInfo!, accountName, accountNumber },
+      };
+      setEventData(newData);
+
       return true;
     }
 

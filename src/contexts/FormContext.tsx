@@ -5,7 +5,7 @@ import { fetchBanks } from "../api/banks";
 import { AppContext } from "./AppContext";
 import { templates } from "../data/templates";
 import { FormContextState } from "../types/contexts";
-import { IPayEvent } from "../types/Event";
+import { IEventData, IPayEvent } from "../types/Event";
 
 export const FormContext = createContext<FormContextState | null>(null);
 
@@ -42,34 +42,36 @@ export const FormContextProvider = ({
       return;
     } else {
       setSelectedTemplate(selectTemplate);
-
-      setEventData({
+      const newData: IEventData = {
         ...eventData,
         uid: user?.uid,
         eventInfo: { ...eventData.eventInfo, creatorEmail: user?.email },
         eventType: selectTemplate.templateName,
         eventImg: selectTemplate.imgUrl,
         completedSteps: [true, false, false, false],
-      });
+      };
+      setEventData(newData);
       setCurrentStep!(creationSteps![1]);
     }
   };
 
   useEffect(() => {
-    setEventData({
+    const newData = {
       ...eventData,
       eventInfo: { ...eventData.eventInfo, creatorEmail: user?.email },
-    });
+    };
+    setEventData(newData);
   }, []);
 
   const handleChangeForEventInfo = (
     nameOfInfo: string,
     valueOfInfo: string,
   ) => {
-    setEventData({
+    const newData: IEventData = {
       ...eventData,
       eventInfo: { ...eventData.eventInfo, [nameOfInfo]: valueOfInfo },
-    });
+    };
+    setEventData(newData);
   };
   const handleChangeForEventType = (eventType: string) => {
     setEventData({
@@ -81,33 +83,37 @@ export const FormContextProvider = ({
   const handleChangeForCompletedSteps = (
     completedSteps: [boolean, boolean, boolean, boolean],
   ) => {
-    setEventData({ ...eventData, completedSteps });
+    const newData = { ...eventData, completedSteps };
+    setEventData(newData);
   };
   const handleChangeForInCreation = (inCreation: boolean) => {
-    setEventData({ ...eventData, inCreation });
+    const newData = { ...eventData, inCreation };
+    setEventData(newData);
   };
 
   const handleChangeForPaymentInfo = (
     paymentInfoName: string,
     paymentInfoValue: string,
   ) => {
-    setEventData({
+    const newData = {
       ...eventData,
       paymentInfo: {
         ...eventData.paymentInfo,
         [paymentInfoName]: paymentInfoValue,
       },
-    });
+    };
+    setEventData(newData);
   };
 
-  const handleChangeAccountNumber = (accountNumber: string | number) => {
-    setEventData({
+  const handleChangeAccountNumber = (accountNumber: string) => {
+    const newData = {
       ...eventData,
       paymentInfo: {
         ...eventData.paymentInfo,
         accountNumber,
       },
-    });
+    };
+    setEventData(newData);
   };
 
   const handleChangeBankName = (selectedBankName: string) => {
@@ -128,6 +134,17 @@ export const FormContextProvider = ({
     }
   };
 
+  const handleChangeAccountName = (accountName: string) => {
+    const newData = {
+      ...eventData,
+      paymentInfo: {
+        ...eventData.paymentInfo,
+        accountName,
+      },
+    };
+    setEventData(newData);
+  };
+
   useEffect(() => {
     const setFoundBanks = async () => {
       const banks = await fetchBanks();
@@ -144,7 +161,7 @@ export const FormContextProvider = ({
         bankCode,
         setImgUrl,
         imgUrl,
-
+        handleChangeAccountName,
         loading,
         setLoading,
         resolvedBankDetails,

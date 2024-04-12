@@ -5,6 +5,7 @@ export type IEventTier = {
   name: string;
   price: number;
   numberOfTickets: number;
+  description: string;
 };
 
 export type IPayEvent = {
@@ -45,6 +46,7 @@ export type IEventData = {
   };
   paymentInfo: {
     bankName: string;
-    accountNumber: string | number;
+    accountNumber: string;
+    accountName: string;
   };
 };

@@ -22,7 +22,7 @@ const TierSection = ({
   const handleAddTier = () => {
     setTiers([
       ...tiers,
-      { id: nanoid(), name: "", price: 0, numberOfTickets: 0 },
+      { id: nanoid(), name: "", price: 0, numberOfTickets: 0, description: "" },
     ]);
     setEventData({
       ...eventData,
@@ -30,7 +30,13 @@ const TierSection = ({
         ...eventData.eventInfo,
         tiers: [
           ...tiers,
-          { id: nanoid(), name: "", price: 0, numberOfTickets: 0 },
+          {
+            id: nanoid(),
+            name: "",
+            price: 0,
+            numberOfTickets: 0,
+            description: "",
+          },
         ],
       },
     });
@@ -51,6 +57,21 @@ const TierSection = ({
     const newTierData: IEventTier = {
       ...newTiers[index],
       name: e.target.value,
+    };
+    newTiers[index] = newTierData;
+    setEventData({
+      ...eventData,
+      eventInfo: { ...eventData.eventInfo, tiers: newTiers },
+    });
+
+    setTiers(newTiers);
+  };
+
+  const handleDescriptionChange = (e: any, index: number) => {
+    const newTiers: IEventTier[] = [...tiers];
+    const newTierData: IEventTier = {
+      ...newTiers[index],
+      description: e.target.value,
     };
     newTiers[index] = newTierData;
     setEventData({
@@ -92,13 +113,28 @@ const TierSection = ({
 
   return (
     <FormSection title="Tiers and Pricing">
-      <div className="flex items-center gap-1">
-        <h5>Has Tiers?</h5>
-        <input type="checkbox" name="" id="" onChange={handleHasTiers} />
+      <InputField
+        id="amount"
+        required={true}
+        type="number"
+        label="Amount per person"
+        name="amountPerParticipant"
+        placeholder="0.00 (NGN)"
+        value={eventData.eventInfo.amountPerParticipant}
+        onChange={eventInfoChange}
+      />
+
+      <div className="flex flex-col justify-center gap-3">
+        <div className="flex items-center gap-2">
+          <h5>Has Tiers?</h5>
+          <input type="checkbox" name="" id="" onChange={handleHasTiers} />
+        </div>
+        <p>Does your event have tiers or categories?</p>
       </div>
 
-      {eventData.hasTiers ? (
+      {eventData.hasTiers && (
         <>
+          <h3>Tiers</h3>
           {eventData.eventInfo.tiers?.map((tier, index) => (
             <div key={`tier ${index + 1}`}>
               <InputField
@@ -120,9 +156,18 @@ const TierSection = ({
                 }}
               />
               <InputField
+                type="textarea"
+                value={tier.description}
+                label={`A good description for tier ${index + 1}`}
+                onChange={(e: any) => {
+                  handleDescriptionChange(e, index);
+                }}
+                required
+              />
+              <InputField
                 type="number"
                 value={tier.numberOfTickets}
-                label={`Number of Tickets for Tier ${index + 1}`}
+                label={`Number of spaces available for Tier ${index + 1}`}
                 required
                 onChange={(e: any) => {
                   handleTicketNumberChange(e, index);
@@ -151,19 +196,6 @@ const TierSection = ({
               Add tier
             </div>
           </div>
-        </>
-      ) : (
-        <>
-          <InputField
-            id="amount"
-            required={true}
-            type="number"
-            label="Amount per person"
-            name="amountPerParticipant"
-            placeholder="0.00 (NGN)"
-            value={eventData.eventInfo.amountPerParticipant}
-            onChange={eventInfoChange}
-          />
         </>
       )}
     </FormSection>

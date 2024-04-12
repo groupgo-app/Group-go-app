@@ -67,7 +67,7 @@ const Event = () => {
       amount: event?.eventInfo.amountPerParticipant!,
       eventId: event?.eventId!,
       title: event?.eventInfo.title!,
-      hasTier: event?.hasTiers,
+      hasTier: false,
     });
     navigate(`/${eventId}/pay`);
   };
@@ -85,7 +85,7 @@ const Event = () => {
         ),
       );
     } catch (error: any) {
-      console.log(error?.stack);
+      if (error) return;
     }
   };
 
@@ -202,7 +202,7 @@ const Event = () => {
         <div className="my-4 flex flex-wrap gap-2">
           {/* Date */}
           <div
-            className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] ${event.hasTiers ? "tablet:w-[45%] laptop:w-[30%]" : "tablet:w-[45%]"}`}
+            className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[45%]`}
           >
             <div className="flex items-center gap-[8px]">
               <img src={dateImg} alt="" />
@@ -225,106 +225,132 @@ const Event = () => {
             </div>
           </div>
           {/* Payment */}
-
-          {event.hasTiers ? (
-            <div className="my-4 w-full">
-              <h3>Event Tiers</h3>
-              <div className="my-4 flex flex-wrap items-center gap-4">
-                {event.eventInfo.tiers?.map((tier, i) => (
-                  <div
-                    key={tier.id}
-                    className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
-                  >
-                    <h5>{tier.name}</h5>
-                    <div className="flex items-center gap-2">
-                      <FaMoneyBill /> {Naira} {tier.price}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FaTicket /> {tier.numberOfTickets} Tickets Available{" "}
-                    </div>
-                    <div>
-                      <button
-                        className={`mt-1 w-full rounded-xl bg-orange-clr p-2 text-white ${
-                          tier.numberOfTickets === 0 || isEnded
-                            ? "cursor-not-allowed bg-red-900"
-                            : ""
-                        }`}
-                        type="button"
-                        disabled={tier.numberOfTickets === 0 || isEnded}
-                        onClick={(e) => {
-                          handleTierPayment(e, tier, i);
-                        }}
-                      >
-                        Buy ticket
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
+            <div className="flex items-center gap-[8px]">
+              <img src={moneyImg} alt="" />
+              <p>Commitment per person</p>
             </div>
-          ) : (
-            <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
-              <div className="flex items-center gap-[8px]">
-                <img src={moneyImg} alt="" />
-                <p>Commitment per person</p>
-              </div>
 
-              <div className="">
-                <h5 className="font-medium">
-                  &#8358; {event?.eventInfo?.amountPerParticipant}
-                </h5>
-              </div>
-              <div className="my-4 flex items-center gap-[8px]">
-                <img src={profile} alt="" />
-                <p className="text-sm capitalize">
-                  {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
-                  {event?.eventInfo?.typeOfParticipants} Allowed
-                </p>
-              </div>
-              <div>
-                <h5 className="mb-[15px]">
-                  {isEnded ? (
-                    "0 "
-                  ) : (
-                    <>
-                      {`${
-                        (event?.eventInfo?.maxNumOfParticipant || 0) -
-                        (event?.numberOfPaidParticipants || 0)
-                      }`}{" "}
-                    </>
-                  )}
-                  Tickets available
-                </h5>
-                <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
-                <button
-                  onClick={handleNonTierPayment}
-                  disabled={
-                    event?.numberOfPaidParticipants ===
-                      Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
-                  }
-                  className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
-                    event?.numberOfPaidParticipants ===
-                      Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
-                      ? "cursor-not-allowed bg-red-900"
-                      : ""
-                  }`}
-                >
-                  {isEnded ? (
-                    <>Event Ended</>
-                  ) : (
-                    <>
-                      {event?.numberOfPaidParticipants ===
-                      Number(event?.eventInfo?.maxNumOfParticipant)
-                        ? "No more ticket"
-                        : "Apply for event"}
-                    </>
-                  )}
-                </button>
-              </div>
+            <div className="">
+              <h5 className="font-medium">
+                &#8358; {event?.eventInfo?.amountPerParticipant}
+              </h5>
             </div>
-          )}
+            <div className="my-4 flex items-center gap-[8px]">
+              <img src={profile} alt="" />
+              <p className="text-sm capitalize">
+                {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
+                {event?.eventInfo?.typeOfParticipants} Allowed
+              </p>
+            </div>
+            <div>
+              <h5 className="mb-[15px]">
+                {isEnded ? (
+                  "0 "
+                ) : (
+                  <>
+                    {`${
+                      (event?.eventInfo?.maxNumOfParticipant || 0) -
+                      (event?.numberOfPaidParticipants || 0)
+                    }`}{" "}
+                  </>
+                )}
+                Tickets available
+              </h5>
+              <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
+              <button
+                onClick={handleNonTierPayment}
+                disabled={
+                  event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
+                }
+                className={`w-full rounded-[15px] bg-[#e2614b] px-[24px] py-[10px] text-[#fff] ${
+                  event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant) || isEnded
+                    ? "cursor-not-allowed bg-red-900"
+                    : ""
+                }`}
+              >
+                {isEnded ? (
+                  <>Event Ended</>
+                ) : (
+                  <>
+                    {event?.numberOfPaidParticipants ===
+                    Number(event?.eventInfo?.maxNumOfParticipant)
+                      ? "No more ticket"
+                      : "Apply for event"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
-
+        {event.hasTiers && (
+          <div className="my-4 w-full">
+            <h3>Event Tiers</h3>
+            <div className="my-4 flex flex-wrap items-center gap-4">
+              {event.eventInfo.tiers?.map((tier, i) => (
+                <div
+                  key={tier.id}
+                  className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
+                >
+                  <h5>{tier.name}</h5>
+                  <div className="flex items-center gap-2">
+                    <FaMoneyBill /> {Naira} {tier.price}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaTicket />{" "}
+                    {tier.numberOfTickets >=
+                    Number(event?.eventInfo?.maxNumOfParticipant) -
+                      event?.numberOfPaidParticipants ? (
+                      <>
+                        {Number(event?.eventInfo?.maxNumOfParticipant) -
+                          event?.numberOfPaidParticipants}
+                      </>
+                    ) : (
+                      <>{tier.numberOfTickets}</>
+                    )}{" "}
+                    Ticket(s) Available{" "}
+                  </div>
+                  <p>{tier.description}</p>
+                  <div>
+                    <button
+                      className={`mt-1 w-full rounded-xl bg-orange-clr p-2 text-white ${
+                        tier.numberOfTickets === 0 ||
+                        isEnded ||
+                        event?.numberOfPaidParticipants ===
+                          Number(event?.eventInfo?.maxNumOfParticipant)
+                          ? "cursor-not-allowed bg-red-900"
+                          : ""
+                      }`}
+                      type="button"
+                      disabled={
+                        tier.numberOfTickets === 0 ||
+                        isEnded ||
+                        event?.numberOfPaidParticipants ===
+                          Number(event?.eventInfo?.maxNumOfParticipant)
+                      }
+                      onClick={(e) => {
+                        handleTierPayment(e, tier, i);
+                      }}
+                    >
+                      {isEnded ? (
+                        "Event Ended"
+                      ) : (
+                        <>
+                          {event?.numberOfPaidParticipants ===
+                          Number(event?.eventInfo?.maxNumOfParticipant)
+                            ? "No more spaces available"
+                            : "Buy ticket"}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Organiser Details */}
         <div className="my-4 w-fit rounded-xl bg-gray-300 p-4">
           <h4>Host / Organiser Details</h4>

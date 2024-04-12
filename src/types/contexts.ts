@@ -44,6 +44,7 @@ export type FormContextState = {
   handleChangeForEventInfo?: any;
   handleChangeForPaymentInfo?: any;
   handleRedirect: (id: any) => Promise<void>;
+  handleChangeAccountName: (accountName: string) => void;
   handleChangeAccountNumber?: any;
   handleChangeBankName?: any;
   handleChangeForEventType?: any;
