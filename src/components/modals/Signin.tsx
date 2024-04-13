@@ -4,7 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FiX } from "react-icons/fi";
 import Loader from "../../assets/images/loader.svg";
 import { AnimatePresence, motion } from "framer-motion";
-import { HiOutlineBellAlert } from "react-icons/hi2";
+
 import * as EmailValidator from "email-validator";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -12,19 +12,19 @@ import { auth } from "../../config/firebase";
 import { handleSignInUser, sendEmailLink } from "../../api/auth";
 
 const Signin = () => {
-  const [isValidEmail, setIsValidEmail] = useState(false);
-
-  const {
-    email,
+  let email: string,
     setEmail,
-    user,
-    alertMsg,
-    setAlertMsg,
+    user: any,
     isEmailLinkLoading,
-    setIsEmailLinkLoading,
-    errorMsg,
-    setErrorMsg,
-  } = useContext(AuthContext);
+    setIsEmailLinkLoading: React.Dispatch<React.SetStateAction<any>>;
+
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const authContext = useContext(AuthContext);
+  if (authContext) {
+    ({ email, setEmail, user, isEmailLinkLoading, setIsEmailLinkLoading } =
+      authContext);
+  }
+
   const { search } = useLocation();
   const navigate = useNavigate();
 
@@ -42,33 +42,19 @@ const Signin = () => {
       setIsValidEmail(EmailValidator.validate(email!));
       emailRef.current = email!; // Update reference with new email
     }
-  }, [email, isValidEmail]);
-
-  // const handleGoogleSignin = async () => {
-  //   try {
-  //     await signInWithGoogle();
-  //     if (user) {
-  //       // createUserDocument(user.uid, user.email, user.photoURL, user.displayName)
-  //       navigate("/create");
-  //     } else {
-  //       console.log("unable to sign in");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  }, [email!, isValidEmail]);
 
   const signInWithGoogle = async () => {
     const googleProvider = new GoogleAuthProvider();
     await signInWithPopup(auth, googleProvider);
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setErrorMsg!("");
-      setIsEmailLinkLoading!(false);
-    }, 4000);
-  }, [errorMsg]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+
+  //     setIsEmailLinkLoading!(false);
+  //   }, 4000);
+  // }, [errorMsg]);
 
   return (
     <>
@@ -90,8 +76,7 @@ const Signin = () => {
               onSubmit={(e) => {
                 sendEmailLink(
                   setIsEmailLinkLoading!,
-                  setAlertMsg!,
-                  setErrorMsg!,
+
                   email!,
                 );
                 e.preventDefault();
@@ -113,22 +98,10 @@ const Signin = () => {
                     type="email"
                     name="email"
                     id="email"
-                    value={email}
+                    value={email!}
                     className="inputs w-full"
                     onChange={(e) => setEmail!(e.target.value)}
                   />
-                  {alertMsg && (
-                    <div className="flex items-center gap-1">
-                      <HiOutlineBellAlert color="red" />
-                      <span className="text-[12px]">{alertMsg}</span>
-                    </div>
-                  )}
-                  {errorMsg && (
-                    <div className="flex items-center gap-1">
-                      <HiOutlineBellAlert color="red" />
-                      <span className="text-[12px]">{errorMsg}</span>
-                    </div>
-                  )}
                 </fieldset>
                 <div>
                   <button
