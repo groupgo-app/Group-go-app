@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -154,5 +155,29 @@ export const updateTicketCount = async (
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const deleteEvent = async (eventId: string) => {
+  try {
+    const dataList: any[] = [];
+    const q = query(eventsCollectionRef, where("eventId", "==", eventId));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      let data = doc.data();
+      data.id = doc.id;
+      dataList.push(data);
+    });
+
+    if (dataList[0]) {
+      const eventDoc = doc(db, "events", dataList[0].id);
+
+      await deleteDoc(eventDoc);
+    } else {
+      return Error("Data not found");
+    }
+  } catch (error: any) {
+    console.error(error.stack);
   }
 };

@@ -228,7 +228,7 @@ const Event = () => {
           <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
             <div className="flex items-center gap-[8px]">
               <img src={moneyImg} alt="" />
-              <p>Commitment per person</p>
+              <p>Amount per person</p>
             </div>
 
             <div className="">
@@ -278,7 +278,7 @@ const Event = () => {
                     {event?.numberOfPaidParticipants ===
                     Number(event?.eventInfo?.maxNumOfParticipant)
                       ? "No more ticket"
-                      : "Apply for event"}
+                      : "Buy ticket"}
                   </>
                 )}
               </button>
@@ -292,7 +292,7 @@ const Event = () => {
               {event.eventInfo.tiers?.map((tier, i) => (
                 <div
                   key={tier.id}
-                  className=" min-w-[300px] rounded-xl bg-gray-300 p-4"
+                  className="min-w-[300px] rounded-xl border border-orange-clr bg-white  p-4"
                 >
                   <h5>{tier.name}</h5>
                   <div className="flex items-center gap-2">
@@ -308,7 +308,7 @@ const Event = () => {
                           event?.numberOfPaidParticipants}
                       </>
                     ) : (
-                      <>{tier.numberOfTickets}</>
+                      <>{isEnded ? "0" : tier.numberOfTickets}</>
                     )}{" "}
                     Ticket(s) Available{" "}
                   </div>
@@ -352,41 +352,44 @@ const Event = () => {
           </div>
         )}
         {/* Organiser Details */}
-        <div className="my-4 w-fit rounded-xl bg-gray-300 p-4">
-          <h4>Host / Organiser Details</h4>
-          <div className="flex justify-center">
-            <FaUser className="text-center text-4xl" />
+        <h3>Host</h3>
+        <div className="flex items-center justify-center tablet:justify-start">
+          <div className="my-4 w-fit min-w-[300px] rounded-xl border border-orange-clr bg-white p-4">
+            <h4>Host / Organiser Details</h4>
+            <div className="flex justify-center">
+              <FaUser className="text-center text-4xl" />
+            </div>
+            <h5 className="text-center">
+              <strong>{event?.eventInfo?.creatorName}</strong>
+            </h5>
+            <p className="flex items-center gap-2 text-sm">
+              <MdEmail />
+              <span>
+                Email:{" "}
+                <a href={`mailto:${event.eventInfo.creatorEmail}`}>
+                  {event.eventInfo.creatorEmail}
+                </a>
+              </span>
+            </p>
+            <p className="flex flex-wrap items-center gap-1 text-sm">
+              Social Profiles:{" "}
+              <span className="flex flex-wrap items-center gap-1">
+                {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
+                  (link: string, i: number) => (
+                    <span
+                      key={i}
+                      className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
+                    >
+                      <SocialIcon
+                        url={link}
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </span>
+                  ),
+                )}
+              </span>
+            </p>
           </div>
-          <h5 className="text-center">
-            <strong>{event?.eventInfo?.creatorName}</strong>
-          </h5>
-          <p className="flex items-center gap-2 text-sm">
-            <MdEmail />
-            <span>
-              Email:{" "}
-              <a href={`mailto:${event.eventInfo.creatorEmail}`}>
-                {event.eventInfo.creatorEmail}
-              </a>
-            </span>
-          </p>
-          <p className="flex flex-wrap items-center gap-1 text-sm">
-            Event Links:{" "}
-            <span className="flex flex-wrap items-center gap-1">
-              {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
-                (link: string, i: number) => (
-                  <span
-                    key={i}
-                    className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
-                  >
-                    <SocialIcon
-                      url={link}
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </span>
-                ),
-              )}
-            </span>
-          </p>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
           <h3 className="flex items-center gap-4">
