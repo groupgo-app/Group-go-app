@@ -23,15 +23,14 @@ export const sendEmailLink = async (
   try {
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
     window.localStorage.setItem("emailForSignIn", email);
-    toast(
-      "We have sent you an email with a link to sign in. Please make sure you are clicking the email on the same device that you are logging in with!",
-      { type: "info" },
-    );
-    // setAlertMsg("");
-    setIsEmailLinkLoading(false);
+    toast("We have sent you an email with a link to sign in.", {
+      type: "success",
+    });
   } catch (error: any) {
-    console.log(error.message);
     toast(`Sign in error :- ${error.message}`, { type: "error" });
+    window.location.href = import.meta.env.VITE_REACT_SITE_URL;
+  } finally {
+    setIsEmailLinkLoading(false);
   }
 };
 
@@ -40,34 +39,31 @@ export const signInWithGoogle = async () => {
 };
 
 export const logout = async (user: any, navigate: Function) => {
-  if (user) {
-    await signOut(auth);
-    navigate("/");
-  } else {
-    return;
-  }
+  if (!user) return;
+  await signOut(auth);
+  navigate("/");
 };
 
 export const handleSignInUser = async (user: any, navigate: Function) => {
   if (user) return;
-  if (isSignInWithEmailLink(auth, window.location.href)) {
-    let email = window.localStorage.getItem("emailForSignIn");
-    if (!email) {
-      email = window.prompt("Please provide your email for confirmation");
-    }
-    signInWithEmailLink(auth, email!, window.location.href)
-      .then((result) => {
-        const newUser = result.user;
-        createUserDocument(newUser);
-        window.localStorage.removeItem("emailForSignIn");
-        navigate("/create");
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log(err);
-        navigate("/login");
-      });
-  } else {
-    // console.log("pls sign in");
-  }
+  if (!isSignInWithEmailLink(auth, window.location.href)) return;
+
+  let email = window.localStorage.getItem("emailForSignIn");
+  if (!email)
+    email = window.prompt("Please provide your email for confirmation");
+
+  signInWithEmailLink(auth, email!, window.location.href)
+    .then((result) => {
+      const newUser = result.user;
+      createUserDocument(newUser);
+      navigate("/create");
+    })
+    .catch((err) => {
+      toast("An error occured while loggin in", { type: "error" });
+      navigate("/");
+      if (err) return;
+    })
+    .finally(() => {
+      window.localStorage.removeItem("emailForSignIn");
+    });
 };

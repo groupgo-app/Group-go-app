@@ -6,7 +6,11 @@ import Loader from "../../assets/images/loader.svg";
 import { AnimatePresence, motion } from "framer-motion";
 
 import * as EmailValidator from "email-validator";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  // useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import { handleSignInUser, sendEmailLink } from "../../api/auth";
@@ -25,12 +29,12 @@ const Signin = () => {
       authContext);
   }
 
-  const { search } = useLocation();
+  // const { search } = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     handleSignInUser(user, navigate);
-  }, [user, navigate, search]);
+  }, [user]);
 
   const emailRef = useRef("");
 
