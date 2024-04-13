@@ -227,7 +227,7 @@ const Event = () => {
           {/* Payment */}
           <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
             <div className="flex items-center gap-[8px]">
-              <img src={moneyImg} alt="" />
+              <img src={moneyImg} alt="" loading="lazy" />
               <p>Amount per person</p>
             </div>
 
@@ -237,7 +237,11 @@ const Event = () => {
               </h5>
             </div>
             <div className="my-4 flex items-center gap-[8px]">
-              <img src={profile} alt="" />
+              <img
+                src={profile}
+                alt={event.eventInfo.creatorName}
+                loading="lazy"
+              />
               <p className="text-sm capitalize">
                 {!(event.eventInfo.typeOfParticipants.length > 7) && "Only "}
                 {event?.eventInfo?.typeOfParticipants} Allowed

@@ -192,9 +192,9 @@ const Home = () => {
             <div>
               <a
                 className="rounded-[15px] border border-[#060811] px-6 py-[14px] text-[18px] font-medium text-[#060811] "
-                href={"#about"}
+                href={"https://calendly.com/atoyebiayo"}
               >
-                Learn more
+                Book a Demo
               </a>
             </div>
           </div>
