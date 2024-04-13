@@ -41,15 +41,19 @@ export const updateEvent = async (
   eventId: string,
   userId: string,
   eventData: IEventData,
+  clickToEdit?: boolean,
 ) => {
   try {
-    const newData = {
-      ...eventData,
-      eventInfo: {
-        ...eventData.eventInfo,
-        socialLinks: JSON.stringify([...eventData.eventInfo.socialLinks]),
-      },
-    };
+    let newData;
+    if (clickToEdit) newData = eventData;
+    else
+      newData = {
+        ...eventData,
+        eventInfo: {
+          ...eventData.eventInfo,
+          socialLinks: JSON.stringify([...eventData.eventInfo.socialLinks]),
+        },
+      };
     const dataList: any[] = [];
     const q = query(eventsCollectionRef, where("eventId", "==", eventId));
     const querySnapshot = await getDocs(q);

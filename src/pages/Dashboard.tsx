@@ -98,6 +98,21 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteForDrafts = async (e: any, eventId: string) => {
+    try {
+      setSingleEventLoading(true);
+      e.preventDefault();
+      await deleteEvent(eventId);
+      toast("Event Successfully deleted", { type: "success" });
+      setDrafts(completedEvents.filter((event) => event.eventId !== eventId));
+      // getAllEvents();
+    } catch (error) {
+      toast("Could not delete event", { type: "error" });
+    } finally {
+      setSingleEventLoading(false);
+    }
+  };
+
   if (loading) {
     return <Loader />;
   } else if (user) {
@@ -184,7 +199,7 @@ const Dashboard = () => {
             href={`${import.meta.env.VITE_REACT_SITE_URL}/dashboard`}
           />
         </Helmet>
-        <div className="w-full space-y-16">
+        <div className="space-y-16 w-full">
           <div className="space-y-5">
             <h5 className="text-[24px] font-medium">Events</h5>
             <div className="grid grid-cols-1 gap-5 laptop:grid-cols-4">
@@ -205,7 +220,7 @@ const Dashboard = () => {
               <Underliner />
               {eventList.length > 0 ? (
                 <>
-                  <div className="flex flex-wrap items-center justify-center gap-4 pt-5 tablet:justify-start">
+                  <div className="flex flex-wrap gap-4 justify-center items-center pt-5 tablet:justify-start">
                     {eventList.map((event) => (
                       <DashboardEvent
                         // handleEventClick={handleEventClick}
@@ -225,13 +240,20 @@ const Dashboard = () => {
                 <h3 className="text-4xl">Drafts</h3>
                 <Underliner />
                 <p>Finish up setting up your events</p>
-                <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
+                {singleEventLoading && (
+                  <>
+                    <Loader />
+                  </>
+                )}
+                <div className="flex flex-wrap gap-4 justify-center items-center tablet:justify-start">
                   {drafts.map((event) => (
                     <DashboardEvent
                       // handleEventClick={handleEventClick}
                       event={event}
                       key={event?.eventId}
                       draft={true}
+                      handleDelete={handleDeleteForDrafts}
+                      singleEventLoading={singleEventLoading}
                     />
                   ))}
                 </div>
@@ -249,7 +271,7 @@ const Dashboard = () => {
                   </>
                 ) : (
                   <div className="py-5">
-                    <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
+                    <div className="flex flex-wrap gap-4 justify-center items-center tablet:justify-start">
                       {completedEvents.map((event) => (
                         <DashboardEvent
                           // handleEventClick={handleEventClick}
@@ -258,6 +280,7 @@ const Dashboard = () => {
                           completed
                           handleDelete={handleDelete}
                           singleEventLoading={singleEventLoading}
+                          setSingleEventLoading={setSingleEventLoading}
                         />
                       ))}
                     </div>
@@ -266,15 +289,6 @@ const Dashboard = () => {
               </>
             )}
           </div>
-          {/* {currentPreview && (
-            <div className="flex flex-col gap-5">
-              <h5 className="text-[24px] font-medium">{`Event/${currentPreview?.eventType}`}</h5>
-              <PreviewAvailableEvents
-                currentPreview={currentPreview}
-                setCurrentPreview={setCurrentPreview}
-              />
-            </div>
-          )} */}
         </div>
       </>
     );

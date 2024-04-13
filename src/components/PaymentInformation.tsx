@@ -147,15 +147,17 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
         "Please select a template or provide details for the event before proceeding here",
         { type: "warning" },
       );
+
       setCurrentStep(creationSteps[1]);
     }
+    console.log(eventData.paymentInfo);
   }, []);
   return (
     <>
       <div className="payment_info_container">
         <button
           onClick={handleBackButton}
-          className="flex items-center gap-2 text-orange-clr"
+          className="flex gap-2 items-center text-orange-clr"
         >
           <FiArrowLeft />
           Go back
@@ -228,19 +230,49 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
               Back
             </button>
           </div>
-          <div className="w-full">
-            <button
-              type="submit"
-              // type="button"
-              disabled={loading || !bankResolutionSuccessful}
-              onClick={() => {
-                goForward();
-              }}
-              className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
-            >
-              {loading || userLoading ? <Loader variant="small" /> : "Continue"}
-            </button>
-          </div>
+
+          {eventData!.paymentInfo.accountName.length > 0 &&
+          eventData!.paymentInfo.accountNumber.length === 10 &&
+          eventData!.paymentInfo.bankName.length > 0 &&
+          eventData!.paymentInfo.bankCode ? (
+            <>
+              <div className="w-full">
+                <button
+                  type="submit"
+                  onClick={() => {
+                    goForward();
+                  }}
+                  className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
+                >
+                  {loading || userLoading ? (
+                    <Loader variant="small" />
+                  ) : (
+                    "Continue"
+                  )}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-full">
+                <button
+                  type="submit"
+                  // type="button"
+                  disabled={loading || !bankResolutionSuccessful}
+                  onClick={() => {
+                    goForward();
+                  }}
+                  className="primary_button flex items-center justify-center disabled:cursor-default disabled:bg-[#EE9080] tablet:w-[100%]"
+                >
+                  {loading || userLoading ? (
+                    <Loader variant="small" />
+                  ) : (
+                    "Continue"
+                  )}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>

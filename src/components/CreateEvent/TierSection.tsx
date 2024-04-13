@@ -14,15 +14,40 @@ const TierSection = ({
   eventInfoChange: any;
 }) => {
   const [tiers, setTiers] = useState<IEventTier[]>([]);
+  const [showAddAmount, setShowAddAmount] = useState(true);
 
   const handleHasTiers = (e: any) => {
-    const newData: IEventData = { ...eventData, hasTiers: e.target.checked };
+    const newData: IEventData = {
+      ...eventData,
+      hasTiers: e.target.checked,
+      eventInfo: {
+        ...eventData.eventInfo,
+        tiers: e.target.checked ? eventData.eventInfo.tiers : [],
+      },
+    };
     setEventData(newData);
   };
+  function sumNumbersInObjects(arr: IEventTier[]) {
+    let totalSum = 0;
+    for (const obj of arr) {
+      if (obj.hasOwnProperty("numberOfTickets")) {
+        // Check if "number" property exists
+        totalSum += Number(obj.numberOfTickets);
+      }
+    }
+    return totalSum;
+  }
+
   const handleAddTier = () => {
     setTiers([
       ...tiers,
-      { id: nanoid(), name: "", price: 0, numberOfTickets: 0, description: "" },
+      {
+        id: nanoid(),
+        name: "",
+        price: "0",
+        numberOfTickets: 0,
+        description: "",
+      },
     ]);
     setEventData({
       ...eventData,
@@ -33,7 +58,7 @@ const TierSection = ({
           {
             id: nanoid(),
             name: "",
-            price: 0,
+            price: "0",
             numberOfTickets: 0,
             description: "",
           },
@@ -89,12 +114,27 @@ const TierSection = ({
       numberOfTickets: e.target.value,
     };
     newTiers[index] = newTierData;
+    const totalSum = sumNumbersInObjects(newTiers);
+
     setEventData({
       ...eventData,
-      eventInfo: { ...eventData.eventInfo, tiers: newTiers },
+      eventInfo: {
+        ...eventData.eventInfo,
+        tiers: newTiers,
+        amountPerParticipant:
+          totalSum === eventData.eventInfo.maxNumOfParticipant
+            ? 1
+            : eventData.eventInfo.amountPerParticipant,
+      },
     });
 
     setTiers(newTiers);
+
+    if (totalSum === eventData.eventInfo.maxNumOfParticipant) {
+      setShowAddAmount(false);
+    } else {
+      setShowAddAmount(true);
+    }
   };
 
   const handlePriceChange = (e: any, index: number) => {
@@ -113,23 +153,39 @@ const TierSection = ({
 
   return (
     <FormSection title="Tiers and Pricing">
-      <InputField
-        id="amount"
-        required={true}
-        type="number"
-        label="Amount per person"
-        name="amountPerParticipant"
-        placeholder="0.00 (NGN)"
-        value={eventData.eventInfo.amountPerParticipant}
-        onChange={eventInfoChange}
-      />
+      {showAddAmount && (
+        <InputField
+          id="amount"
+          required={true}
+          type="number"
+          label="Amount per person"
+          name="amountPerParticipant"
+          placeholder="0.00 (NGN)"
+          value={eventData.eventInfo.amountPerParticipant}
+          onChange={eventInfoChange}
+        />
+      )}
 
-      <div className="flex flex-col justify-center gap-3">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 justify-center">
+        <p className="text-xs">
+          Tick the checkbox below if you have categories or tiers for this
+          event.
+        </p>
+        <div className="flex gap-2 items-center">
           <h5>Has Tiers?</h5>
-          <input type="checkbox" name="" id="" onChange={handleHasTiers} />
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            onChange={handleHasTiers}
+            checked={eventData.hasTiers}
+          />
         </div>
-        <p>Does your event have tiers or categories?</p>
+        <p className="text-xs">
+          Please note that when the total number of spaces of all the tiers is
+          equal to the maximum number of participants, the event will
+          automatically be a tiered/categorised event.
+        </p>
       </div>
 
       {eventData.hasTiers && (
@@ -147,7 +203,7 @@ const TierSection = ({
                 }}
               />
               <InputField
-                type="number"
+                type="text"
                 value={tier.price}
                 label={`Tier ${index + 1} price`}
                 required

@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useEffect, useState } from "react";
 import { SocialIcon } from "react-social-icons";
 import InputField from "./InputField";
 import { BiTrash } from "react-icons/bi";
@@ -74,17 +74,11 @@ const SocialLinkInput = ({
     setLinks(newLinks);
   };
 
-  // useEffect(() => {
-  //   if (inputRef.current) {
-  //     inputRef.current.blur(); // Remove focus after component mounts
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   document.addEventListener("keydown", handleEscape);
-
-  //   return () => document.removeEventListener("keydown", handleEscape);
-  // }, []);
-  // Empty dependency array to run effect only once
+  useEffect(() => {
+    if (Array.isArray(eventData.eventInfo.socialLinks)) {
+      setLinks(eventData.eventInfo.socialLinks);
+    }
+  }, [eventData.eventInfo.socialLinks]);
 
   const renderLink = (link: string, i: number) => {
     // Identify and return the appropriate icon based on the link

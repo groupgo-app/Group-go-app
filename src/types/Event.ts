@@ -1,9 +1,7 @@
-// import { ISubLocation } from "./Location";
-
 export type IEventTier = {
   id: string;
   name: string;
-  price: number;
+  price: string;
   numberOfTickets: number;
   description: string;
 };
@@ -16,6 +14,7 @@ export type IPayEvent = {
   amount: number;
   title: string;
 };
+
 export type IEventData = {
   id?: string;
   uid: string;
@@ -48,5 +47,6 @@ export type IEventData = {
     bankName: string;
     accountNumber: string;
     accountName: string;
+    bankCode: string | number;
   };
 };

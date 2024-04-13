@@ -32,6 +32,7 @@ export const initialEventData: IEventData = {
     bankName: "",
     accountNumber: "",
     accountName: "",
+    bankCode: "",
   },
 };
 

@@ -4,10 +4,12 @@ const FormButtons = ({
   handleSubmit,
   isLoadingSubmit,
   handleBackButton,
+  isEvent
 }: {
   handleSubmit: any;
   isLoadingSubmit: boolean;
   handleBackButton: any;
+  isEvent?:boolean
 }) => {
   return (
     <div className="mt-12 flex w-full justify-between tablet:gap-[100px]">
@@ -32,7 +34,7 @@ const FormButtons = ({
               <Loader variant="small" />
             </>
           ) : (
-            <>Save and Continue</>
+            <>{isEvent ? "Update" : "Save"} and Continue</>
           )}
         </button>
       </div>

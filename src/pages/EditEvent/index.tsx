@@ -37,6 +37,7 @@ const EditEvent = () => {
           },
         };
 
+        // console.log(JSON.parse(eventData.eventInfo.socialLinks));
         const step = searchParams.get("step");
         if (step) setCurrentStep!(creationSteps![Number(step) - 1]);
         setEvent(newEventData);
@@ -55,7 +56,9 @@ const EditEvent = () => {
     payment: <PaymentPage event={event} />,
     invite: <SendInvitationPage event={event} />,
   };
-
+  useEffect(() => {
+    if (event && event.inCreation === false) navigate(`/${event?.eventId}`);
+  }, [event]);
   if (event && event.inCreation === true) {
     return (
       <>
@@ -149,12 +152,10 @@ const EditEvent = () => {
         </div>
       </>
     );
-  } else if (event) {
-    navigate(`/${event?.eventId}`);
   }
   return (
     <>
-      {event && event.inCreation === false && <></>}
+      {event && event.inCreation === false}
       <StepProgress />
 
       <div className="w-full max-w-full tablet:w-[60%]">

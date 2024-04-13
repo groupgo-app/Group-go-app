@@ -1,21 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IEventData } from "../../types/Event";
-import Loader from "../Loader";
+// import Loader from "../Loader";
 import { FaTrash } from "react-icons/fa6";
+import { updateEvent } from "../../api/events";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const DashboardEvent = ({
   event,
   draft = false,
   completed = false,
   handleDelete,
-  singleEventLoading,
+  setSingleEventLoading,
+  // singleEventLoading,
 }: {
   event: IEventData;
   draft?: boolean;
   completed?: boolean;
   handleDelete?: (e: any, eventId: string) => void;
   singleEventLoading?: boolean;
+  setSingleEventLoading?: any;
 }) => {
+  let user: any;
+  const authContext = useContext(AuthContext);
+  if (authContext) {
+    ({ user } = authContext);
+  }
+  const navigate = useNavigate();
+
+  const handleEdit = async (e: any) => {
+    try {
+      setSingleEventLoading(true);
+      e.preventDefault();
+      const newData: IEventData = { ...event, inCreation: true };
+      await updateEvent(event?.eventId, user?.uid, newData, true);
+      navigate(`/edit/${event?.eventId}?step=2`);
+    } catch (error) {
+    } finally {
+      setSingleEventLoading(false);
+    }
+  };
   return (
     <>
       <figure className="relative flex  w-full min-w-[300px] max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl border border-orange-clr bg-white pb-2">
@@ -45,19 +69,34 @@ const DashboardEvent = ({
             </svg>
             {draft ? "Edit Details" : completed ? "View Details" : "View"}
           </Link>
-          {completed && (
-            <button
-              type="button"
-              className="my-4 flex w-full items-center justify-center gap-2 rounded-[15px] bg-red-500 py-2 text-white"
-              onClick={(e) => {
-                handleDelete!(e, event?.eventId!);
-              }}
-            >
-              <FaTrash />
-              Delete Event
-            </button>
+          {(completed || draft) && (
+            <>
+              <button
+                type="button"
+                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-red-500 py-2 text-white"
+                onClick={(e) => {
+                  handleDelete!(e, event?.eventId!);
+                }}
+              >
+                <FaTrash />
+                Delete Event
+              </button>
+            </>
           )}
-          {/* {singleEventLoading && <Loader />} */}
+          {!draft && (
+            <>
+              <button
+                type="button"
+                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-teal-500 py-2 text-white"
+                onClick={(e) => {
+                  handleEdit(e);
+                }}
+              >
+                <FaTrash />
+                Edit
+              </button>
+            </>
+          )}
         </figcaption>
       </figure>
     </>

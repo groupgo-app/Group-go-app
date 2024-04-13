@@ -218,7 +218,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
           const areAllFilled = eventData.eventInfo.tiers.every(
             (tier: IEventTier) =>
               tier.name.length > 0 &&
-              tier.price > 0 &&
+              tier.price.length > 0 &&
               tier.numberOfTickets > 0 &&
               tier.description.length > 0,
           );
@@ -256,7 +256,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
 
         setCurrentStep!(creationSteps![2]);
 
-        toast("Successfully created Event", {
+        toast(`Successfully ${event ? "updated" : "created"} Event`, {
           type: "success",
           autoClose: 3000,
         });
@@ -370,6 +370,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
           handleBackButton={handleBackButton}
           handleSubmit={handleSubmit}
           isLoadingSubmit={isLoadingSubmit}
+          isEvent={event ? true : false}
         />
       </form>
     </>
