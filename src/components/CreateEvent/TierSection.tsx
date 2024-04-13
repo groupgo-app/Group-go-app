@@ -166,7 +166,7 @@ const TierSection = ({
         />
       )}
 
-      <div className="flex flex-col gap-3 justify-center">
+      <div className="flex flex-col justify-center">
         <p className="text-xs">
           Tick the checkbox below if you have categories or tiers for this
           event.
@@ -181,16 +181,17 @@ const TierSection = ({
             checked={eventData.hasTiers}
           />
         </div>
-        <p className="text-xs">
-          Please note that when the total number of spaces of all the tiers is
-          equal to the maximum number of participants, the event will
-          automatically be a tiered/categorised event.
-        </p>
       </div>
 
       {eventData.hasTiers && (
         <>
           <h3>Tiers</h3>
+          <p className="pb-2 text-xs">
+            Please note that when the total number (or sum) of spaces available
+            for all the tiers is equal to the maximum number of participants,
+            the event will automatically be a tiered/categorised event and there
+            won't be a need for the amount per participant.
+          </p>
           {eventData.eventInfo.tiers?.map((tier, index) => (
             <div key={`tier ${index + 1}`}>
               <InputField

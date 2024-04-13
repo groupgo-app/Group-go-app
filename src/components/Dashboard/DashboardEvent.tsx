@@ -5,6 +5,7 @@ import { FaTrash } from "react-icons/fa6";
 import { updateEvent } from "../../api/events";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { BiEdit } from "react-icons/bi";
 
 const DashboardEvent = ({
   event,
@@ -73,7 +74,7 @@ const DashboardEvent = ({
             <>
               <button
                 type="button"
-                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-red-500 py-2 text-white"
+                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-red-800 py-2 text-white hover:bg-opacity-70"
                 onClick={(e) => {
                   handleDelete!(e, event?.eventId!);
                 }}
@@ -87,12 +88,12 @@ const DashboardEvent = ({
             <>
               <button
                 type="button"
-                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-teal-500 py-2 text-white"
+                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-green-800 py-2 text-white hover:bg-opacity-70"
                 onClick={(e) => {
                   handleEdit(e);
                 }}
               >
-                <FaTrash />
+                <BiEdit />
                 Edit
               </button>
             </>
