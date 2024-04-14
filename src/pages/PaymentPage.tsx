@@ -63,14 +63,6 @@ const PaymentPage = ({}) => {
           creatorEmail: eventData.eventInfo.creatorEmail,
           creatorName: eventData.eventInfo.creatorName,
         };
-        const response = await emailjs.send(
-          import.meta.env.VITE_REACT_EMAIL_SERVICE_ID!,
-          import.meta.env.VITE_REACT_SEND_TICKET_TEMPLATE_ID!,
-          // "#emailForm",
-          templateParams,
-          import.meta.env.VITE_REACT_EMAIL_PUBLIC_KEY!,
-        );
-
         await updateParticipantsCount(eventId!);
         if (!paymentData?.hasTier) return navigate(`/${eventId}`);
         const newTiers: IEventTier[] = [...eventData.eventInfo.tiers];
@@ -88,6 +80,14 @@ const PaymentPage = ({}) => {
           },
         };
         await updateTicketCount(eventId!, newData);
+        const response = await emailjs.send(
+          import.meta.env.VITE_REACT_EMAIL_SERVICE_ID!,
+          import.meta.env.VITE_REACT_SEND_TICKET_TEMPLATE_ID!,
+          // "#emailForm",
+          templateParams,
+          import.meta.env.VITE_REACT_EMAIL_PUBLIC_KEY!,
+        );
+
         if (response.status === 200)
           toast("An email with the ticket has been sent", { type: "success" });
       } catch (error) {
@@ -182,13 +182,13 @@ const PaymentPage = ({}) => {
     <>
       <form
         action=""
-        className="flex flex-col items-center p-4 w-full rounded-sm"
+        className="flex w-full flex-col items-center rounded-sm p-4"
       >
-        <div className="p-4 w-full bg-gray-200 rounded-xl border border-orange-clr tablet:w-3/4 laptop:w-1/2">
+        <div className="w-full rounded-xl border border-orange-clr bg-gray-200 p-4 tablet:w-3/4 laptop:w-1/2">
           <div>
             <Link
               to={`/${eventId}`}
-              className="flex gap-2 items-center text-orange-clr"
+              className="flex items-center gap-2 text-orange-clr"
             >
               <FcLeft />
               Go Back
@@ -264,14 +264,14 @@ const PaymentPage = ({}) => {
               }}
             />
           </div>
-          <div className="flex gap-4 items-center p-4 rounded-xl">
+          <div className="flex items-center gap-4 rounded-xl p-4">
             <BiInfoCircle className="text-3xl" color="orange" />
             <p>
               Tickets will only be sent to the email address you provide above
             </p>
           </div>
           <button
-            className="flex justify-center items-center p-2 my-4 w-full text-white rounded-xl bg-orange-clr"
+            className="my-4 flex w-full items-center justify-center rounded-xl bg-orange-clr p-2 text-white"
             onClick={handlePaymentSubmit}
             type="submit"
           >

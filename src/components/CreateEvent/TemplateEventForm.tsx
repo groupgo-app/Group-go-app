@@ -230,20 +230,21 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
               type: "error",
             });
         }
+        const newData: IEventData = {
+          ...eventData,
+          uid: user.uid,
+          completedSteps: [true, true, false, false],
+          eventInfo: {
+            ...eventData.eventInfo,
+            amountPerParticipant: showAddAmount
+              ? eventData.eventInfo.amountPerParticipant
+              : 0,
+          },
+        };
         if (event) {
-          const newData: IEventData = {
-            ...eventData,
-
-            completedSteps: [true, true, false, false],
-          };
           await updateEvent(eventData.eventId, user.uid, newData);
           setEventData(newData);
         } else {
-          const newData: IEventData = {
-            ...eventData,
-            uid: user.uid,
-            completedSteps: [true, true, false, false],
-          };
           await saveEvent(newData);
         }
 
@@ -353,6 +354,7 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
           eventData={eventData!}
           eventInfoChange={eventInfoChange}
           setShowAddAmount={setShowAddAmount}
+          setEventData={setEventData!}
         />
         <TierSection
           eventData={eventData!}

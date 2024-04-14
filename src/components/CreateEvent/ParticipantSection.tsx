@@ -7,13 +7,24 @@ const ParticipantSection = ({
   eventData,
   eventInfoChange,
   setShowAddAmount,
+  setEventData,
 }: {
   eventData: IEventData;
   eventInfoChange: (e: any) => void;
   setShowAddAmount: React.Dispatch<React.SetStateAction<boolean>>;
+  setEventData: React.Dispatch<React.SetStateAction<IEventData>>;
 }) => {
   const handleChange = (e: any) => {
     if (Number(e.target.value) === sumTierTickets(eventData.eventInfo.tiers)) {
+      const newEventData: IEventData = {
+        ...eventData,
+        eventInfo: {
+          ...eventData.eventInfo,
+          amountPerParticipant: 0,
+        },
+      };
+      setEventData(newEventData);
+
       setShowAddAmount(false);
     } else {
       setShowAddAmount(true);
