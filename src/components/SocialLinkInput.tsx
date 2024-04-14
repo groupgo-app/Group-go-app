@@ -17,12 +17,13 @@ const SocialLinkInput = ({
   const [links, setLinks] = useState<string[]>([]);
   // const inputRef = useRef<any>(null);
 
-  const handleInputChange = (event: any) => {
-    setUserInput(event.target.value);
-  };
+  const handleInputChange = (e: any) => {
+    setUserInput(e.target.value);
 
-  const handleKeyDown = (e: any) => {
-    if (e.key === "," && userInput.trim() !== "") {
+    if (
+      String(e.target.value).split("").slice(-1).join("") === "," &&
+      userInput.trim() !== ""
+    ) {
       if (isUrl(e.target.value)) {
         const newLink: string = userInput.trim().split(",")[0];
         const newData = {
@@ -39,6 +40,9 @@ const SocialLinkInput = ({
       }
       setUserInput("");
     }
+  };
+
+  const handleKeyDown = (e: any) => {
     if (e.key === "Escape") {
       setUserInput("");
     }
@@ -86,9 +90,9 @@ const SocialLinkInput = ({
     return (
       <div
         key={link}
-        className="flex gap-2 justify-between items-center px-2 py-1 m-1 bg-gray-300 rounded-full"
+        className="m-1 flex items-center justify-between gap-2 rounded-full bg-gray-300 px-2 py-1"
       >
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <SocialIcon url={link} style={{ width: "15px", height: "15px" }} />
           <a
             href={link}
@@ -100,7 +104,7 @@ const SocialLinkInput = ({
           </a>
         </div>
         <div
-          className="text-xs text-red-500 cursor-pointer"
+          className="cursor-pointer text-xs text-red-500"
           onClick={() => {
             handleDelete(i);
           }}

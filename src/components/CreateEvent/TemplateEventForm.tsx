@@ -21,6 +21,7 @@ import ParticipantSection from "./ParticipantSection";
 import CreatorSection from "./CreatorSection";
 import FormButtons from "./FormButtons";
 import FormImageSection from "./FormImageSection";
+import { sumTierTickets } from "../../utils/numbers";
 
 const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   let selectedTemplate: ITemplate | undefined,
@@ -61,22 +62,12 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
   const { eventInfo } = eventData!;
 
   const [coverImg, setCoverImg] = useState("");
+  const [showAddAmount, setShowAddAmount] = useState(true);
 
   const navigate = useNavigate();
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   // const [showAddButton, setShowAddButton] = useState(false);
-
-  function sumNumbersInObjects(arr: IEventTier[]) {
-    let totalSum = 0;
-    for (const obj of arr) {
-      if (obj.hasOwnProperty("numberOfTickets")) {
-        // Check if "number" property exists
-        totalSum += Number(obj.numberOfTickets);
-      }
-    }
-    return totalSum;
-  }
 
   const handleUpload: Function = async (
     file: any,
@@ -201,10 +192,6 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
         eventData.eventInfo.typeOfParticipants.length > 0
       ) {
         setIsLoadingSubmit(true);
-        if (!(eventData.eventInfo.amountPerParticipant > 0))
-          return toast("Please pass in an amount per person", {
-            type: "error",
-          });
 
         if (eventData.hasTiers) {
           if (
@@ -229,13 +216,19 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
             );
 
           if (
-            sumNumbersInObjects(eventData.eventInfo.tiers) >
+            sumTierTickets(eventData.eventInfo.tiers) >
             eventData.eventInfo.maxNumOfParticipant
           )
             return toast(
               "Your number of tickets should not be more than the number of people",
               { type: "error" },
             );
+        }
+        if (showAddAmount) {
+          if (!(eventData.eventInfo.amountPerParticipant > 0))
+            return toast("Please pass in an amount per person", {
+              type: "error",
+            });
         }
         if (event) {
           const newData: IEventData = {
@@ -359,11 +352,14 @@ const TemplateEventForm = ({ event }: { event?: IEventData }) => {
         <ParticipantSection
           eventData={eventData!}
           eventInfoChange={eventInfoChange}
+          setShowAddAmount={setShowAddAmount}
         />
         <TierSection
           eventData={eventData!}
           setEventData={setEventData!}
           eventInfoChange={eventInfoChange}
+          showAddAmount={showAddAmount}
+          setShowAddAmount={setShowAddAmount}
         />
 
         <FormButtons

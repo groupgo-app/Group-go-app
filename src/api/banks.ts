@@ -58,7 +58,7 @@ export const resolveBankAccount = async ({
       const data = await response.json();
       setResolvedBankDetails(data.data);
       const accountName = await data.data.account_name;
-      const bankCode = await data.data.bank_id;
+      // const newBankCode = await data.data.bank_id;
       const newData: IEventData = {
         ...eventData,
         paymentInfo: {

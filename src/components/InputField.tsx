@@ -10,6 +10,8 @@ const InputField = ({
   onKeyDown,
   onBlur,
   required,
+  inputmode,
+  pattern,
   ref,
 }: any) => {
   const asterisk = <span className="text-red-500">*</span>;
@@ -46,6 +48,8 @@ const InputField = ({
             onBlur={onBlur ? onBlur : () => {}}
             autoFocus={autoFocus ? autoFocus : false}
             ref={ref ? ref : null}
+            inputMode={inputmode && inputmode}
+            pattern={pattern && pattern}
             required
           />
         )}

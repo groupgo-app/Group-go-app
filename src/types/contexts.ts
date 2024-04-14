@@ -30,6 +30,7 @@ export type FormContextState = {
   eventData: IEventData;
   banks: any[];
   bankCode: any;
+  setBankCode: any;
   setImgUrl: React.Dispatch<React.SetStateAction<string>>;
   imgUrl: string;
   paymentData?: IPayEvent;

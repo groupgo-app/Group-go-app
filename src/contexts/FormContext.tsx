@@ -126,6 +126,7 @@ export const FormContextProvider = ({
         paymentInfo: {
           ...eventData.paymentInfo,
           bankName: selectedBankName,
+          bankCode: bank?.code,
         },
       }));
       // console.log("This is bank", bank);
@@ -159,6 +160,7 @@ export const FormContextProvider = ({
         eventData,
         banks,
         bankCode,
+        setBankCode,
         setImgUrl,
         imgUrl,
         handleChangeAccountName,

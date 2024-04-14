@@ -43,10 +43,7 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
       errorMessage,
       setErrorMessage,
       setResolvedBankDetails,
-      // resolvedBankDetails,
-      // handleChangeAccountNumber,
       handleChangeBankName,
-      // handleChangeAccountName,
       handleChangeForCompletedSteps,
       setEventData,
     } = formContext);
@@ -150,14 +147,13 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
 
       setCurrentStep(creationSteps[1]);
     }
-    console.log(eventData.paymentInfo);
   }, []);
   return (
     <>
       <div className="payment_info_container">
         <button
           onClick={handleBackButton}
-          className="flex gap-2 items-center text-orange-clr"
+          className="flex items-center gap-2 text-orange-clr"
         >
           <FiArrowLeft />
           Go back
@@ -184,9 +180,11 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
           eventData!.paymentInfo.accountNumber?.length === 10 ? (
             <>
               <input
-                type="text"
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 className="inputs"
-                id="accoundNumber"
+                id="accountNumber"
                 disabled={loading}
                 value={eventData!.paymentInfo.accountNumber}
                 onChange={(event) => numberChange(event)}
@@ -196,9 +194,11 @@ const PaymentInformation = ({ event }: { event?: IEventData }) => {
           ) : (
             <>
               <input
-                type="text"
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 className="inputs"
-                id="accoundNumber"
+                id="accountNumber"
                 disabled={loading}
                 value={formAccountNumber}
                 onChange={(event) => numberChange(event)}

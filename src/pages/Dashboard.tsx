@@ -35,7 +35,6 @@ const Dashboard = () => {
   const [drafts, setDrafts] = useState<IEventData[]>([]);
   const [completedEvents, setCompletedEvents] = useState<IEventData[]>([]);
   const navigate = useNavigate();
-  const [singleEventLoading, setSingleEventLoading] = useState(false);
 
   const getAllEvents = async () => {
     try {
@@ -77,45 +76,35 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getAllEvents();
-    // console.log("hello");
-  }, [user]);
+    if (user) getAllEvents();
+  }, []);
 
   const handleDelete = async (e: any, eventId: string) => {
     try {
-      setSingleEventLoading(true);
       e.preventDefault();
       await deleteEvent(eventId);
       toast("Event Successfully deleted", { type: "success" });
       setCompletedEvents(
         completedEvents.filter((event) => event.eventId !== eventId),
       );
-      // getAllEvents();
     } catch (error) {
       toast("Could not delete event", { type: "error" });
-    } finally {
-      setSingleEventLoading(false);
     }
   };
 
   const handleDeleteForDrafts = async (e: any, eventId: string) => {
     try {
-      setSingleEventLoading(true);
       e.preventDefault();
       await deleteEvent(eventId);
       toast("Event Successfully deleted", { type: "success" });
-      setDrafts(completedEvents.filter((event) => event.eventId !== eventId));
-      // getAllEvents();
+      setDrafts(drafts.filter((event) => event.eventId !== eventId));
     } catch (error) {
       toast("Could not delete event", { type: "error" });
-    } finally {
-      setSingleEventLoading(false);
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  } else if (user) {
+  if (loading) return <Loader />;
+  else if (user) {
     return (
       <>
         <Helmet>
@@ -125,7 +114,7 @@ const Dashboard = () => {
             data-react-helmet="true"
             content="Beautiful Dashboard for your events"
           />
-          {/* <!-- <meta name="robots" data-react-helmet="true" content="index, follow" /> --> */}
+
           <meta
             property="og:url"
             data-react-helmet="true"
@@ -157,7 +146,7 @@ const Dashboard = () => {
             data-react-helmet="true"
             content="summary_large_image"
           />
-          {/* <meta name="twitter:site" data-react-helmet="true" content="@your_twitter_handle" /> */}
+
           <meta
             name="twitter:title"
             data-react-helmet="true"
@@ -199,7 +188,7 @@ const Dashboard = () => {
             href={`${import.meta.env.VITE_REACT_SITE_URL}/dashboard`}
           />
         </Helmet>
-        <div className="space-y-16 w-full">
+        <div className="w-full space-y-16">
           <div className="space-y-5">
             <h5 className="text-[24px] font-medium">Events</h5>
             <div className="grid grid-cols-1 gap-5 laptop:grid-cols-4">
@@ -211,7 +200,7 @@ const Dashboard = () => {
                   navigate("/create");
                 }}
               >
-                <img src={addIcon} alt="" />
+                <img src={addIcon} alt="Add Icon" />
                 <p className="font-normal text-black">Create Event</p>
               </div>
             </div>
@@ -220,13 +209,9 @@ const Dashboard = () => {
               <Underliner />
               {eventList.length > 0 ? (
                 <>
-                  <div className="flex flex-wrap gap-4 justify-center items-center pt-5 tablet:justify-start">
+                  <div className="flex flex-wrap items-center justify-center gap-4 pt-5 tablet:justify-start">
                     {eventList.map((event) => (
-                      <DashboardEvent
-                        // handleEventClick={handleEventClick}
-                        event={event}
-                        key={event?.eventId}
-                      />
+                      <DashboardEvent event={event} key={event?.eventId} />
                     ))}
                   </div>
                 </>
@@ -240,20 +225,14 @@ const Dashboard = () => {
                 <h3 className="text-4xl">Drafts</h3>
                 <Underliner />
                 <p>Finish up setting up your events</p>
-                {singleEventLoading && (
-                  <>
-                    <Loader />
-                  </>
-                )}
-                <div className="flex flex-wrap gap-4 justify-center items-center tablet:justify-start">
+
+                <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
                   {drafts.map((event) => (
                     <DashboardEvent
-                      // handleEventClick={handleEventClick}
                       event={event}
                       key={event?.eventId}
                       draft={true}
                       handleDelete={handleDeleteForDrafts}
-                      singleEventLoading={singleEventLoading}
                     />
                   ))}
                 </div>
@@ -265,27 +244,18 @@ const Dashboard = () => {
                 <h3 className="text-4xl">Ended Events</h3>
                 <Underliner />
                 <p>Check out the details of the completed events</p>
-                {singleEventLoading ? (
-                  <>
-                    <Loader />
-                  </>
-                ) : (
-                  <div className="py-5">
-                    <div className="flex flex-wrap gap-4 justify-center items-center tablet:justify-start">
-                      {completedEvents.map((event) => (
-                        <DashboardEvent
-                          // handleEventClick={handleEventClick}
-                          event={event}
-                          key={event?.id}
-                          completed
-                          handleDelete={handleDelete}
-                          singleEventLoading={singleEventLoading}
-                          setSingleEventLoading={setSingleEventLoading}
-                        />
-                      ))}
-                    </div>
+                <div className="py-5">
+                  <div className="flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
+                    {completedEvents.map((event) => (
+                      <DashboardEvent
+                        event={event}
+                        key={event?.id}
+                        completed
+                        handleDelete={handleDelete}
+                      />
+                    ))}
                   </div>
-                )}
+                </div>
               </>
             )}
           </div>

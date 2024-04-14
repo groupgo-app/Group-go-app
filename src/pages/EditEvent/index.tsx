@@ -10,14 +10,19 @@ import { fetchEventById } from "../../api/events";
 import { IEventData } from "../../types/Event";
 import { FormContext } from "../../contexts/FormContext";
 import { Helmet } from "react-helmet";
+import PageNotFound from "../PageNotFound";
 
 const EditEvent = () => {
-  let currentStep, creationSteps, setCurrentStep, setEventData;
+  let currentStep,
+    creationSteps,
+    setCurrentStep,
+    setEventData,
+    setBankCode: any;
   const appContext = useContext(AppContext);
   const formContext = useContext(FormContext);
   if (appContext && formContext) {
     ({ currentStep, creationSteps, setCurrentStep } = appContext);
-    ({ setEventData } = formContext);
+    ({ setEventData, setBankCode } = formContext);
   }
 
   const { eventId } = useParams();
@@ -29,7 +34,7 @@ const EditEvent = () => {
     try {
       if (eventId) {
         const eventData = await fetchEventById(eventId);
-        const newEventData = {
+        const newEventData: IEventData = {
           ...eventData,
           eventInfo: {
             ...eventData.eventInfo,
@@ -37,9 +42,9 @@ const EditEvent = () => {
           },
         };
 
-        // console.log(JSON.parse(eventData.eventInfo.socialLinks));
         const step = searchParams.get("step");
         if (step) setCurrentStep!(creationSteps![Number(step) - 1]);
+        setBankCode(newEventData.paymentInfo.bankCode);
         setEvent(newEventData);
         setEventData!(newEventData);
       }
@@ -59,108 +64,102 @@ const EditEvent = () => {
   useEffect(() => {
     if (event && event.inCreation === false) navigate(`/${event?.eventId}`);
   }, [event]);
-  if (event && event.inCreation === true) {
-    return (
-      <>
-        <Helmet>
-          <title>Groupgo | Edit Event</title>
-          <meta
-            name="description"
-            data-react-helmet="true"
-            content="Get ready to create astonishing and thrilling events"
-          />
-          {/* <!-- <meta name="robots" data-react-helmet="true" content="index, follow" /> --> */}
-          <meta
-            property="og:url"
-            data-react-helmet="true"
-            content="https://groupgo.vercel.app/edit"
-          />
-          <meta
-            property="og:title"
-            data-react-helmet="true"
-            content="GroupGo | Edit Event"
-          />
-          <meta
-            property="og:description"
-            data-react-helmet="true"
-            content="Get ready to create astonishing and thrilling events"
-          />
-          <meta
-            property="og:image"
-            data-react-helmet="true"
-            content="https://groupgo.vercel.app/site_img.png"
-          />
-          <meta
-            property="og:site_name"
-            data-react-helmet="true"
-            content="GroupGo Edit"
-          />
-
-          <meta
-            name="twitter:card"
-            data-react-helmet="true"
-            content="summary_large_image"
-          />
-          <meta
-            name="twitter:site"
-            data-react-helmet="true"
-            content="@your_twitter_handle"
-          />
-          <meta
-            name="twitter:title"
-            data-react-helmet="true"
-            content="Groupgo | Edit Event"
-          />
-          <meta
-            name="twitter:description"
-            data-react-helmet="true"
-            content="Edit your current event"
-          />
-          <meta
-            name="twitter:image"
-            data-react-helmet="true"
-            content="https://www.yourwebsite.com/your-image.jpg"
-          />
-          <meta
-            name="pinterest:description"
-            data-react-helmet="true"
-            content="Edit your current event"
-          />
-          <meta
-            name="pinterest:image"
-            data-react-helmet="true"
-            content="https://groupgo.vercel.app/site_img.png"
-          />
-
-          <meta
-            name="linkedin:title"
-            data-react-helmet="true"
-            content="Groupgo"
-          />
-          <meta
-            name="linkedin:description"
-            data-react-helmet="true"
-            content="Edit your current event"
-          />
-          <link rel="canonical" href="https://groupgo.vercel.app/edit" />
-        </Helmet>
-        {/* {event && event.inCreation === false && <></>} */}
-        <StepProgress />
-
-        <div className="w-full max-w-full tablet:w-[60%]">
-          {mapping[currentStep!?.page]}
-        </div>
-      </>
-    );
-  }
   return (
     <>
-      {event && event.inCreation === false}
-      <StepProgress />
+      {event ? (
+        <>
+          <Helmet>
+            <title>Groupgo | Edit Event</title>
+            <meta
+              name="description"
+              data-react-helmet="true"
+              content="Get ready to create astonishing and thrilling events"
+            />
+            {/* <!-- <meta name="robots" data-react-helmet="true" content="index, follow" /> --> */}
+            <meta
+              property="og:url"
+              data-react-helmet="true"
+              content="https://groupgo.vercel.app/edit"
+            />
+            <meta
+              property="og:title"
+              data-react-helmet="true"
+              content="GroupGo | Edit Event"
+            />
+            <meta
+              property="og:description"
+              data-react-helmet="true"
+              content="Get ready to create astonishing and thrilling events"
+            />
+            <meta
+              property="og:image"
+              data-react-helmet="true"
+              content="https://groupgo.vercel.app/site_img.png"
+            />
+            <meta
+              property="og:site_name"
+              data-react-helmet="true"
+              content="GroupGo Edit"
+            />
 
-      <div className="w-full max-w-full tablet:w-[60%]">
-        {mapping[currentStep!?.page]}
-      </div>
+            <meta
+              name="twitter:card"
+              data-react-helmet="true"
+              content="summary_large_image"
+            />
+            <meta
+              name="twitter:site"
+              data-react-helmet="true"
+              content="@your_twitter_handle"
+            />
+            <meta
+              name="twitter:title"
+              data-react-helmet="true"
+              content="Groupgo | Edit Event"
+            />
+            <meta
+              name="twitter:description"
+              data-react-helmet="true"
+              content="Edit your current event"
+            />
+            <meta
+              name="twitter:image"
+              data-react-helmet="true"
+              content="https://www.yourwebsite.com/your-image.jpg"
+            />
+            <meta
+              name="pinterest:description"
+              data-react-helmet="true"
+              content="Edit your current event"
+            />
+            <meta
+              name="pinterest:image"
+              data-react-helmet="true"
+              content="https://groupgo.vercel.app/site_img.png"
+            />
+
+            <meta
+              name="linkedin:title"
+              data-react-helmet="true"
+              content="Groupgo"
+            />
+            <meta
+              name="linkedin:description"
+              data-react-helmet="true"
+              content="Edit your current event"
+            />
+            <link rel="canonical" href="https://groupgo.vercel.app/edit" />
+          </Helmet>
+
+          <StepProgress />
+
+          <div className="w-full max-w-full tablet:w-[60%]">
+            {mapping[currentStep!?.page]}
+          </div>
+        </>
+      ) : (
+        <PageNotFound />
+      )}
     </>
   );
 };

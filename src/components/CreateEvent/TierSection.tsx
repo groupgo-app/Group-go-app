@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IEventData, IEventTier } from "../../types/Event";
 import { nanoid } from "nanoid";
 import InputField from "../InputField";
 import FormSection from "./FormSection";
+import { sumTierTickets } from "../../utils/numbers";
 
 const TierSection = ({
   eventData,
   setEventData,
   eventInfoChange,
+  setShowAddAmount,
+  showAddAmount,
 }: {
   eventData: IEventData;
   setEventData: React.Dispatch<React.SetStateAction<IEventData>>;
   eventInfoChange: any;
+  setShowAddAmount: React.Dispatch<React.SetStateAction<boolean>>;
+  showAddAmount: boolean;
 }) => {
   const [tiers, setTiers] = useState<IEventTier[]>([]);
-  const [showAddAmount, setShowAddAmount] = useState(true);
+  // const [showAddAmount, setShowAddAmount] = useState(true);
 
   const handleHasTiers = (e: any) => {
     const newData: IEventData = {
@@ -27,16 +32,6 @@ const TierSection = ({
     };
     setEventData(newData);
   };
-  function sumNumbersInObjects(arr: IEventTier[]) {
-    let totalSum = 0;
-    for (const obj of arr) {
-      if (obj.hasOwnProperty("numberOfTickets")) {
-        // Check if "number" property exists
-        totalSum += Number(obj.numberOfTickets);
-      }
-    }
-    return totalSum;
-  }
 
   const handleAddTier = () => {
     setTiers([
@@ -114,7 +109,7 @@ const TierSection = ({
       numberOfTickets: e.target.value,
     };
     newTiers[index] = newTierData;
-    const totalSum = sumNumbersInObjects(newTiers);
+    const totalSum = sumTierTickets(newTiers);
 
     setEventData({
       ...eventData,
@@ -123,7 +118,7 @@ const TierSection = ({
         tiers: newTiers,
         amountPerParticipant:
           totalSum === eventData.eventInfo.maxNumOfParticipant
-            ? 1
+            ? 0
             : eventData.eventInfo.amountPerParticipant,
       },
     });
@@ -136,6 +131,13 @@ const TierSection = ({
       setShowAddAmount(true);
     }
   };
+
+  useEffect(() => {
+    const totalSum = sumTierTickets(eventData.eventInfo.tiers);
+    if (totalSum === eventData.eventInfo.maxNumOfParticipant)
+      setShowAddAmount(false);
+    setTiers(eventData.eventInfo.tiers);
+  }, []);
 
   const handlePriceChange = (e: any, index: number) => {
     const newTiers: IEventTier[] = [...tiers];
@@ -156,7 +158,10 @@ const TierSection = ({
       {showAddAmount && (
         <InputField
           id="amount"
-          required={true}
+          required={
+            sumTierTickets(eventData.eventInfo.tiers) !==
+            eventData.eventInfo.maxNumOfParticipant
+          }
           type="number"
           label="Amount per person"
           name="amountPerParticipant"
@@ -171,7 +176,7 @@ const TierSection = ({
           Tick the checkbox below if you have categories or tiers for this
           event.
         </p>
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <h5>Has Tiers?</h5>
           <input
             type="checkbox"
@@ -204,7 +209,9 @@ const TierSection = ({
                 }}
               />
               <InputField
-                type="text"
+                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 value={tier.price}
                 label={`Tier ${index + 1} price`}
                 required
@@ -224,6 +231,8 @@ const TierSection = ({
               <InputField
                 type="number"
                 value={tier.numberOfTickets}
+                inputmode="numeric"
+                pattern="[0-9]*"
                 label={`Number of spaces available for Tier ${index + 1}`}
                 required
                 onChange={(e: any) => {

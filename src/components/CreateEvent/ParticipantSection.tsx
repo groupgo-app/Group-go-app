@@ -1,19 +1,32 @@
 import { IEventData } from "../../types/Event";
 import FormSection from "./FormSection";
 import InputField from "../InputField";
+import { sumTierTickets } from "../../utils/numbers";
 
 const ParticipantSection = ({
   eventData,
   eventInfoChange,
+  setShowAddAmount,
 }: {
   eventData: IEventData;
   eventInfoChange: (e: any) => void;
+  setShowAddAmount: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const handleChange = (e: any) => {
+    if (Number(e.target.value) === sumTierTickets(eventData.eventInfo.tiers)) {
+      setShowAddAmount(false);
+    } else {
+      setShowAddAmount(true);
+    }
+    eventInfoChange(e);
+  };
   return (
     <FormSection title="Who is attending the event?">
       <InputField
         id="min_num_participant"
         type="number"
+        inputmode="numeric"
+        pattern="[0-9]*"
         label="Minimum number of participants"
         name="minNumOfParticipant"
         placeholder="Minimum"
@@ -26,11 +39,13 @@ const ParticipantSection = ({
         id="max_num_participant"
         required={true}
         type="number"
+        inputmode="numeric"
+        pattern="[0-9]*"
         label="Maximum number of participants"
         name="maxNumOfParticipant"
         placeholder="Maximum"
         value={eventData.eventInfo.maxNumOfParticipant}
-        onChange={eventInfoChange}
+        onChange={handleChange}
       />
 
       <div className="field_set_div">

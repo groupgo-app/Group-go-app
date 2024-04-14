@@ -3,31 +3,41 @@ import { IEventData } from "../../types/Event";
 // import Loader from "../Loader";
 import { FaTrash } from "react-icons/fa6";
 import { updateEvent } from "../../api/events";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { BiEdit } from "react-icons/bi";
+import Loader from "../Loader";
 
 const DashboardEvent = ({
   event,
   draft = false,
   completed = false,
   handleDelete,
-  setSingleEventLoading,
-  // singleEventLoading,
 }: {
   event: IEventData;
   draft?: boolean;
   completed?: boolean;
-  handleDelete?: (e: any, eventId: string) => void;
-  singleEventLoading?: boolean;
-  setSingleEventLoading?: any;
+  handleDelete?: (e: any, eventId: string) => Promise<void>;
 }) => {
   let user: any;
   const authContext = useContext(AuthContext);
+  const [singleEventLoading, setSingleEventLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   if (authContext) {
     ({ user } = authContext);
   }
   const navigate = useNavigate();
+  const deleteEvent = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    try {
+      setDeleteLoading(true);
+      await handleDelete!(e, event.eventId);
+    } catch (error) {
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const handleEdit = async (e: any) => {
     try {
@@ -43,11 +53,11 @@ const DashboardEvent = ({
   };
   return (
     <>
-      <figure className="relative flex  w-full min-w-[300px] max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl border border-orange-clr bg-white pb-2">
+      <figure className="relative flex w-full min-w-[300px] max-w-[300px] cursor-pointer flex-col gap-1 rounded-xl border border-orange-clr bg-white pb-2">
         <img
           src={event?.eventImg}
           alt=""
-          className="relative h-full w-full rounded-[10px] object-contain"
+          className="relative h-[250px] w-full rounded-[10px]  object-cover"
         />
         <figcaption className="px-2">
           <h3 className="px-4 py-2 text-xl">{event?.eventInfo.title}</h3>
@@ -70,31 +80,49 @@ const DashboardEvent = ({
             </svg>
             {draft ? "Edit Details" : completed ? "View Details" : "View"}
           </Link>
+
+          {!draft && (
+            <>
+              <button
+                type="button"
+                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] border border-orange-clr bg-orange-clr bg-opacity-15 py-2 text-orange-clr hover:bg-opacity-50"
+                onClick={async (e) => {
+                  await handleEdit(e);
+                }}
+              >
+                {singleEventLoading ? (
+                  <>
+                    <Loader variant="small" />
+                  </>
+                ) : (
+                  <>
+                    <BiEdit />
+                    Edit
+                  </>
+                )}
+              </button>
+            </>
+          )}
+
           {(completed || draft) && (
             <>
               <button
                 type="button"
                 className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-red-800 py-2 text-white hover:bg-opacity-70"
-                onClick={(e) => {
-                  handleDelete!(e, event?.eventId!);
+                onClick={async (e) => {
+                  await deleteEvent(e);
                 }}
               >
-                <FaTrash />
-                Delete Event
-              </button>
-            </>
-          )}
-          {!draft && (
-            <>
-              <button
-                type="button"
-                className="my-4 flex w-full items-center justify-center  gap-2 rounded-[15px] bg-green-800 py-2 text-white hover:bg-opacity-70"
-                onClick={(e) => {
-                  handleEdit(e);
-                }}
-              >
-                <BiEdit />
-                Edit
+                {deleteLoading ? (
+                  <>
+                    <Loader variant="small" />
+                  </>
+                ) : (
+                  <>
+                    <FaTrash />
+                    Delete Event
+                  </>
+                )}
               </button>
             </>
           )}

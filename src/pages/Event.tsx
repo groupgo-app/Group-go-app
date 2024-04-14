@@ -20,7 +20,7 @@ import { FaMoneyBill, FaTicket, FaUser } from "react-icons/fa6";
 import { FormContext } from "../contexts/FormContext";
 import { Helmet } from "react-helmet";
 import { getFirst100Chars } from "../utils/get100Chars";
-import { convertToWholeNumber } from "../utils/numbers";
+import { convertToWholeNumber, numberWithCommas } from "../utils/numbers";
 
 const Event = () => {
   // let user;
@@ -36,7 +36,6 @@ const Event = () => {
 
   const navigate = useNavigate();
   if (authContext && formContext) {
-    // ({ user } = authContext);
     ({ setPaymentData, setEventData } = formContext);
   }
 
@@ -98,7 +97,7 @@ const Event = () => {
   if (loading) return <Loader />;
   else if (event) {
     return (
-      <div className="overflow-hidden w-full">
+      <div className="w-full overflow-hidden">
         <Helmet>
           <title data-react-helmet="true">
             Groupgo | {event.eventInfo.title}
@@ -187,9 +186,9 @@ const Event = () => {
           <p className="py-2 text-sm">Event Type: {event?.eventType}</p>
         </div>
 
-        <div className="my-4 w-full aspect-video">
+        <div className="my-4 aspect-video w-full">
           <img
-            className="object-cover w-full rounded-sm aspect-video"
+            className="aspect-video w-full rounded-sm object-cover"
             src={event?.eventImg}
             alt=""
           />
@@ -201,7 +200,7 @@ const Event = () => {
           <p>{event?.eventInfo?.eventDesc}</p>
         </div>
 
-        <div className="flex flex-wrap gap-2 my-4">
+        <div className="my-4 flex flex-wrap gap-2">
           {/* Date */}
           <div
             className={`h-[149px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] tablet:w-[45%]`}
@@ -227,7 +226,7 @@ const Event = () => {
             </div>
           </div>
           {/* Payment */}
-          {!(event.eventInfo.amountPerParticipant === 1) && (
+          {event.eventInfo.amountPerParticipant !== 0 && (
             <div className=" h-[250px] w-full flex-col justify-between rounded-[10px] bg-[#f7f6f9] p-[18px] pt-1 tablet:w-[45%]">
               <div className="flex items-center gap-[8px]">
                 <img src={moneyImg} alt="" loading="lazy" />
@@ -296,19 +295,19 @@ const Event = () => {
         {event.hasTiers && (
           <div className="my-4 w-full">
             <h3>Event Tiers</h3>
-            <div className="flex flex-wrap gap-4 justify-center items-center my-4 tablet:justify-start">
+            <div className="my-4 flex flex-wrap items-center justify-center gap-4 tablet:justify-start">
               {event.eventInfo.tiers?.map((tier, i) => (
                 <div
-                  key={tier.id}
+                  key={i + 1}
                   className="min-w-[300px] rounded-xl border border-orange-clr bg-white  p-4"
                 >
                   <h5>{tier.name}</h5>
-                  <div className="flex gap-2 items-center">
-                    <FaMoneyBill /> {Naira} {tier.price}
+                  <div className="flex items-center gap-2">
+                    <FaMoneyBill /> {Naira} {numberWithCommas(tier.price)}
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <FaTicket />{" "}
-                    {event.eventInfo.amountPerParticipant !== 1 ? (
+                    {event.eventInfo.amountPerParticipant !== 0 ? (
                       <>
                         {tier.numberOfTickets >=
                         Number(event?.eventInfo?.maxNumOfParticipant) -
@@ -367,16 +366,16 @@ const Event = () => {
         )}
         {/* Organiser Details */}
         <h3>Host</h3>
-        <div className="flex justify-center items-center tablet:justify-start">
+        <div className="flex items-center justify-center tablet:justify-start">
           <div className="my-4 w-fit min-w-[300px] rounded-xl border border-orange-clr bg-white p-4">
             <h4>Host / Organiser Details</h4>
             <div className="flex justify-center">
-              <FaUser className="text-4xl text-center" />
+              <FaUser className="text-center text-4xl" />
             </div>
             <h5 className="text-center">
               <strong>{event?.eventInfo?.creatorName}</strong>
             </h5>
-            <p className="flex gap-2 items-center text-sm">
+            <p className="flex items-center gap-2 text-sm">
               <MdEmail />
               <span>
                 Email:{" "}
@@ -385,14 +384,14 @@ const Event = () => {
                 </a>
               </span>
             </p>
-            <p className="flex flex-wrap gap-1 items-center text-sm">
+            <p className="flex flex-wrap items-center gap-1 text-sm">
               Social Profiles:{" "}
-              <span className="flex flex-wrap gap-1 items-center">
+              <span className="flex flex-wrap items-center gap-1">
                 {JSON.parse(String(event?.eventInfo?.socialLinks)).map(
                   (link: string, i: number) => (
                     <span
                       key={i}
-                      className="flex gap-3 items-center p-2 rounded-xl w-fit hover:bg-gray-300"
+                      className="flex w-fit items-center gap-3 rounded-xl p-2 hover:bg-gray-300"
                     >
                       <SocialIcon
                         url={link}
@@ -406,7 +405,7 @@ const Event = () => {
           </div>
         </div>
         <div className="flex flex-col gap-[15px] tablet:gap-[8px]">
-          <h3 className="flex gap-4 items-center">
+          <h3 className="flex items-center gap-4">
             <img src={location} alt="" />
             Location
           </h3>
